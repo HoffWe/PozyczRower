@@ -12,6 +12,7 @@ public class Rent {
     private LocalDateTime returnTime;
 
     public Rent(){}
+
     public Rent(int id,int bikeId, int clientId, LocalDateTime rentDate, LocalDateTime returnTime) {
         this.id = id;
         this.bikeId = bikeId;
