@@ -19,65 +19,95 @@ public class RentRepository {
 
     public RentRepository() {
         rentDataBase = new ArrayList<>();
+        rentDataBase = loadRentDataBase();
     }
+
     public List<Rent> getRentDataBase() {
         return rentDataBase;
     }
+
     public void addRent(Rent rent) {
+        rent.setId(currentId);
+        currentId++;
         rentDataBase.add(rent);
     }
     public void removeRent(int rentId) {
-        rentDataBase.remove(rentId);
+        rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst()
+                .ifPresent(r -> {rentDataBase.remove(r);});
     }
     public Rent getRentByID(int rentId) {
-        return rentDataBase.get(rentId);
+        return rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst().orElse(null);
     }
     public void updateRent(int rentId, Rent newRent) {
-        rentDataBase.set(rentId, newRent);
+        rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst().ifPresent(r -> {r.setRentDate(newRent.getRentDate());
+                                                                                            r.setReturnTime(newRent.getReturnTime());
+                                                                                            r.setClientId(newRent.getClientId());
+                                                                                            r.setBikeId(newRent.getBikeId());});
+
     }
     /**
      *  klasa służąca do zapisania bazy danych wypożyczeń w pliku
      * @author Tomasz Piłat
      */
-    public void saveRentDataBase(List<Rent> rentDataBase) throws IOException {
+    public void saveRentDataBase(List<Rent> rentDataBase) {
 
-        DataOutputStream outputStream = new DataOutputStream(
-                new FileOutputStream("RentDataBase.dat")
-        );
-        outputStream.writeInt(rentDataBase.size());
-        outputStream.writeInt(currentId);
+        try (DataOutputStream outputStream = new DataOutputStream(
+                new FileOutputStream("RentDataBase.dat"))) {
 
-        for (Rent rent : rentDataBase) {
-            outputStream.writeInt(rent.getId());
-            outputStream.writeInt(rent.getBikeId());
-            outputStream.writeInt(rent.getClientId());
-            outputStream.writeLong(Timestamp.valueOf(rent.getRentDate()).getTime());
-            outputStream.writeLong(Timestamp.valueOf(rent.getReturnTime()).getTime());
+            outputStream.writeInt(rentDataBase.size());
+            outputStream.writeInt(currentId);
+
+            for (Rent rent : rentDataBase) {
+                outputStream.writeInt(rent.getId());
+                outputStream.writeInt(rent.getBikeId());
+                outputStream.writeInt(rent.getClientId());
+                outputStream.writeLong(Timestamp.valueOf(rent.getRentDate()).getTime());
+                outputStream.writeLong(Timestamp.valueOf(rent.getReturnTime()).getTime());
+            }
+
+        } catch (IOException e) {
+            System.out.println("Błąd podczas zapisywania bazy danych.");
         }
-        outputStream.close();
     }
 /**
  *  klasa służąca do wczytania bazy danych wypożyczeń z pliku
  * @author Tomasz Piłat
  */
-    public List<Rent> loadRentDataBase() throws IOException {
+    public List<Rent> loadRentDataBase(){
         List<Rent> rentDataBase = new ArrayList<>();
 
-        DataInputStream inputStream = new DataInputStream(new FileInputStream("RentDataBase.dat"));
-        int size = inputStream.readInt();
-        currentId = inputStream.readInt();
-        for (int i = 0; i < size; i++) {
-            int rentId = inputStream.readInt();
-            int bikeId = inputStream.readInt();
-            int clientId = inputStream.readInt();
-            LocalDateTime rentDate = new Timestamp(inputStream.readLong()).toLocalDateTime();
-            LocalDateTime returnTime = new Timestamp(inputStream.readLong()).toLocalDateTime();
+        try (DataInputStream inputStream =
+                     new DataInputStream(new FileInputStream("RentDataBase.dat"))) {
 
-            rentDataBase.add(
-                    new Rent(rentId, bikeId, clientId, rentDate, returnTime));
+            int size = inputStream.readInt();
+            currentId = inputStream.readInt();
+
+            for (int i = 0; i < size; i++) {
+
+                int rentId = inputStream.readInt();
+                int bikeId = inputStream.readInt();
+                int clientId = inputStream.readInt();
+
+                LocalDateTime rentDate =
+                        new Timestamp(inputStream.readLong()).toLocalDateTime();
+
+                LocalDateTime returnTime =
+                        new Timestamp(inputStream.readLong()).toLocalDateTime();
+
+                rentDataBase.add(
+                        new Rent(rentId, bikeId, clientId, rentDate, returnTime)
+                );
+            }
+
+        } catch (FileNotFoundException e) {
+
+            System.out.println("Plik bazy danych nie istnieje.");
+
+        } catch (IOException e) {
+
+            System.out.println("Błąd podczas wczytywania bazy danych.");
         }
 
-    inputStream.close();
         return rentDataBase;
     }
 
