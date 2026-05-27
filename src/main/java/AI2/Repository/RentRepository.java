@@ -46,7 +46,8 @@ public class RentRepository {
 
     }
     /**
-     *  klasa służąca do zapisania bazy danych wypożyczeń w pliku
+     *  klasa służąca do zapisania bazy danych wypożyczeń do pliku
+     * @param rentDataBase lista wypożyczeń do zapisania
      * @author Tomasz Piłat
      */
     public void saveRentDataBase(List<Rent> rentDataBase) {
@@ -71,6 +72,7 @@ public class RentRepository {
     }
 /**
  *  klasa służąca do wczytania bazy danych wypożyczeń z pliku
+ * @return lista wypożyczeń wczytana z pliku
  * @author Tomasz Piłat
  */
     public List<Rent> loadRentDataBase(){
