@@ -10,8 +10,6 @@ public class BikeType {
     private String name;
     private String description;
 
-    public BikeType() {
-    }
 
     public BikeType(int id, String name, String description) {
      this.id = id;
@@ -20,24 +18,24 @@ public class BikeType {
 
     }
 
-    public int getId() {
+    public int getBikeTypeId() {
         return id;
     }
-    public void setId(int id) {
+    public void setBikeTypeId(int id) {
         this.id = id;
     }
 
-    public String getName() {
+    public String getBikeTypeName() {
         return name;
     }
-    public void setName(String name) {
+    public void setBikeTypeName(String name) {
         this.name = name;
     }
 
-    public String getDescription() {
+    public String getBikeTypeDescription() {
         return description;
     }
-    public void setDescription(String description) {
+    public void setBikeTypeDescription(String description) {
         this.description = description;
     }
 
