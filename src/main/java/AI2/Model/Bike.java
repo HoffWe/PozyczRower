@@ -1,5 +1,7 @@
 package AI2.Model;
 
+import AI2.Enums.BikeStatus;
+
 /**
  * Reprezentuje pojedynczy rower w systemie.
  */
@@ -33,7 +35,7 @@ public class Bike {
     /**
      * Status roweru.
      */
-    private String status;
+    private BikeStatus status;
 
     /**
      * Opis roweru.
@@ -52,7 +54,7 @@ public class Bike {
      * @param description opis roweru
      */
     public Bike(int bikeId, String brand, String model, String type, int wheelSize,
-                String status, String description) {
+                BikeStatus status, String description) {
         this.bikeId = bikeId;
         this.brand = brand;
         this.model = model;
@@ -157,7 +159,7 @@ public class Bike {
      *
      * @return status roweru
      */
-    public String getStatus() {
+    public BikeStatus getStatus() {
         return status;
     }
 
@@ -166,7 +168,7 @@ public class Bike {
      *
      * @param status status roweru
      */
-    public void setStatus(String status) {
+    public void setStatus(BikeStatus status) {
         this.status = status;
     }
 

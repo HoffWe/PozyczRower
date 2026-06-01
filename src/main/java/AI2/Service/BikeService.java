@@ -1,5 +1,6 @@
 package AI2.Service;
 
+import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 import AI2.Repository.BikeRepository;
 
@@ -36,8 +37,8 @@ public class BikeService {
      * @return dodany rower
      */
     public Bike addBike(String brand, String model, String type, int wheelSize,
-                        String status, String description) {
-        validateBikeData(brand, model, type, wheelSize, status);
+                        BikeStatus status, String description) {
+        validateBikeData(brand, model, type, wheelSize);
 
         Bike bike = new Bike(
                 0,
@@ -45,7 +46,7 @@ public class BikeService {
                 model.trim(),
                 type.trim(),
                 wheelSize,
-                status.trim(),
+                status,
                 description == null ? "" : description.trim()
         );
 
@@ -78,14 +79,13 @@ public class BikeService {
                 bike.getBrand(),
                 bike.getModel(),
                 bike.getType(),
-                bike.getWheelSize(),
-                bike.getStatus()
+                bike.getWheelSize()
         );
 
         bike.setBrand(bike.getBrand().trim());
         bike.setModel(bike.getModel().trim());
         bike.setType(bike.getType().trim());
-        bike.setStatus(bike.getStatus().trim());
+        bike.setStatus(bike.getStatus());
 
         if (bike.getDescription() == null) {
             bike.setDescription("");
@@ -121,7 +121,7 @@ public class BikeService {
      * @param status status roweru
      * @return lista rowerów
      */
-    public List<Bike> getBikesByStatus(String status) {
+    public List<Bike> getBikesByStatus(BikeStatus status) {
         return bikeRepository.getBikesByStatus(status);
     }
 
@@ -132,10 +132,9 @@ public class BikeService {
      * @param model model roweru
      * @param type typ roweru
      * @param wheelSize rozmiar koła
-     * @param status status roweru
      */
     private void validateBikeData(String brand, String model, String type,
-                                  int wheelSize, String status) {
+                                  int wheelSize) {
         if (brand == null || brand.isBlank()) {
             throw new IllegalArgumentException("Marka roweru nie może być pusta.");
         }
@@ -150,10 +149,6 @@ public class BikeService {
 
         if (wheelSize <= 0) {
             throw new IllegalArgumentException("Rozmiar koła musi być większy od zera.");
-        }
-
-        if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("Status roweru nie może być pusty.");
         }
     }
 }

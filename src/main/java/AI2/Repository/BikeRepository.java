@@ -1,5 +1,6 @@
 package AI2.Repository;
 
+import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 
 import java.io.DataInputStream;
@@ -127,11 +128,11 @@ public class BikeRepository {
      * @param status status roweru
      * @return lista rowerów
      */
-    public List<Bike> getBikesByStatus(String status) {
+    public List<Bike> getBikesByStatus(BikeStatus status) {
         List<Bike> bikesByStatus = new ArrayList<>();
 
         for (Bike bike : bikeList) {
-            if (bike.getStatus() != null && bike.getStatus().equalsIgnoreCase(status)) {
+            if (bike.getStatus() != null && bike.getStatus()==status) {
                 bikesByStatus.add(bike);
             }
         }
@@ -162,7 +163,7 @@ public class BikeRepository {
                 outputStream.writeUTF(bike.getModel() == null ? "" : bike.getModel());
                 outputStream.writeUTF(bike.getType() == null ? "" : bike.getType());
                 outputStream.writeInt(bike.getWheelSize());
-                outputStream.writeUTF(bike.getStatus() == null ? "" : bike.getStatus());
+                outputStream.writeUTF(bike.getStatus().name());
                 outputStream.writeUTF(bike.getDescription() == null ? "" : bike.getDescription());
             }
         } catch (IOException e) {
@@ -186,7 +187,7 @@ public class BikeRepository {
                 String model = inputStream.readUTF();
                 String type = inputStream.readUTF();
                 int wheelSize = inputStream.readInt();
-                String status = inputStream.readUTF();
+                BikeStatus status = BikeStatus.valueOf(inputStream.readUTF());
                 String description = inputStream.readUTF();
 
                 Bike bike = new Bike(
