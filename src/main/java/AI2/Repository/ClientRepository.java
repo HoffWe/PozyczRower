@@ -9,7 +9,11 @@ import java.util.List;
 /**
  *
  *
+ *
+ *
  * @author Sviatoslav Matsopa
+ *
+ *
  *
  *
  */
@@ -20,29 +24,22 @@ public class ClientRepository {
 
     /** Konstruktor - automatycznie wczytuje dane z pliku przy starcie */
     public ClientRepository() {
-
         loadFromFile();
-
     }
 
     /** Dodaje nowego klienta i zapisuje do pliku */
     public void addClient(Client client) {
-
         clients.add(client);
         saveToFile();
-
     }
 
     /** Zwraca liste wszystkich klientow */
     public List<Client> getAllClients() {
-
         return clients;
-
     }
 
     /** Zwraca klienta po ID, lub null jesli nie istnieje */
     public Client getClientById(int id) {
-
         for (Client c : clients) {
             if (c.getId() == id) {
                 return c;
@@ -53,14 +50,12 @@ public class ClientRepository {
 
     /** Usuwa klienta po ID i zapisuje do pliku */
     public void removeClient(int id) {
-
         clients.removeIf(c -> c.getId() == id);
         saveToFile();
     }
 
     /** Aktualizuje dane klienta i zapisuje do pliku */
     public void updateClient(Client updated) {
-
         for (int i = 0; i < clients.size(); i++) {
             if (clients.get(i).getId() == updated.getId()) {
                 clients.set(i, updated);
@@ -70,8 +65,18 @@ public class ClientRepository {
         }
     }
 
-    /** Zapisuje wszystkich klientow do pliku za pomoca DataOutputStream
-     * */
+    /** Zwraca nastepne dostepne ID na podstawie istniejacych danych */
+    public int getNextId() {
+        int max = 0;
+        for (Client c : clients) {
+            if (c.getId() > max) {
+                max = c.getId();
+            }
+        }
+        return max + 1;
+    }
+
+    /** Zapisuje wszystkich klientow do pliku za pomoca DataOutputStream */
     private void saveToFile() {
         try {
             FileOutputStream fos = new FileOutputStream(FILE_NAME);
@@ -94,11 +99,8 @@ public class ClientRepository {
         }
     }
 
-    /** Wczytuje klientow z pliku
-     *
-     * */
+    /** Wczytuje klientow z pliku */
     private void loadFromFile() {
-
         File file = new File(FILE_NAME);
         if (!file.exists()) {
             return;
