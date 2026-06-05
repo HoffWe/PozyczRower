@@ -1,5 +1,7 @@
 package AI2.Model;
 
+import AI2.Enums.RentStatus;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ public class Rent {
     private int clientId;
     private LocalDateTime rentDate;
     private LocalDateTime returnTime;
+    private RentStatus status;
 
     public Rent(){}
 
@@ -49,6 +52,12 @@ public class Rent {
     }
     public void setReturnTime(LocalDateTime returnTime) {
         this.returnTime = returnTime;
+    }
+    public RentStatus getStatus() {
+        return status;
+    }
+    public void setStatus(RentStatus status) {
+        this.status = status;
     }
 
 }
