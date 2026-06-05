@@ -1,5 +1,6 @@
 package AI2.Repository;
 
+import AI2.Enums.RentStatus;
 import AI2.Model.Rent;
 
 import java.io.*;
@@ -16,6 +17,8 @@ Klasa służąca jako baza danych dla wypożyczeń
 public class RentRepository {
     private final List<Rent> rentDataBase;
     private int currentId;
+    private static final String FILE_PATH =
+            "data/RentDataBase.dat";
 
     public RentRepository() {
         rentDataBase = loadRentDataBase();
@@ -27,6 +30,7 @@ public class RentRepository {
 
     public void addRent(Rent rent) {
         rent.setId(currentId);
+
         currentId++;
         rentDataBase.add(rent);
     }
@@ -45,16 +49,16 @@ public class RentRepository {
         rent.setRentDate(newRent.getRentDate());
         rent.setReturnTime(newRent.getReturnTime());
         rent.setClientId(newRent.getClientId());
+        rent.setStatus(newRent.getStatus());
     }
     /**
      *  klasa służąca do zapisania bazy danych wypożyczeń do pliku
-     * @param rentDataBase lista wypożyczeń do zapisania
      * @author Tomasz Piłat
      */
-    public void saveRentDataBase(List<Rent> rentDataBase) {
+    public void saveRentDataBase() {
 
         try (DataOutputStream outputStream = new DataOutputStream(
-                new FileOutputStream("RentDataBase.dat"))) {
+                new FileOutputStream(FILE_PATH))) {
 
             outputStream.writeInt(rentDataBase.size());
             outputStream.writeInt(currentId);
@@ -65,6 +69,7 @@ public class RentRepository {
                 outputStream.writeInt(rent.getClientId());
                 outputStream.writeLong(Timestamp.valueOf(rent.getRentDate()).getTime());
                 outputStream.writeLong(Timestamp.valueOf(rent.getReturnTime()).getTime());
+                outputStream.writeUTF(rent.getStatus().name());
             }
 
         } catch (IOException e) {
@@ -80,7 +85,7 @@ public class RentRepository {
         List<Rent> rentDataBase = new ArrayList<>();
 
         try (DataInputStream inputStream =
-                     new DataInputStream(new FileInputStream("RentDataBase.dat"))) {
+                     new DataInputStream(new FileInputStream(FILE_PATH))) {
 
             int size = inputStream.readInt();
             currentId = inputStream.readInt();
@@ -97,18 +102,18 @@ public class RentRepository {
                 LocalDateTime returnTime =
                         new Timestamp(inputStream.readLong()).toLocalDateTime();
 
+                RentStatus status = RentStatus.valueOf(inputStream.readUTF());
+
                 rentDataBase.add(
-                        new Rent(rentId, bikeId, clientId, rentDate, returnTime)
+                        new Rent(rentId, bikeId, clientId, rentDate, returnTime,status)
                 );
             }
 
-        } catch (FileNotFoundException e) {
+        }  catch (IOException e) {
 
-            System.out.println("Plik bazy danych nie istnieje.");
-
-        } catch (IOException e) {
-
-            System.out.println("Błąd podczas wczytywania bazy danych.");
+            System.out.println(
+                    "Plik bazy danych nie istnieje."
+            );
         }
 
         return rentDataBase;
