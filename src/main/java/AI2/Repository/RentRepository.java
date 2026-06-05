@@ -14,11 +14,10 @@ Klasa służąca jako baza danych dla wypożyczeń
  @author Tomasz Piłat
  */
 public class RentRepository {
-    private List<Rent> rentDataBase;
+    private final List<Rent> rentDataBase;
     private int currentId;
 
     public RentRepository() {
-        rentDataBase = new ArrayList<>();
         rentDataBase = loadRentDataBase();
     }
 
@@ -31,19 +30,21 @@ public class RentRepository {
         currentId++;
         rentDataBase.add(rent);
     }
+
     public void removeRent(int rentId) {
-        rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst()
-                .ifPresent(r -> {rentDataBase.remove(r);});
+        rentDataBase.removeIf(r->r.getId()==rentId);
     }
+
     public Rent getRentByID(int rentId) {
         return rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst().orElse(null);
     }
-    public void updateRent(int rentId, Rent newRent) {
-        rentDataBase.stream().filter(r -> r.getId() == rentId).findFirst().ifPresent(r -> {r.setRentDate(newRent.getRentDate());
-                                                                                            r.setReturnTime(newRent.getReturnTime());
-                                                                                            r.setClientId(newRent.getClientId());
-                                                                                            r.setBikeId(newRent.getBikeId());});
 
+    public void updateRent(Rent newRent) {
+        Rent rent = getRentByID(newRent.getId());
+        rent.setBikeId(newRent.getBikeId());
+        rent.setRentDate(newRent.getRentDate());
+        rent.setReturnTime(newRent.getReturnTime());
+        rent.setClientId(newRent.getClientId());
     }
     /**
      *  klasa służąca do zapisania bazy danych wypożyczeń do pliku
@@ -113,10 +114,4 @@ public class RentRepository {
         return rentDataBase;
     }
 
-    public int getCurrentId() {
-        return currentId;
-    }
-    public void setCurrentId(int currentId) {
-        this.currentId = currentId;
-    }
 }
