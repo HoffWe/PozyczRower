@@ -19,7 +19,7 @@ public class BikeRepository {
     /**
      * Nazwa pliku z danymi rowerów.
      */
-    private static final String FILE_NAME = "bike_repository.dat";
+    private static final String FILE_NAME = "data/bike_repository.dat";
 
     /**
      * Lista rowerów.

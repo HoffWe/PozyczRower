@@ -7,10 +7,12 @@ import AI2.Model.Rent;
 import AI2.Repository.BikeRepository;
 import AI2.Repository.ClientRepository;
 import AI2.Repository.RentRepository;
+import AI2.Util.LanguageManager;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RentService {
@@ -28,6 +30,7 @@ public class RentService {
 
     public void addRent(Rent rent){
         validateRent(rent);
+        if(Objects.equals(rent.getRentDate(), LocalDateTime.now())){}
         rent.setStatus(RentStatus.ACTIVE);
         bikeRepository.getBikeById(rent.getBikeId()).setStatus(BikeStatus.RENTED);
         rentRepository.addRent(rent);
@@ -71,8 +74,22 @@ public class RentService {
         return rentRepository.getRentByID(rentId);
     }
 
-    public List<Rent> getAllRents(){
-        return rentRepository.getRentDataBase();
+    public List<Rent> getAllRents() {
+
+        try {
+
+            return rentRepository
+                    .getRentDataBase();
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    LanguageManager.getString(
+                            "error.databaseLoad"
+                    ),
+                    e
+            );
+        }
     }
 
     public void setOverdueStatus(){
@@ -90,7 +107,9 @@ public class RentService {
         return rentRepository.getRentDataBase().stream().filter(r-> r.getStatus() == RentStatus.ACTIVE).collect(Collectors.toList());
     }
 
-
+    public void saveRents(){
+        rentRepository.saveRentDataBase();
+    }
 
 
 
@@ -106,9 +125,6 @@ public class RentService {
         }
         if(clientRepository.getClientById(rent.getClientId())==null){
             throw  new IllegalArgumentException("Client does not exist");
-        }
-        if(rent.getRentDate()==null){
-            throw  new IllegalArgumentException("Rent date does not exist");
         }
         if(rent.getRentDate().isBefore(LocalDateTime.now())){
             throw  new IllegalArgumentException("Rent date is before current date");

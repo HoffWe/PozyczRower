@@ -16,11 +16,19 @@ public class Rent {
 
     public Rent(){}
 
-    public Rent(int id,int bikeId, int clientId, LocalDateTime rentDate, LocalDateTime returnTime) {
+    public Rent(int id,int bikeId, int clientId, LocalDateTime rentDate, LocalDateTime returnTime, RentStatus status) {
         this.id = id;
         this.bikeId = bikeId;
         this.clientId = clientId;
         this.rentDate = rentDate;
+        this.returnTime = returnTime;
+        this.status = status;
+    }
+
+    public Rent(int bikeId, int clientId, LocalDateTime startDate ,LocalDateTime returnTime){
+        this.bikeId = bikeId;
+        this.clientId = clientId;
+        this.rentDate = startDate;
         this.returnTime = returnTime;
     }
     public int getId() {
