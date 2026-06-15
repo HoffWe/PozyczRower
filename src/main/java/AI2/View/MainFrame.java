@@ -4,8 +4,10 @@ import AI2.Repository.BikeRepository;
 import AI2.Repository.ClientRepository;
 import AI2.Repository.RentRepository;
 import AI2.Service.BikeService;
+import AI2.Service.ClientService;
 import AI2.Service.RentService;
 import AI2.Util.LanguageManager;
+import AI2.View.Client.ClientPanel;
 import AI2.View.Rent.RentPanel;
 
 import javax.swing.*;
@@ -17,7 +19,8 @@ public class MainFrame extends JFrame {
     private final JPanel contentPanel;
     private final CardLayout layout;
     private final RentService rentService;
-    public MainFrame(RentService rentService) {
+
+    public MainFrame(RentService rentService, ClientService clientService) {
         this.rentService = rentService;
         setTitle(LanguageManager.getString("app.title"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,18 +50,20 @@ public class MainFrame extends JFrame {
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         JButton rentsButton = new JButton(LanguageManager.getString("rent.name"));
+        JButton clientsButton = new JButton(LanguageManager.getString("client.name"));
         toolBar.add(rentsButton);
+        toolBar.add(clientsButton);
         add(toolBar, BorderLayout.NORTH);
         layout = new CardLayout();
         contentPanel = new JPanel(layout);
-        contentPanel.add(new RentPanel(rentService),LanguageManager.getString("rent.name"));
+        contentPanel.add(new RentPanel(rentService), LanguageManager.getString("rent.name"));
+        contentPanel.add(new ClientPanel(clientService), LanguageManager.getString("client.name"));
         add(contentPanel, BorderLayout.CENTER);
-        rentsButton.addActionListener(e -> {
-            layout.show(contentPanel, LanguageManager.getString("rent.name"));
-        });
+        rentsButton.addActionListener(e -> layout.show(contentPanel, LanguageManager.getString("rent.name")));
+        clientsButton.addActionListener(e -> layout.show(contentPanel, LanguageManager.getString("client.name")));
     }
 
-    private void saveData(){
+    private void saveData() {
         rentService.saveRents();
     }
 
@@ -66,16 +71,16 @@ public class MainFrame extends JFrame {
         BikeRepository bikeRepository = new BikeRepository();
         ClientRepository clientRepository = new ClientRepository();
         RentRepository rentRepository = new RentRepository();
-        RentService rentService = new RentService(rentRepository,bikeRepository,clientRepository);
+        RentService rentService = new RentService(rentRepository, bikeRepository, clientRepository);
         BikeService bikeService = new BikeService(bikeRepository);
+        ClientService clientService = new ClientService(clientRepository);
+
         SwingUtilities.invokeLater(() -> {
 
-            MainFrame frame =
-                    new MainFrame(rentService);
+            MainFrame frame = new MainFrame(rentService, clientService);
 
             frame.setVisible(true);
 
         });
     }
 }
-
