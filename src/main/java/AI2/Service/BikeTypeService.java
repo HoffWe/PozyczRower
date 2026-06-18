@@ -106,6 +106,11 @@ public class BikeTypeService {
     }
 
 
+    public void saveBikeTypes(){
+        bikeTypeRepository.saveBikeTypeRepository();
+    }
+
+
     private void validateBikeTypeData(BikeTypeDTO newType) {
         if(newType.name() == null || newType.name().isBlank()){
             throw new IllegalArgumentException("Nazwa jest pusta");
