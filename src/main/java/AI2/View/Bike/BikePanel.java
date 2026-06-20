@@ -1,26 +1,24 @@
-package AI2.View.BikeType;
+package AI2.View.Bike;
 
-import AI2.Model.BikeType;
-import AI2.Service.BikeTypeService;
+import AI2.Model.Bike;
+import AI2.Service.BikeService;
 import AI2.Util.LanguageManager;
 import AI2.View.Abstract.BaseListPanel;
-import AI2.View.ViewModel.BikeTypeViewModel;
+import AI2.View.ViewModel.BikeViewModel;
 
 import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Panel zarządzania typami rowerów.
- * Dane pobierane z serwisu (brak hardkodowanych wartości).
- * ID typów NIE jest wyświetlane w tabeli.
+ * Panel zarządzania rowerami.
  */
-public class BikeTypePanel extends BaseListPanel {
+public class BikePanel extends BaseListPanel {
 
-    private final BikeTypeService bikeTypeService;
+    private final BikeService bikeService;
 
-    public BikeTypePanel(BikeTypeService bikeTypeService) {
-        this.bikeTypeService = bikeTypeService;
+    public BikePanel(BikeService bikeService) {
+        this.bikeService = bikeService;
         loadData();
     }
 
@@ -30,14 +28,17 @@ public class BikeTypePanel extends BaseListPanel {
 
     @Override
     protected String getTitleKey() {
-        return "bikeType.management";
+        return "bike.management";
     }
 
     @Override
     protected String[] getColumnNames() {
         return new String[]{
-                LanguageManager.getString("bikeType.nameField"),
-                LanguageManager.getString("bikeType.descriptionField")
+                LanguageManager.getString("bike.brand"),
+                LanguageManager.getString("bike.model"),
+                LanguageManager.getString("bike.type"),
+                LanguageManager.getString("bike.wheelSize"),
+                LanguageManager.getString("bike.status")
         };
     }
 
@@ -45,18 +46,19 @@ public class BikeTypePanel extends BaseListPanel {
     public void loadData() {
         String query = searchField != null ? searchField.getText().trim() : "";
 
-        List<BikeType> types = bikeTypeService.getAllBikeTypes();
+        List<Bike> bikes = bikeService.getAllBikes();
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
-            types = types.stream()
-                    .filter(bt -> bt.getBikeTypeName().toLowerCase().contains(lower)
-                            || bt.getBikeTypeDescription().toLowerCase().contains(lower))
+            bikes = bikes.stream()
+                    .filter(b -> b.getBrand().toLowerCase().contains(lower)
+                            || b.getModel().toLowerCase().contains(lower)
+                            || b.getType().toLowerCase().contains(lower))
                     .collect(Collectors.toList());
         }
 
         clearTable();
-        for (BikeType bt : types) {
-            BikeTypeViewModel vm = new BikeTypeViewModel(bt);
+        for (Bike bike : bikes) {
+            BikeViewModel vm = new BikeViewModel(bike);
             addRow(vm.getId(), vm.toRow());
         }
     }
@@ -69,9 +71,9 @@ public class BikeTypePanel extends BaseListPanel {
     @Override
     protected void onAdd() {
         openDialog(
-                LanguageManager.getString("bikeType.nameAdd"),
-                new AddBikeTypePanel(bikeTypeService, this),
-                480, 300
+                LanguageManager.getString("bike.nameAdd"),
+                new AddBikePanel(bikeService, this),
+                500, 400
         );
     }
 
@@ -80,17 +82,17 @@ public class BikeTypePanel extends BaseListPanel {
         int id = getSelectedId();
         if (id == -1) return;
 
-        BikeType bikeType = bikeTypeService.getBikeTypeById(id);
-        if (bikeType == null) {
+        Bike bike = bikeService.getBikeById(id);
+        if (bike == null) {
             JOptionPane.showMessageDialog(this,
                     LanguageManager.getString("error.title"));
             return;
         }
 
         openDialog(
-                LanguageManager.getString("bikeType.editTitle"),
-                new EditBikeTypePanel(bikeTypeService, bikeType, this),
-                480, 300
+                LanguageManager.getString("bike.editTitle"),
+                new EditBikePanel(bikeService, bike, this),
+                500, 400
         );
     }
 
@@ -101,13 +103,13 @@ public class BikeTypePanel extends BaseListPanel {
 
         int result = JOptionPane.showConfirmDialog(
                 this,
-                LanguageManager.getString("bikeType.deleteConfirm"),
+                LanguageManager.getString("bike.deleteConfirm"),
                 LanguageManager.getString("button.delete"),
                 JOptionPane.YES_NO_OPTION
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            bikeTypeService.removeBikeType(id);
+            bikeService.removeBike(id);
             loadData();
         }
     }
