@@ -85,7 +85,7 @@ public class Client {
     @Override
     public String toString() {
 
-        return name + " " + surname + " (ID: " + id + ")";
+        return name + " " + surname + " " + evidence ;
 
     }
 }

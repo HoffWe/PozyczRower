@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ClientRepository {
 
-    private static final String FILE_NAME = "clients.dat";
+    private static final String FILE_NAME = "data/clients.dat";
     private List<Client> clients = new ArrayList<>();
 
     /** Konstruktor - automatycznie wczytuje dane z pliku przy starcie */

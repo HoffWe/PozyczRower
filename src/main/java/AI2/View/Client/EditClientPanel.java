@@ -1,5 +1,6 @@
 package AI2.View.Client;
 
+import AI2.Model.Client;
 import AI2.Service.ClientService;
 import AI2.Util.LanguageManager;
 import AI2.View.Abstract.BaseFormPanel;
@@ -8,11 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel formularza dodawania nowego klienta.
+ * Panel formularza edycji istniejącego klienta.
+ * Pola są wstępnie wypełnione danymi przekazanego obiektu {@link Client}.
  */
-public class AddClientPanel extends BaseFormPanel {
+public class EditClientPanel extends BaseFormPanel {
 
     private final ClientService clientService;
+    private final Client client;
     private final ClientPanel parentPanel;
 
     private JTextField nameField;
@@ -20,8 +23,10 @@ public class AddClientPanel extends BaseFormPanel {
     private JTextField evidenceField;
     private JTextField opisField;
 
-    public AddClientPanel(ClientService clientService, ClientPanel parentPanel) {
+    public EditClientPanel(ClientService clientService, Client client,
+                           ClientPanel parentPanel) {
         this.clientService = clientService;
+        this.client        = client;
         this.parentPanel   = parentPanel;
         init();
     }
@@ -31,18 +36,18 @@ public class AddClientPanel extends BaseFormPanel {
     // ----------------------------------------------------------------
 
     @Override
-    protected String getTitleKey() { return "client.nameAdd"; }
+    protected String getTitleKey() { return "client.editTitle"; }
 
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() { return "button.save"; }
 
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField     = new JTextField(); nameField.setPreferredSize(size);
-        surnameField  = new JTextField(); surnameField.setPreferredSize(size);
-        evidenceField = new JTextField(); evidenceField.setPreferredSize(size);
-        opisField     = new JTextField(); opisField.setPreferredSize(size);
+        nameField     = new JTextField(client.getName());     nameField.setPreferredSize(size);
+        surnameField  = new JTextField(client.getSurname());  surnameField.setPreferredSize(size);
+        evidenceField = new JTextField(client.getEvidence()); evidenceField.setPreferredSize(size);
+        opisField     = new JTextField(client.getOpis());     opisField.setPreferredSize(size);
     }
 
     @Override
@@ -56,13 +61,14 @@ public class AddClientPanel extends BaseFormPanel {
     @Override
     protected void onSubmit() {
         try {
-            clientService.addClient(
+            clientService.updateClient(
+                    client.getId(),
                     nameField.getText().trim(),
                     surnameField.getText().trim(),
                     evidenceField.getText().trim(),
                     opisField.getText().trim()
             );
-            showSuccess("client.added");
+            showSuccess("client.updated");
             parentPanel.loadData();
             closeDialog();
         } catch (Exception ex) {
