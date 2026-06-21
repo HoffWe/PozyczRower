@@ -17,6 +17,14 @@ public class Client {
     private String evidence;
     private String opis;
 
+    /**
+     * Flaga miękkiego usunięcia.
+     * {@code true} oznacza że klient jest usunięty i nie powinien być wyświetlany.
+     *
+     * @author Światosław Matsopa
+     */
+    private boolean deleted;
+
     /** Konstruktor domyslny */
     public Client() {}
 
@@ -29,6 +37,7 @@ public class Client {
         this.surname = surname;
         this.evidence = evidence;
         this.opis = opis;
+        this.deleted = false;
     }
 
     /** Zwraca ID klienta */
@@ -81,6 +90,12 @@ public class Client {
 
         this.opis = opis;
     }
+
+    /** Zwraca czy klient jest miękko usunięty. */
+    public boolean isDeleted() { return deleted; }
+
+    /** Ustawia flagę miękkiego usunięcia. */
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
     @Override
     public String toString() {

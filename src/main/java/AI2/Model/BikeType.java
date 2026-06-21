@@ -39,7 +39,14 @@ public class BikeType {
         this.description = description;
     }
 
-
-
-
+    /**
+     * Zwraca nazwę typu roweru (używana m.in. przez JComboBox).
+     *
+     * @return nazwa typu
+     * @author Adrian Karpiński
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
 }

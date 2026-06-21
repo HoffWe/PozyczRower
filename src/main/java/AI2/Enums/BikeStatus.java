@@ -8,6 +8,7 @@ public enum BikeStatus {
     SERVICING("bike.status.service"),
     UNAVAILABLE("bike.status.unavible")
 
+
     ;
     private final String key;
     private BikeStatus(String key) {
@@ -17,5 +18,13 @@ public enum BikeStatus {
         return LanguageManager.getString(key);
     }
 
-
+    /**
+     * Zwraca zlokalizowaną nazwę statusu (używana m.in. przez JComboBox).
+     *
+     * @return wyświetlana nazwa statusu
+     */
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

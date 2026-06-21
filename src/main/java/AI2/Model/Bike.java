@@ -4,189 +4,158 @@ import AI2.Enums.BikeStatus;
 
 /**
  * Reprezentuje pojedynczy rower w systemie.
+ * Marka i model przechowywane są przez referencję do {@link BikeModel},
+ * typ roweru – przez referencję do {@link BikeType}.
+ *
+ * @author Rafał Wojciechowski
  */
 public class Bike {
 
-    /**
-     * Unikalny identyfikator roweru.
-     */
+    /** Unikalny identyfikator roweru. */
     private int bikeId;
 
-    /**
-     * Marka roweru.
-     */
-    private String brand;
+    /** Identyfikator modelu roweru ({@link BikeModel}). */
+    private int bikeModelId;
 
-    /**
-     * Model roweru.
-     */
-    private String model;
+    /** Identyfikator typu roweru ({@link BikeType}). */
+    private int bikeTypeId;
 
-    /**
-     * Typ roweru.
-     */
-    private String type;
-
-    /**
-     * Rozmiar koła roweru.
-     */
+    /** Rozmiar koła roweru (w calach). */
     private int wheelSize;
 
-    /**
-     * Status roweru.
-     */
+    /** Aktualny status roweru. */
     private BikeStatus status;
 
-    /**
-     * Opis roweru.
-     */
+    /** Opis roweru. */
     private String description;
+
+    /**
+     * Flaga miękkiego usunięcia.
+     * {@code true} oznacza że rower jest usunięty i nie powinien być wyświetlany.
+     */
+    private boolean deleted;
 
     /**
      * Tworzy nowy rower.
      *
-     * @param bikeId identyfikator roweru
-     * @param brand marka roweru
-     * @param model model roweru
-     * @param type typ roweru
-     * @param wheelSize rozmiar koła
-     * @param status status roweru
+     * @param bikeId      identyfikator roweru
+     * @param bikeModelId identyfikator modelu roweru
+     * @param bikeTypeId  identyfikator typu roweru
+     * @param wheelSize   rozmiar koła
+     * @param status      status roweru
      * @param description opis roweru
+     * @author Rafał Wojciechowski
      */
-    public Bike(int bikeId, String brand, String model, String type, int wheelSize,
-                BikeStatus status, String description) {
-        this.bikeId = bikeId;
-        this.brand = brand;
-        this.model = model;
-        this.type = type;
-        this.wheelSize = wheelSize;
-        this.status = status;
+    public Bike(int bikeId, int bikeModelId, int bikeTypeId,
+                int wheelSize, BikeStatus status, String description) {
+        this.bikeId      = bikeId;
+        this.bikeModelId = bikeModelId;
+        this.bikeTypeId  = bikeTypeId;
+        this.wheelSize   = wheelSize;
+        this.status      = status;
         this.description = description;
+        this.deleted     = false;
     }
 
     /**
      * Zwraca identyfikator roweru.
      *
      * @return identyfikator roweru
+     * @author Rafał Wojciechowski
      */
-    public int getBikeId() {
-        return bikeId;
-    }
+    public int getBikeId() { return bikeId; }
 
     /**
      * Ustawia identyfikator roweru.
      *
      * @param bikeId identyfikator roweru
+     * @author Rafał Wojciechowski
      */
-    public void setBikeId(int bikeId) {
-        this.bikeId = bikeId;
-    }
+    public void setBikeId(int bikeId) { this.bikeId = bikeId; }
 
     /**
-     * Zwraca markę roweru.
+     * Zwraca identyfikator modelu roweru.
      *
-     * @return marka roweru
+     * @return identyfikator modelu
+     * @author Rafał Wojciechowski
      */
-    public String getBrand() {
-        return brand;
-    }
+    public int getBikeModelId() { return bikeModelId; }
 
     /**
-     * Ustawia markę roweru.
+     * Ustawia identyfikator modelu roweru.
      *
-     * @param brand marka roweru
+     * @param bikeModelId identyfikator modelu
+     * @author Rafał Wojciechowski
      */
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
+    public void setBikeModelId(int bikeModelId) { this.bikeModelId = bikeModelId; }
 
     /**
-     * Zwraca model roweru.
+     * Zwraca identyfikator typu roweru.
      *
-     * @return model roweru
+     * @return identyfikator typu
+     * @author Rafał Wojciechowski
      */
-    public String getModel() {
-        return model;
-    }
+    public int getBikeTypeId() { return bikeTypeId; }
 
     /**
-     * Ustawia model roweru.
+     * Ustawia identyfikator typu roweru.
      *
-     * @param model model roweru
+     * @param bikeTypeId identyfikator typu
+     * @author Rafał Wojciechowski
      */
-    public void setModel(String model) {
-        this.model = model;
-    }
+    public void setBikeTypeId(int bikeTypeId) { this.bikeTypeId = bikeTypeId; }
 
     /**
-     * Zwraca typ roweru.
-     *
-     * @return typ roweru
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Ustawia typ roweru.
-     *
-     * @param type typ roweru
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * Zwraca rozmiar koła.
+     * Zwraca rozmiar koła roweru.
      *
      * @return rozmiar koła
+     * @author Rafał Wojciechowski
      */
-    public int getWheelSize() {
-        return wheelSize;
-    }
+    public int getWheelSize() { return wheelSize; }
 
     /**
-     * Ustawia rozmiar koła.
+     * Ustawia rozmiar koła roweru.
      *
      * @param wheelSize rozmiar koła
+     * @author Rafał Wojciechowski
      */
-    public void setWheelSize(int wheelSize) {
-        this.wheelSize = wheelSize;
-    }
+    public void setWheelSize(int wheelSize) { this.wheelSize = wheelSize; }
 
     /**
      * Zwraca status roweru.
      *
      * @return status roweru
+     * @author Rafał Wojciechowski
      */
-    public BikeStatus getStatus() {
-        return status;
-    }
+    public BikeStatus getStatus() { return status; }
 
     /**
      * Ustawia status roweru.
      *
      * @param status status roweru
+     * @author Rafał Wojciechowski
      */
-    public void setStatus(BikeStatus status) {
-        this.status = status;
-    }
+    public void setStatus(BikeStatus status) { this.status = status; }
 
     /**
      * Zwraca opis roweru.
      *
      * @return opis roweru
+     * @author Rafał Wojciechowski
      */
-    public String getDescription() {
-        return description;
-    }
+    public String getDescription() { return description; }
 
     /**
      * Ustawia opis roweru.
      *
      * @param description opis roweru
+     * @author Rafał Wojciechowski
      */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description) { this.description = description; }
+
+    /** Zwraca czy rower jest miękko usunięty. */
+    public boolean isDeleted() { return deleted; }
+
+    /** Ustawia flagę miękkiego usunięcia. */
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }

@@ -3,113 +3,107 @@ package AI2.Service;
 import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 import AI2.Repository.BikeRepository;
+import AI2.Util.LanguageManager;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Serwis obsługujący rowery.
+ * Serwis obsługujący logikę biznesową rowerów.
+ *
+ * @author Rafał Wojciechowski
  */
 public class BikeService {
 
-    /**
-     * Repozytorium rowerów.
-     */
+    /** Repozytorium rowerów. */
     private final BikeRepository bikeRepository;
 
     /**
      * Tworzy serwis rowerów.
      *
      * @param bikeRepository repozytorium rowerów
+     * @author Rafał Wojciechowski
      */
     public BikeService(BikeRepository bikeRepository) {
         this.bikeRepository = bikeRepository;
     }
 
     /**
-     * Dodaje nowy rower.
+     * Dodaje nowy rower do systemu.
      *
-     * @param brand marka roweru
-     * @param model model roweru
-     * @param type typ roweru
-     * @param wheelSize rozmiar koła
-     * @param status status roweru
+     * @param bikeModelId identyfikator modelu roweru
+     * @param bikeTypeId  identyfikator typu roweru
+     * @param wheelSize   rozmiar koła
+     * @param status      status roweru
      * @param description opis roweru
      * @return dodany rower
+     * @throws IllegalArgumentException jeśli dane są niepoprawne
+     * @author Rafał Wojciechowski
      */
-    public Bike addBike(String brand, String model, String type, int wheelSize,
+    public Bike addBike(int bikeModelId, int bikeTypeId, int wheelSize,
                         BikeStatus status, String description) {
-        validateBikeData(brand, model, type, wheelSize);
+        validateBikeData(bikeModelId, bikeTypeId, wheelSize);
 
         Bike bike = new Bike(
                 0,
-                brand.trim(),
-                model.trim(),
-                type.trim(),
+                bikeModelId,
+                bikeTypeId,
                 wheelSize,
                 status,
                 description == null ? "" : description.trim()
         );
-
         bikeRepository.addBike(bike);
         return bike;
     }
 
     /**
-     * Usuwa rower.
+     * Usuwa rower z systemu.
      *
      * @param bikeId identyfikator roweru
-     * @return true, jeśli rower został usunięty
+     * @return {@code true} jeśli rower został usunięty
+     * @author Rafał Wojciechowski
      */
     public boolean removeBike(int bikeId) {
         return bikeRepository.removeBike(bikeId);
     }
 
     /**
-     * Aktualizuje rower.
+     * Aktualizuje dane roweru.
      *
      * @param bike rower z nowymi danymi
-     * @return true, jeśli zaktualizowano rower
+     * @return {@code true} jeśli aktualizacja się powiodła
+     * @throws IllegalArgumentException jeśli rower jest null lub dane niepoprawne
+     * @author Rafał Wojciechowski
      */
     public boolean updateBike(Bike bike) {
         if (bike == null) {
-            throw new IllegalArgumentException("Rower nie może być pusty.");
+            throw new IllegalArgumentException(LanguageManager.getString("error.bike.null"));
         }
+        validateBikeData(bike.getBikeModelId(), bike.getBikeTypeId(), bike.getWheelSize());
 
-        validateBikeData(
-                bike.getBrand(),
-                bike.getModel(),
-                bike.getType(),
-                bike.getWheelSize()
-        );
-
-        bike.setBrand(bike.getBrand().trim());
-        bike.setModel(bike.getModel().trim());
-        bike.setType(bike.getType().trim());
-        bike.setStatus(bike.getStatus());
-
-        if (bike.getDescription() == null) {
-            bike.setDescription("");
-        } else {
-            bike.setDescription(bike.getDescription().trim());
-        }
+        if (bike.getDescription() == null) bike.setDescription("");
 
         return bikeRepository.updateBike(bike);
     }
 
     /**
-     * Zwraca wszystkie rowery.
+     * Zwraca wszystkie aktywne (nie usunięte) rowery.
      *
      * @return lista rowerów
+     * @author Rafał Wojciechowski
      */
     public List<Bike> getAllBikes() {
-        return bikeRepository.getAllBikes();
+        return bikeRepository.getAllBikes().stream()
+                .filter(b -> !b.isDeleted())
+                .collect(Collectors.toList());
     }
 
     /**
      * Zwraca rower po identyfikatorze.
      *
      * @param bikeId identyfikator roweru
-     * @return rower albo null
+     * @return rower albo {@code null} gdy nie znaleziono
+     * @author Rafał Wojciechowski
      */
     public Bike getBikeById(int bikeId) {
         return bikeRepository.getBikeById(bikeId);
@@ -119,36 +113,34 @@ public class BikeService {
      * Zwraca rowery o podanym statusie.
      *
      * @param status status roweru
-     * @return lista rowerów
+     * @return lista rowerów o podanym statusie
+     * @author Rafał Wojciechowski
      */
     public List<Bike> getBikesByStatus(BikeStatus status) {
         return bikeRepository.getBikesByStatus(status);
     }
 
     /**
-     * Sprawdza poprawność podstawowych danych roweru.
+     * Sprawdza poprawność danych roweru.
      *
-     * @param brand marka roweru
-     * @param model model roweru
-     * @param type typ roweru
-     * @param wheelSize rozmiar koła
+     * @param bikeModelId identyfikator modelu roweru (musi być > 0)
+     * @param bikeTypeId  identyfikator typu roweru (musi być > 0)
+     * @param wheelSize   rozmiar koła (musi być > 0)
+     * @throws IllegalArgumentException jeśli któraś wartość jest niepoprawna
+     * @author Rafał Wojciechowski
      */
-    private void validateBikeData(String brand, String model, String type,
-                                  int wheelSize) {
-        if (brand == null || brand.isBlank()) {
-            throw new IllegalArgumentException("Marka roweru nie może być pusta.");
+    private void validateBikeData(int bikeModelId, int bikeTypeId, int wheelSize) {
+        if (bikeModelId <= 0) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bike.modelRequired"));
         }
-
-        if (model == null || model.isBlank()) {
-            throw new IllegalArgumentException("Model roweru nie może być pusty.");
+        if (bikeTypeId <= 0) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bike.typeRequired"));
         }
-
-        if (type == null || type.isBlank()) {
-            throw new IllegalArgumentException("Typ roweru nie może być pusty.");
-        }
-
         if (wheelSize <= 0) {
-            throw new IllegalArgumentException("Rozmiar koła musi być większy od zera.");
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bike.wheelSizePositive"));
         }
     }
 }

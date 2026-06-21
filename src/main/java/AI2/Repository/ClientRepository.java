@@ -48,10 +48,16 @@ public class ClientRepository {
         return null;
     }
 
-    /** Usuwa klienta po ID i zapisuje do pliku */
+    /**
+     * Miękkie usunięcie klienta – ustawia flagę {@code deleted} i zapisuje do pliku.
+     * Klient pozostaje w pliku, ale jest ukrywany w UI.
+     */
     public void removeClient(int id) {
-        clients.removeIf(c -> c.getId() == id);
-        saveToFile();
+        Client c = getClientById(id);
+        if (c != null) {
+            c.setDeleted(true);
+            saveToFile();
+        }
     }
 
     /** Aktualizuje dane klienta i zapisuje do pliku */
@@ -90,6 +96,7 @@ public class ClientRepository {
                 dos.writeUTF(c.getSurname());
                 dos.writeUTF(c.getEvidence());
                 dos.writeUTF(c.getOpis());
+                dos.writeBoolean(c.isDeleted());
             }
 
             dos.close();
@@ -116,7 +123,12 @@ public class ClientRepository {
                 String surname = dis.readUTF();
                 String evidence = dis.readUTF();
                 String opis = dis.readUTF();
-                clients.add(new Client(id, name, surname, evidence, opis));
+                // Backward-compat: starszy format nie miał flagi deleted
+                boolean isDeleted = false;
+                try { isDeleted = dis.readBoolean(); } catch (java.io.EOFException ignored) {}
+                Client client = new Client(id, name, surname, evidence, opis);
+                client.setDeleted(isDeleted);
+                clients.add(client);
             }
 
             dis.close();

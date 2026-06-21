@@ -3,47 +3,42 @@ package AI2.Repository;
 import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Repozytorium przechowujące dane rowerów.
+ * Repozytorium rowerów – przechowuje dane w pamięci i utrwala je w pliku binarnym.
+ *
+ * @author Rafał Wojciechowski
  */
 public class BikeRepository {
 
-    /**
-     * Nazwa pliku z danymi rowerów.
-     */
+    /** Ścieżka do pliku z danymi rowerów. */
     private static final String FILE_NAME = "data/bike_repository.dat";
 
-    /**
-     * Lista rowerów.
-     */
+    /** Lista rowerów przechowywana w pamięci. */
     private List<Bike> bikeList;
 
-    /**
-     * Ostatnio użyty identyfikator roweru.
-     */
+    /** Ostatnio użyty identyfikator roweru. */
     private int currentBikeId;
 
     /**
-     * Tworzy repozytorium rowerów.
+     * Tworzy repozytorium i wczytuje dane z pliku.
+     *
+     * @author Rafał Wojciechowski
      */
     public BikeRepository() {
-        bikeList = new ArrayList<>();
+        bikeList      = new ArrayList<>();
         currentBikeId = 0;
         loadBikeRepository();
     }
 
     /**
-     * Zwraca następny identyfikator roweru.
+     * Zwraca i inkrementuje następny identyfikator roweru.
      *
      * @return następny identyfikator roweru
+     * @author Rafał Wojciechowski
      */
     private int getNextBikeId() {
         currentBikeId++;
@@ -51,9 +46,10 @@ public class BikeRepository {
     }
 
     /**
-     * Dodaje rower do repozytorium.
+     * Dodaje rower do repozytorium i zapisuje do pliku.
      *
      * @param bike rower do dodania
+     * @author Rafał Wojciechowski
      */
     public void addBike(Bike bike) {
         bike.setBikeId(getNextBikeId());
@@ -62,28 +58,27 @@ public class BikeRepository {
     }
 
     /**
-     * Usuwa rower po identyfikatorze.
+     * Miękkie usunięcie roweru – ustawia flagę {@code deleted} i zapisuje do pliku.
+     * Rower pozostaje w pliku, ale jest ukrywany w UI.
      *
      * @param bikeId identyfikator roweru
-     * @return true, jeśli rower został usunięty
+     * @return {@code true} jeśli rower został znaleziony i oznaczony jako usunięty
+     * @author Rafał Wojciechowski
      */
     public boolean removeBike(int bikeId) {
         Bike bike = getBikeById(bikeId);
-
-        if (bike == null) {
-            return false;
-        }
-
-        bikeList.remove(bike);
+        if (bike == null) return false;
+        bike.setDeleted(true);
         saveBikeRepository();
         return true;
     }
 
     /**
-     * Aktualizuje rower.
+     * Aktualizuje dane roweru.
      *
      * @param updatedBike rower z nowymi danymi
-     * @return true, jeśli zaktualizowano rower
+     * @return {@code true} jeśli zaktualizowano rower
+     * @author Rafał Wojciechowski
      */
     public boolean updateBike(Bike updatedBike) {
         for (int i = 0; i < bikeList.size(); i++) {
@@ -93,7 +88,6 @@ public class BikeRepository {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -101,6 +95,7 @@ public class BikeRepository {
      * Zwraca wszystkie rowery.
      *
      * @return lista rowerów
+     * @author Rafał Wojciechowski
      */
     public List<Bike> getAllBikes() {
         return new ArrayList<>(bikeList);
@@ -110,15 +105,13 @@ public class BikeRepository {
      * Zwraca rower po identyfikatorze.
      *
      * @param bikeId identyfikator roweru
-     * @return rower albo null
+     * @return rower albo {@code null} gdy nie znaleziono
+     * @author Rafał Wojciechowski
      */
     public Bike getBikeById(int bikeId) {
         for (Bike bike : bikeList) {
-            if (bike.getBikeId() == bikeId) {
-                return bike;
-            }
+            if (bike.getBikeId() == bikeId) return bike;
         }
-
         return null;
     }
 
@@ -126,84 +119,80 @@ public class BikeRepository {
      * Zwraca rowery o podanym statusie.
      *
      * @param status status roweru
-     * @return lista rowerów
+     * @return lista rowerów o podanym statusie
+     * @author Rafał Wojciechowski
      */
     public List<Bike> getBikesByStatus(BikeStatus status) {
-        List<Bike> bikesByStatus = new ArrayList<>();
-
+        List<Bike> result = new ArrayList<>();
         for (Bike bike : bikeList) {
-            if (bike.getStatus() != null && bike.getStatus()==status) {
-                bikesByStatus.add(bike);
+            if (bike.getStatus() != null && bike.getStatus() == status) {
+                result.add(bike);
             }
         }
-
-        return bikesByStatus;
+        return result;
     }
 
     /**
      * Zwraca ostatnio użyty identyfikator roweru.
      *
-     * @return ostatnio użyty identyfikator
+     * @return ostatni identyfikator
+     * @author Rafał Wojciechowski
      */
-    public int getCurrentBikeId() {
-        return currentBikeId;
-    }
+    public int getCurrentBikeId() { return currentBikeId; }
 
     /**
-     * Zapisuje dane rowerów do pliku.
+     * Zapisuje dane rowerów do pliku binarnego.
+     * Format: currentBikeId, count, [bikeId, bikeModelId, bikeTypeId, wheelSize, status, description]*
+     *
+     * @author Rafał Wojciechowski
      */
     public void saveBikeRepository() {
-        try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
-            outputStream.writeInt(currentBikeId);
-            outputStream.writeInt(bikeList.size());
-
+        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
+            out.writeInt(currentBikeId);
+            out.writeInt(bikeList.size());
             for (Bike bike : bikeList) {
-                outputStream.writeInt(bike.getBikeId());
-                outputStream.writeUTF(bike.getBrand() == null ? "" : bike.getBrand());
-                outputStream.writeUTF(bike.getModel() == null ? "" : bike.getModel());
-                outputStream.writeUTF(bike.getType() == null ? "" : bike.getType());
-                outputStream.writeInt(bike.getWheelSize());
-                outputStream.writeUTF(bike.getStatus().name());
-                outputStream.writeUTF(bike.getDescription() == null ? "" : bike.getDescription());
+                out.writeInt(bike.getBikeId());
+                out.writeInt(bike.getBikeModelId());
+                out.writeInt(bike.getBikeTypeId());
+                out.writeInt(bike.getWheelSize());
+                out.writeUTF(bike.getStatus() != null ? bike.getStatus().name() : "");
+                out.writeUTF(bike.getDescription() == null ? "" : bike.getDescription());
+                out.writeBoolean(bike.isDeleted());
             }
         } catch (IOException e) {
-            System.out.println("Błąd zapisu danych rowerów: " + e.getMessage());
+            System.err.println("Błąd zapisu danych rowerów: " + e.getMessage());
         }
     }
 
     /**
-     * Odczytuje dane rowerów z pliku.
+     * Wczytuje dane rowerów z pliku binarnego.
+     * Brak pliku przy pierwszym uruchomieniu jest normalny.
+     *
+     * @author Rafał Wojciechowski
      */
     public void loadBikeRepository() {
-        try (DataInputStream inputStream = new DataInputStream(new FileInputStream(FILE_NAME))) {
-            bikeList = new ArrayList<>();
-            currentBikeId = inputStream.readInt();
+        try (DataInputStream in = new DataInputStream(new FileInputStream(FILE_NAME))) {
+            bikeList      = new ArrayList<>();
+            currentBikeId = in.readInt();
+            int count     = in.readInt();
+            for (int i = 0; i < count; i++) {
+                int bikeId      = in.readInt();
+                int bikeModelId = in.readInt();
+                int bikeTypeId  = in.readInt();
+                int wheelSize   = in.readInt();
+                String statusStr = in.readUTF();
+                String description = in.readUTF();
+                // Backward-compat: starszy format nie miał flagi deleted
+                boolean isDeleted = false;
+                try { isDeleted = in.readBoolean(); } catch (java.io.EOFException ignored) {}
 
-            int bikeCount = inputStream.readInt();
-
-            for (int i = 0; i < bikeCount; i++) {
-                int bikeId = inputStream.readInt();
-                String brand = inputStream.readUTF();
-                String model = inputStream.readUTF();
-                String type = inputStream.readUTF();
-                int wheelSize = inputStream.readInt();
-                BikeStatus status = BikeStatus.valueOf(inputStream.readUTF());
-                String description = inputStream.readUTF();
-
-                Bike bike = new Bike(
-                        bikeId,
-                        brand,
-                        model,
-                        type,
-                        wheelSize,
-                        status,
-                        description
-                );
-
+                BikeStatus status = statusStr.isEmpty() ? null : BikeStatus.valueOf(statusStr);
+                Bike bike = new Bike(bikeId, bikeModelId, bikeTypeId, wheelSize, status, description);
+                bike.setDeleted(isDeleted);
                 bikeList.add(bike);
             }
         } catch (IOException e) {
-            // Brak pliku przy pierwszym uruchomieniu aplikacji jest normalny.
+            // Brak pliku przy pierwszym uruchomieniu jest normalny.
         }
     }
 }

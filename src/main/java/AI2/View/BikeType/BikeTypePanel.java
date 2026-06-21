@@ -107,8 +107,13 @@ public class BikeTypePanel extends BaseListPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            bikeTypeService.removeBikeType(id);
-            loadData();
+            try {
+                bikeTypeService.removeBikeType(id);
+                loadData();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(),
+                        LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

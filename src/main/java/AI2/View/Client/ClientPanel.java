@@ -1,12 +1,19 @@
 package AI2.View.Client;
 
 import AI2.Model.Client;
+import AI2.Service.BikeModelService;
+import AI2.Service.BikeService;
+import AI2.Service.BikeTypeService;
 import AI2.Service.ClientService;
+import AI2.Service.RentService;
 import AI2.Util.LanguageManager;
 import AI2.View.Abstract.BaseListPanel;
+import AI2.View.Components.AppButton;
+import AI2.View.Rent.AddRentPanel;
 import AI2.View.ViewModel.ClientViewModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +23,61 @@ import java.util.stream.Collectors;
  */
 public class ClientPanel extends BaseListPanel {
 
-    private final ClientService clientService;
+    private final ClientService    clientService;
+    private final RentService      rentService;
+    private final BikeService      bikeService;
+    private final BikeModelService bikeModelService;
+    private final BikeTypeService  bikeTypeService;
 
-    public ClientPanel(ClientService clientService) {
-        this.clientService = clientService;
+    private JButton rentButton;
+    private JButton showRentsButton;
+
+    public ClientPanel(ClientService clientService, RentService rentService,
+                       BikeService bikeService, BikeModelService bikeModelService,
+                       BikeTypeService bikeTypeService) {
+        this.clientService    = clientService;
+        this.rentService      = rentService;
+        this.bikeService      = bikeService;
+        this.bikeModelService = bikeModelService;
+        this.bikeTypeService  = bikeTypeService;
         loadData();
+    }
+
+    // ----------------------------------------------------------------
+    // BaseListPanel – dodatkowe komponenty
+    // ----------------------------------------------------------------
+
+    @Override
+    protected void initExtraComponents() {
+        rentButton      = new AppButton(LanguageManager.getString("button.rent"));
+        showRentsButton = new AppButton(LanguageManager.getString("button.showRents"));
+        showRentsButton.setPreferredSize(new Dimension(180, 40));
+        rentButton.setEnabled(false);
+        showRentsButton.setEnabled(false);
+    }
+
+    @Override
+    protected void buildExtraButtons(JPanel buttonPanel) {
+        buttonPanel.add(rentButton);
+        buttonPanel.add(showRentsButton);
+    }
+
+    @Override
+    protected void onSelectionChanged(boolean selected) {
+        rentButton.setEnabled(selected);
+        showRentsButton.setEnabled(selected);
+    }
+
+    @Override
+    protected void refreshLanguageTexts() {
+        rentButton.setText(LanguageManager.getString("button.rent"));
+        showRentsButton.setText(LanguageManager.getString("button.showRents"));
+    }
+
+    @Override
+    protected void initExtraListeners() {
+        rentButton.addActionListener(e -> onRent());
+        showRentsButton.addActionListener(e -> onShowRents());
     }
 
     // ----------------------------------------------------------------
@@ -113,8 +170,58 @@ public class ClientPanel extends BaseListPanel {
         );
 
         if (result == JOptionPane.YES_OPTION) {
-            clientService.removeClient(id);
-            loadData();
+            try {
+                if (rentService.clientHasActiveRentals(id)) {
+                    throw new IllegalStateException(
+                            LanguageManager.getString("error.client.hasRents"));
+                }
+                clientService.removeClient(id);
+                loadData();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(),
+                        LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+            }
         }
+    }
+
+    // ----------------------------------------------------------------
+    // Wypożycz
+    // ----------------------------------------------------------------
+
+    private void onRent() {
+        int id = getSelectedId();
+        if (id == -1) return;
+
+        Client client = clientService.getClientById(id);
+        if (client == null) return;
+
+        openDialog(
+                LanguageManager.getString("rent.nameAdd"),
+                new AddRentPanel(rentService, clientService, bikeService,
+                        bikeModelService, bikeTypeService, client),
+                580, 600
+        );
+    }
+
+    // ----------------------------------------------------------------
+    // Wypożyczenia klienta
+    // ----------------------------------------------------------------
+
+    /**
+     * Otwiera dialog z listą wypożyczeń zaznaczonego klienta.
+     *
+     * @author Tomasz Piłat
+     */
+    private void onShowRents() {
+        int id = getSelectedId();
+        if (id == -1) return;
+
+        Client client = clientService.getClientById(id);
+        if (client == null) return;
+
+        Window owner = javax.swing.SwingUtilities.getWindowAncestor(this);
+        ClientRentsDialog dlg = new ClientRentsDialog(
+                owner, client, rentService, bikeService, bikeModelService);
+        dlg.setVisible(true);
     }
 }
