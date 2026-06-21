@@ -68,6 +68,8 @@ public class AddRentPanel extends BaseFormPanel {
     private JButton            removeBikeBtn;
     private JPanel             bikesPanel;
 
+    private JTextArea          notesArea;
+
     // ----------------------------------------------------------------
     // Konstruktory
     // ----------------------------------------------------------------
@@ -266,6 +268,12 @@ public class AddRentPanel extends BaseFormPanel {
         bikesPanel.setBackground(Color.WHITE);
         bikesPanel.add(bikesScroll,   BorderLayout.CENTER);
         bikesPanel.add(bikeBtnPanel,  BorderLayout.SOUTH);
+
+        // --- Uwagi ---
+        notesArea = new JTextArea(3, 20);
+        notesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        notesArea.setLineWrap(true);
+        notesArea.setWrapStyleWord(true);
     }
 
     /** {@inheritDoc} */
@@ -285,6 +293,11 @@ public class AddRentPanel extends BaseFormPanel {
         gbc.gridx   = 1; gbc.weightx = 1.0;
         formPanel.add(bikesPanel, gbc);
         gbc.gridy++;
+
+        // Wiersz uwag
+        gbc.fill    = GridBagConstraints.BOTH;
+        gbc.weighty = 0.3;
+        addFormRow(formPanel, gbc, "rent.notes", new JScrollPane(notesArea));
     }
 
     /** {@inheritDoc} */
@@ -310,12 +323,15 @@ public class AddRentPanel extends BaseFormPanel {
                         LanguageManager.getString("error.rent.dateRange"));
             }
 
+            String notes = notesArea.getText().trim();
+
             List<String> errors = new ArrayList<>();
             int added = 0;
             for (Bike bike : selectedBikes) {
                 try {
-                    rentService.addRent(
-                            new Rent(bike.getBikeId(), selectedClient.getId(), start, end));
+                    Rent rent = new Rent(bike.getBikeId(), selectedClient.getId(), start, end);
+                    rent.setNotes(notes);
+                    rentService.addRent(rent);
                     added++;
                 } catch (Exception ex) {
                     errors.add("ID " + bike.getBikeId() + ": " + ex.getMessage());

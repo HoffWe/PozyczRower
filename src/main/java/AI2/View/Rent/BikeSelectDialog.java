@@ -73,7 +73,7 @@ public class BikeSelectDialog extends JDialog {
 
         GroupEntry(List<Bike> bikes, BikeType bt, BikeModel bm) {
             this.bikes     = bikes;
-            this.typeName  = bt != null ? bt.getBikeTypeName() : "?";
+            this.typeName  = bt != null ? bt.getDisplayName() : "?";
             this.brand     = bm != null ? bm.getBrand()        : "?";
             this.model     = bm != null ? bm.getModel()        : "?";
             this.wheelSize = bikes.get(0).getWheelSize();

@@ -1,21 +1,32 @@
 package AI2.Model;
 
-/**
- @author Adrian Karpiński
- */
+import AI2.Util.LanguageManager;
 
+import java.text.Normalizer;
+import java.util.Locale;
+
+/**
+ * Model typu roweru.
+ *
+ * @author Adrian Karpiński
+ */
 public class BikeType {
 
     private int id;
     private String name;
+    private String nameEn;
     private String description;
 
+    public BikeType(int id, String name, String nameEn, String description) {
+        this.id          = id;
+        this.name        = name;
+        this.nameEn      = nameEn == null ? "" : nameEn;
+        this.description = description;
+    }
 
+    /** Konstruktor bez nameEn – zachowanie wstecznej kompatybilności. */
     public BikeType(int id, String name, String description) {
-     this.id = id;
-     this.name = name;
-     this.description = description;
-
+        this(id, name, "", description);
     }
 
     public int getBikeTypeId() {
@@ -32,6 +43,39 @@ public class BikeType {
         this.name = name;
     }
 
+    public String getNameEn() {
+        return nameEn == null ? "" : nameEn;
+    }
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn == null ? "" : nameEn;
+    }
+
+    /**
+     * Zwraca wyświetlaną nazwę typu roweru w aktualnym języku.
+     * <ol>
+     *   <li>Gdy język angielski i pole {@code nameEn} jest niepuste – zwraca {@code nameEn}.</li>
+     *   <li>Fallback EN: szuka klucza {@code bikeType.name.<ascii_name>} w LanguageManager
+     *       (obsługa typów z dat-pliku sprzed dodania {@code nameEn}).</li>
+     *   <li>Ostateczny fallback: oryginalna nazwa polska.</li>
+     * </ol>
+     *
+     * @return przetłumaczona nazwa lub oryginalna gdy brak tłumaczenia
+     */
+    public String getDisplayName() {
+        if (!LanguageManager.isPolish()) {
+            if (nameEn != null && !nameEn.isBlank()) return nameEn;
+            // Fallback: statyczny klucz dla starych danych (dat-plik bez nameEn)
+            String key = "bikeType.name." + Normalizer
+                    .normalize(name, Normalizer.Form.NFD)
+                    .replaceAll("\\p{M}", "")
+                    .toLowerCase(Locale.ROOT)
+                    .replace(" ", "_");
+            String translated = LanguageManager.getString(key);
+            return translated.startsWith("!") ? name : translated;
+        }
+        return name;
+    }
+
     public String getBikeTypeDescription() {
         return description;
     }
@@ -45,8 +89,14 @@ public class BikeType {
      * @return nazwa typu
      * @author Adrian Karpiński
      */
+    /**
+     * Zwraca przetłumaczoną nazwę (używana m.in. przez JComboBox).
+     *
+     * @return przetłumaczona nazwa
+     * @author Adrian Karpiński
+     */
     @Override
     public String toString() {
-        return name;
+        return getDisplayName();
     }
 }

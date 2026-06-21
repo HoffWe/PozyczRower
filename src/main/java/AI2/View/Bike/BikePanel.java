@@ -1,5 +1,6 @@
 package AI2.View.Bike;
 
+import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 import AI2.Model.BikeModel;
 import AI2.Model.BikeType;
@@ -15,16 +16,29 @@ import AI2.View.Rent.AddRentPanel;
 import AI2.View.ViewModel.BikeViewModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Panel zarządzania rowerami.
- * Wykorzystuje {@link BikeModelService} i {@link BikeTypeService} do rozwiązywania nazw.
+ * Zawiera filtr statusu (Wszystkie / Dostępny / Wypożyczony / …) oraz
+ * przycisk szybkiego wypożyczenia zaznaczonego roweru.
  *
  * @author Rafał Wojciechowski
  */
 public class BikePanel extends BaseListPanel {
+
+    // ----------------------------------------------------------------
+    // Sentinel – "brak filtra statusu"
+    // ----------------------------------------------------------------
+
+    /** Obiekt sentinel reprezentujący opcję "Wszystkie" w combo filtra statusu. */
+    private static final Object STATUS_ALL = "ALL";
+
+    // ----------------------------------------------------------------
+    // Serwisy
+    // ----------------------------------------------------------------
 
     /** Serwis rowerów. */
     private final BikeService bikeService;
@@ -41,8 +55,23 @@ public class BikePanel extends BaseListPanel {
     /** Serwis klientów (dla formularza wypożyczenia). */
     private final ClientService clientService;
 
+    // ----------------------------------------------------------------
+    // Komponenty
+    // ----------------------------------------------------------------
+
     /** Przycisk otwierający formularz wypożyczenia dla zaznaczonego roweru. */
     private JButton rentButton;
+
+    /**
+     * Combo box do filtrowania tabeli wg statusu roweru.
+     * Zawiera sentinel {@link #STATUS_ALL} jako pierwszą pozycję ("Wszystkie"),
+     * a następnie wszystkie wartości {@link BikeStatus}.
+     */
+    private JComboBox<Object> statusFilterCombo;
+
+    // ----------------------------------------------------------------
+    // Konstruktor
+    // ----------------------------------------------------------------
 
     /**
      * Tworzy panel zarządzania rowerami.
@@ -74,6 +103,40 @@ public class BikePanel extends BaseListPanel {
     protected void initExtraComponents() {
         rentButton = new AppButton(LanguageManager.getString("button.rent"));
         rentButton.setEnabled(false);
+
+        // --- Filtr statusu ---
+        statusFilterCombo = new JComboBox<>();
+        statusFilterCombo.addItem(STATUS_ALL);
+        for (BikeStatus s : BikeStatus.values()) {
+            statusFilterCombo.addItem(s);
+        }
+        statusFilterCombo.setPreferredSize(new Dimension(160, 28));
+        statusFilterCombo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        statusFilterCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (STATUS_ALL.equals(value)) {
+                    setText(LanguageManager.getString("bike.filter.all"));
+                } else if (value instanceof BikeStatus) {
+                    setText(((BikeStatus) value).getDisplayName());
+                }
+                return this;
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected JPanel buildFilterBar() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+        panel.setBackground(Color.WHITE);
+        JLabel label = new JLabel(LanguageManager.getString("bike.filter.status"));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        panel.add(label);
+        panel.add(statusFilterCombo);
+        return panel;
     }
 
     /** {@inheritDoc} */
@@ -92,12 +155,15 @@ public class BikePanel extends BaseListPanel {
     @Override
     protected void refreshLanguageTexts() {
         rentButton.setText(LanguageManager.getString("button.rent"));
+        // Combo używa renderera dynamicznego – repaint wystarczy do odświeżenia etykiet
+        if (statusFilterCombo != null) statusFilterCombo.repaint();
     }
 
     /** {@inheritDoc} */
     @Override
     protected void initExtraListeners() {
         rentButton.addActionListener(e -> onRent());
+        statusFilterCombo.addActionListener(e -> loadData());
     }
 
     // ----------------------------------------------------------------
@@ -127,17 +193,33 @@ public class BikePanel extends BaseListPanel {
     public void loadData() {
         String query = searchField != null ? searchField.getText().trim() : "";
 
+        // Ustal wybrany filtr statusu
+        Object sel = statusFilterCombo != null ? statusFilterCombo.getSelectedItem() : STATUS_ALL;
+        BikeStatus filterStatus = (sel instanceof BikeStatus) ? (BikeStatus) sel : null;
+
         List<Bike> bikes = bikeService.getAllBikes();
+
+        // Filtruj wg statusu
+        if (filterStatus != null) {
+            final BikeStatus fs = filterStatus;
+            bikes = bikes.stream()
+                    .filter(b -> b.getStatus() == fs)
+                    .collect(Collectors.toList());
+        }
+
+        // Filtruj wg tekstu wyszukiwania
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             bikes = bikes.stream()
                     .filter(b -> {
                         BikeModel bm = bikeModelService.getBikeModelById(b.getBikeModelId());
                         BikeType  bt = bikeTypeService.getBikeTypeById(b.getBikeTypeId());
-                        String brand = bm != null ? bm.getBrand().toLowerCase() : "";
-                        String model = bm != null ? bm.getModel().toLowerCase() : "";
-                        String type  = bt != null ? bt.getBikeTypeName().toLowerCase() : "";
-                        return brand.contains(lower) || model.contains(lower) || type.contains(lower);
+                        String brand  = bm != null ? bm.getBrand().toLowerCase() : "";
+                        String model  = bm != null ? bm.getModel().toLowerCase() : "";
+                        String type   = bt != null ? bt.getDisplayName().toLowerCase() : "";
+                        String wheels = String.valueOf(b.getWheelSize());
+                        return brand.contains(lower) || model.contains(lower)
+                                || type.contains(lower) || wheels.contains(lower);
                     })
                     .collect(Collectors.toList());
         }

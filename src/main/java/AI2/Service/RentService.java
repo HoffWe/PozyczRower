@@ -61,14 +61,28 @@ public class RentService {
 
     /**
      * Kończy wypożyczenie – ustawia status FINISHED i zwraca rower (AVAILABLE).
-     * Rzuca wyjątek jeśli wypożyczenie jest już zakończone lub rower nie istnieje.
+     * Deleguje do {@link #endRent(int, String)} z pustymi uwagami.
      *
      * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException         jeśli wypożyczenie nie istnieje lub rower nie istnieje
-     * @throws IllegalStateException    jeśli wypożyczenie jest już zakończone
+     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws IllegalStateException jeśli wypożyczenie jest już zakończone
      * @author Tomasz Piłat
      */
     public void endRent(int rentId) {
+        endRent(rentId, "");
+    }
+
+    /**
+     * Kończy wypożyczenie – ustawia status FINISHED, zwraca rower (AVAILABLE)
+     * i zapisuje uwagi przy zwrocie.
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @param notes  uwagi przy zwrocie (może być pusty)
+     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws IllegalStateException jeśli wypożyczenie jest już zakończone
+     * @author Tomasz Piłat
+     */
+    public void endRent(int rentId, String notes) {
         Rent rent = rentRepository.getRentByID(rentId);
         if (rent == null) {
             throw new RuntimeException(LanguageManager.getString("error.rent.notFound"));
@@ -86,6 +100,9 @@ public class RentService {
             bikeRepository.updateBike(bike);
         }
 
+        if (notes != null && !notes.isBlank()) {
+            rent.setNotes(notes);
+        }
         rent.setStatus(RentStatus.FINISHED);
         rentRepository.updateRent(rent);
     }
@@ -111,7 +128,8 @@ public class RentService {
     }
 
     /**
-     * Aktualizuje dane wypożyczenia.
+     * Aktualizuje dane wypożyczenia (daty, rower). Wywołuje pełną walidację.
+     * Używać tylko dla statusów SCHEDULED i ACTIVE.
      *
      * @param newRent wypożyczenie z nowymi danymi
      * @throws IllegalArgumentException jeśli dane są niepoprawne
@@ -120,6 +138,24 @@ public class RentService {
     public void updateRent(Rent newRent) {
         validateRent(newRent);
         rentRepository.updateRent(newRent);
+    }
+
+    /**
+     * Aktualizuje wyłącznie pole uwag wypożyczenia, bez żadnej walidacji.
+     * Działa dla każdego statusu (SCHEDULED, ACTIVE, OVERDUE, FINISHED, CLOSED).
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @param notes  nowe uwagi
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
+     * @author Tomasz Piłat
+     */
+    public void updateNotes(int rentId, String notes) {
+        Rent rent = rentRepository.getRentByID(rentId);
+        if (rent == null) {
+            throw new RuntimeException(LanguageManager.getString("error.rent.notFound"));
+        }
+        rent.setNotes(notes == null ? "" : notes);
+        rentRepository.updateRent(rent);
     }
 
     /**
@@ -157,15 +193,16 @@ public class RentService {
     /**
      * Aktualizuje statusy wszystkich wypożyczeń na podstawie aktualnego czasu:
      * <ul>
-     *   <li>SCHEDULED → ACTIVE gdy data rozpoczęcia minęła, a rower nie jest jeszcze zwrócony</li>
+     *   <li>SCHEDULED → ACTIVE gdy data rozpoczęcia minęła</li>
      *   <li>SCHEDULED/ACTIVE → OVERDUE gdy data zwrotu minęła</li>
      * </ul>
      * Przy przejściu SCHEDULED → ACTIVE rower jest oznaczany jako RENT.
-     * Metoda zapisuje zmiany do pliku.
+     * Jeśli cokolwiek się zmieniło, zapisuje dane do pliku.
      *
+     * @return {@code true} jeśli przynajmniej jeden status uległ zmianie
      * @author Tomasz Piłat
      */
-    public void updateStatuses() {
+    public boolean updateStatuses() {
         LocalDateTime now = LocalDateTime.now();
         boolean changed = false;
 
@@ -190,6 +227,7 @@ public class RentService {
         if (changed) {
             rentRepository.saveRentDataBase();
         }
+        return changed;
     }
 
     /**

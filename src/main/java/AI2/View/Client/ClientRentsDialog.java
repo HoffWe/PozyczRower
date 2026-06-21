@@ -11,9 +11,11 @@ import AI2.Service.RentService;
 import AI2.Util.LanguageManager;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,10 +37,16 @@ public class ClientRentsDialog extends JDialog {
     private static final Set<RentStatus> FINISHED_STATUSES =
             Set.of(RentStatus.FINISHED, RentStatus.CLOSED);
 
-    private final List<Rent>     allRents;
-    private final BikeService    bikeService;
+    private final List<Rent>      allRents;
+    private final BikeService     bikeService;
     private final BikeModelService bikeModelService;
     private final DefaultTableModel tableModel;
+
+    /**
+     * Indeksy wierszy odpowiadające wypożyczeniom OVERDUE w aktualnym widoku tabeli.
+     * Używane przez renderer do kolorowania na czerwono.
+     */
+    private final List<Integer> overdueRows = new ArrayList<>();
 
     /**
      * Tworzy dialog z listą wypożyczeń klienta.
@@ -78,6 +86,20 @@ public class ClientRentsDialog extends JDialog {
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        // Renderer kolorujący wiersze OVERDUE na czerwono
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(
+                        t, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setForeground(overdueRows.contains(row) ? Color.RED : t.getForeground());
+                }
+                return c;
+            }
+        });
+
         JCheckBox showFinishedBox = new JCheckBox(
                 LanguageManager.getString("client.rents.showFinished"), false);
         showFinishedBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -109,12 +131,15 @@ public class ClientRentsDialog extends JDialog {
      */
     private void rebuildTable(boolean showFinished) {
         tableModel.setRowCount(0);
+        overdueRows.clear();
 
         List<Rent> visible = allRents.stream()
                 .filter(r -> showFinished || !FINISHED_STATUSES.contains(r.getStatus()))
                 .collect(Collectors.toList());
 
+        int rowIdx = 0;
         for (Rent r : visible) {
+            if (r.getStatus() == RentStatus.OVERDUE) overdueRows.add(rowIdx);
             String bikeInfo = "ID:" + r.getBikeId();
             try {
                 Bike b = bikeService.getBikeById(r.getBikeId());
@@ -133,6 +158,7 @@ public class ClientRentsDialog extends JDialog {
                     r.getReturnTime() != null ? r.getReturnTime().format(FMT) : "-",
                     r.getStatus()     != null ? r.getStatus().getDisplayName() : "-"
             });
+            rowIdx++;
         }
     }
 }

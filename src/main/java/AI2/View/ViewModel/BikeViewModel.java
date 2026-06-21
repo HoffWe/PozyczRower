@@ -45,7 +45,7 @@ public class BikeViewModel {
         this.id = bike.getBikeId();
         this.brand = bikeModel != null ? bikeModel.getBrand() : "?";
         this.model = bikeModel != null ? bikeModel.getModel() : "?";
-        this.type = bikeType  != null ? bikeType.getBikeTypeName() : "?";
+        this.type = bikeType  != null ? bikeType.getDisplayName() : "?";
         this.wheelSize = bike.getWheelSize();
         this.statusDisplay = bike.getStatus() != null ? bike.getStatus().getDisplayName() : "";
         this.description = bike.getDescription() != null ? bike.getDescription() : "";

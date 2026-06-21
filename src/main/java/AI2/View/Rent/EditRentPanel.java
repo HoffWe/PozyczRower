@@ -62,6 +62,9 @@ public class EditRentPanel extends BaseFormPanel {
     /** Panel z presetami czasu trwania. */
     private JPanel presetPanel;
 
+    /** Uwagi do wypożyczenia. */
+    private JTextArea notesArea;
+
     /**
      * Tworzy panel edycji wypożyczenia.
      *
@@ -132,17 +135,25 @@ public class EditRentPanel extends BaseFormPanel {
         if (rent.getReturnTime() != null) returnDatePicker.setDateTimeStrict(rent.getReturnTime());
 
         // Zablokowania wg statusu
-        boolean isScheduled = rent.getStatus() == RentStatus.SCHEDULED;
-        boolean isActive    = rent.getStatus() == RentStatus.ACTIVE;
+        boolean isScheduled  = rent.getStatus() == RentStatus.SCHEDULED;
+        boolean isActive     = rent.getStatus() == RentStatus.ACTIVE;
+        boolean canEditDates = isScheduled || isActive;
 
         selectBikeBtn.setEnabled(isScheduled);
         startDatePicker.setEnabled(isScheduled);
 
-        // Dla ACTIVE tylko data zakończenia edytowalna
-        returnDatePicker.setEnabled(isScheduled || isActive);
+        // Dla ACTIVE tylko data zakończenia edytowalna; dla pozostałych statusów – zablokowane
+        returnDatePicker.setEnabled(canEditDates);
 
         // Presety czasu trwania (dostępne dla SCHEDULED i ACTIVE)
-        presetPanel = buildPresetPanel(isScheduled || isActive);
+        presetPanel = buildPresetPanel(canEditDates);
+
+        // Uwagi – zawsze edytowalne niezależnie od statusu
+        notesArea = new JTextArea(3, 20);
+        notesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        notesArea.setLineWrap(true);
+        notesArea.setWrapStyleWord(true);
+        notesArea.setText(rent.getNotes());
     }
 
     /** {@inheritDoc} */
@@ -153,32 +164,47 @@ public class EditRentPanel extends BaseFormPanel {
         addFormRow(formPanel, gbc, "date.startDate", startDatePicker);
         addFormRow(formPanel, gbc, "rent.duration",  presetPanel);
         addFormRow(formPanel, gbc, "date.endDate",   returnDatePicker);
+
+        // Uwagi – fill=BOTH + weighty, żeby GridBag przydzielił wysokość dla JScrollPane
+        gbc.fill    = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        addFormRow(formPanel, gbc, "rent.notes",     new JScrollPane(notesArea));
+        gbc.fill    = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 0.0;
     }
 
     /** {@inheritDoc} */
     @Override
     protected void onSubmit() {
         try {
-            if (returnDatePicker.getDateTimeStrict() == null) {
-                throw new IllegalArgumentException(
-                        LanguageManager.getString("error.dateRequired"));
-            }
+            boolean isScheduled  = rent.getStatus() == RentStatus.SCHEDULED;
+            boolean isActive     = rent.getStatus() == RentStatus.ACTIVE;
+            boolean canEditDates = isScheduled || isActive;
 
-            boolean isScheduled = rent.getStatus() == RentStatus.SCHEDULED;
-
-            if (isScheduled) {
-                if (startDatePicker.getDateTimeStrict() == null) {
+            if (canEditDates) {
+                // Pełna edycja dat i roweru
+                if (returnDatePicker.getDateTimeStrict() == null) {
                     throw new IllegalArgumentException(
                             LanguageManager.getString("error.dateRequired"));
                 }
-                rent.setRentDate(startDatePicker.getDateTimeStrict());
-                if (selectedBike != null) {
-                    rent.setBikeId(selectedBike.getBikeId());
+                if (isScheduled) {
+                    if (startDatePicker.getDateTimeStrict() == null) {
+                        throw new IllegalArgumentException(
+                                LanguageManager.getString("error.dateRequired"));
+                    }
+                    rent.setRentDate(startDatePicker.getDateTimeStrict());
+                    if (selectedBike != null) {
+                        rent.setBikeId(selectedBike.getBikeId());
+                    }
                 }
+                rent.setReturnTime(returnDatePicker.getDateTimeStrict());
+                rent.setNotes(notesArea.getText().trim());
+                rentService.updateRent(rent);
+            } else {
+                // Wyłącznie aktualizacja uwag (status FINISHED / OVERDUE / CLOSED)
+                rentService.updateNotes(rent.getId(), notesArea.getText().trim());
             }
 
-            rent.setReturnTime(returnDatePicker.getDateTimeStrict());
-            rentService.updateRent(rent);
             showSuccess("rent.updated");
             parentPanel.loadData();
             closeDialog();
@@ -224,7 +250,7 @@ public class EditRentPanel extends BaseFormPanel {
         BikeModel bm = bikeModelService.getBikeModelById(bike.getBikeModelId());
         BikeType  bt = bikeTypeService.getBikeTypeById(bike.getBikeTypeId());
         String model = bm != null ? bm.getBrand() + " " + bm.getModel() : "?";
-        String type  = bt != null ? bt.getBikeTypeName() : "?";
+        String type  = bt != null ? bt.getDisplayName() : "?";
         return model + "  [" + type + "]";
     }
 

@@ -2,6 +2,8 @@ package AI2.Repository;
 
 import AI2.Model.BikeType;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,54 +132,68 @@ public class BikeTypeRepository {
     }
 
     /**
-     * Zapisuje dane typów roweru do pliku
-     * */
+     * Znacznik wersji 2 pliku (pierwszy int w pliku).
+     * Stare pliki zaczynały się od currentBikeTypeId (wartość > 0),
+     * więc Integer.MIN_VALUE jest bezpiecznym znacznikiem wersji.
+     */
+    private static final int VERSION_MARKER = Integer.MIN_VALUE;
+    private static final int FILE_VERSION   = 2; // wersja obsługująca nameEn
 
+    /**
+     * Zapisuje dane typów roweru do pliku (format v2: z nameEn).
+     */
     public void saveBikeTypeRepository(){
-        try(DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(FILE_NAME))){
-
-            outputStream.writeInt(currentBikeTypeId);
-            outputStream.writeInt(bikeTypeList.size());
-
-            for(BikeType bikeType : bikeTypeList){
-                outputStream.writeInt(bikeType.getBikeTypeId());
-                outputStream.writeUTF(bikeType.getBikeTypeName() == null ? "" : bikeType.getBikeTypeName());
-                outputStream.writeUTF(bikeType.getBikeTypeDescription() == null ? "" : bikeType.getBikeTypeDescription());
+        List<BikeType> snapshot = new ArrayList<>(bikeTypeList);
+        int idSnapshot = currentBikeTypeId;
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
+                out.writeInt(VERSION_MARKER);   // znacznik wersji
+                out.writeInt(FILE_VERSION);      // numer wersji formatu
+                out.writeInt(idSnapshot);
+                out.writeInt(snapshot.size());
+                for (BikeType bt : snapshot) {
+                    out.writeInt(bt.getBikeTypeId());
+                    out.writeUTF(bt.getBikeTypeName()        == null ? "" : bt.getBikeTypeName());
+                    out.writeUTF(bt.getBikeTypeDescription() == null ? "" : bt.getBikeTypeDescription());
+                    out.writeUTF(bt.getNameEn());
+                }
+            } catch (IOException e) {
+                System.out.println("Blad zapisu danych typow rowerow: " + e.getMessage());
             }
-
-        }catch (IOException e){
-            System.out.println("Blad zapisu danych typow rowerow" + e.getMessage());
-        }
+        });
     }
 
     /**
-     * Odczytuje dane typów roweru do pliku
-     * */
-
+     * Wczytuje dane typów roweru z pliku.
+     * Obsługuje stary format (v1, bez nameEn) i nowy (v2, z nameEn).
+     */
     public void loadBikeTypeRepository(){
-        try(DataInputStream inputStream = new DataInputStream(new FileInputStream(FILE_NAME))){
-
+        try (DataInputStream in = new DataInputStream(new FileInputStream(FILE_NAME))) {
             bikeTypeList.clear();
 
-            currentBikeTypeId = inputStream.readInt();
-            int bikeTypeCount = inputStream.readInt();
-
-            for(int i = 0; i < bikeTypeCount; i++) {
-                int bikeTypeId = inputStream.readInt();
-                String bikeTypeName = inputStream.readUTF();
-                String bikeTypeDescription = inputStream.readUTF();
-
-                BikeType bikeType = new BikeType(
-                        bikeTypeId,
-                        bikeTypeName,
-                        bikeTypeDescription
-                );
-
-                bikeTypeList.add(bikeType);
-
+            int first = in.readInt();
+            boolean hasNameEn;
+            if (first == VERSION_MARKER) {
+                // Nowy format: VERSION_MARKER, version, currentId, count, ...
+                int version = in.readInt();
+                currentBikeTypeId = in.readInt();
+                hasNameEn = (version >= 2);
+            } else {
+                // Stary format: pierwszy int to currentBikeTypeId
+                currentBikeTypeId = first;
+                hasNameEn = false;
             }
 
-        }catch(IOException e){
+            int count = in.readInt();
+            for (int i = 0; i < count; i++) {
+                int    id   = in.readInt();
+                String name = in.readUTF();
+                String desc = in.readUTF();
+                String en   = hasNameEn ? in.readUTF() : "";
+                bikeTypeList.add(new BikeType(id, name, en, desc));
+            }
+        } catch (IOException e) {
             // Brak pliku przy pierwszym uruchomieniu apki jest normalny
         }
     }

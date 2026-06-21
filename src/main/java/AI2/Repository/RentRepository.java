@@ -3,6 +3,8 @@ package AI2.Repository;
 import AI2.Enums.RentStatus;
 import AI2.Model.Rent;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -50,31 +52,35 @@ public class RentRepository {
         rent.setReturnTime(newRent.getReturnTime());
         rent.setClientId(newRent.getClientId());
         rent.setStatus(newRent.getStatus());
+        rent.setNotes(newRent.getNotes());
     }
     /**
-     *  klasa służąca do zapisania bazy danych wypożyczeń do pliku
+     * Zapisuje bazę danych wypożyczeń do pliku w oddzielnym wątku (DataOutputStream).
+     *
      * @author Tomasz Piłat
      */
     public void saveRentDataBase() {
-
-        try (DataOutputStream outputStream = new DataOutputStream(
-                new FileOutputStream(FILE_PATH))) {
-
-            outputStream.writeInt(rentDataBase.size());
-            outputStream.writeInt(currentId);
-
-            for (Rent rent : rentDataBase) {
-                outputStream.writeInt(rent.getId());
-                outputStream.writeInt(rent.getBikeId());
-                outputStream.writeInt(rent.getClientId());
-                outputStream.writeLong(Timestamp.valueOf(rent.getRentDate()).getTime());
-                outputStream.writeLong(Timestamp.valueOf(rent.getReturnTime()).getTime());
-                outputStream.writeUTF(rent.getStatus().name());
+        List<Rent> snapshot = new ArrayList<>(rentDataBase);
+        int idSnapshot = currentId;
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream outputStream = new DataOutputStream(
+                    new FileOutputStream(FILE_PATH))) {
+                outputStream.writeInt(snapshot.size());
+                outputStream.writeInt(idSnapshot);
+                for (Rent rent : snapshot) {
+                    outputStream.writeInt(rent.getId());
+                    outputStream.writeInt(rent.getBikeId());
+                    outputStream.writeInt(rent.getClientId());
+                    outputStream.writeLong(Timestamp.valueOf(rent.getRentDate()).getTime());
+                    outputStream.writeLong(Timestamp.valueOf(rent.getReturnTime()).getTime());
+                    outputStream.writeUTF(rent.getStatus().name());
+                    outputStream.writeUTF(rent.getNotes() == null ? "" : rent.getNotes());
+                }
+            } catch (IOException e) {
+                System.out.println("Błąd podczas zapisywania bazy danych.");
             }
-
-        } catch (IOException e) {
-            System.out.println("Błąd podczas zapisywania bazy danych.");
-        }
+        });
     }
 /**
  *  klasa służąca do wczytania bazy danych wypożyczeń z pliku
@@ -103,10 +109,13 @@ public class RentRepository {
                         new Timestamp(inputStream.readLong()).toLocalDateTime();
 
                 RentStatus status = RentStatus.valueOf(inputStream.readUTF());
+                // Backward-compat: starszy format nie miał pola notes
+                String notes = "";
+                try { notes = inputStream.readUTF(); } catch (java.io.EOFException ignored) {}
 
-                rentDataBase.add(
-                        new Rent(rentId, bikeId, clientId, rentDate, returnTime,status)
-                );
+                Rent rent = new Rent(rentId, bikeId, clientId, rentDate, returnTime, status);
+                rent.setNotes(notes);
+                rentDataBase.add(rent);
             }
 
         }  catch (IOException e) {

@@ -2,6 +2,8 @@ package AI2.Repository;
 
 import AI2.Model.Client;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,28 +84,26 @@ public class ClientRepository {
         return max + 1;
     }
 
-    /** Zapisuje wszystkich klientow do pliku za pomoca DataOutputStream */
+    /** Zapisuje wszystkich klientów do pliku w oddzielnym wątku (DataOutputStream). */
     private void saveToFile() {
-        try {
-            FileOutputStream fos = new FileOutputStream(FILE_NAME);
-            DataOutputStream dos = new DataOutputStream(fos);
-
-            dos.writeInt(clients.size());
-            for (int i = 0; i < clients.size(); i++) {
-                Client c = clients.get(i);
-                dos.writeInt(c.getId());
-                dos.writeUTF(c.getName());
-                dos.writeUTF(c.getSurname());
-                dos.writeUTF(c.getEvidence());
-                dos.writeUTF(c.getOpis());
-                dos.writeBoolean(c.isDeleted());
+        List<Client> snapshot = new ArrayList<>(clients);
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream dos = new DataOutputStream(
+                    new FileOutputStream(FILE_NAME))) {
+                dos.writeInt(snapshot.size());
+                for (Client c : snapshot) {
+                    dos.writeInt(c.getId());
+                    dos.writeUTF(c.getName());
+                    dos.writeUTF(c.getSurname());
+                    dos.writeUTF(c.getEvidence());
+                    dos.writeUTF(c.getOpis());
+                    dos.writeBoolean(c.isDeleted());
+                }
+            } catch (IOException e) {
+                System.out.println("Blad zapisu: " + e.getMessage());
             }
-
-            dos.close();
-            fos.close();
-        } catch (IOException e) {
-            System.out.println("Blad zapisu: " + e.getMessage());
-        }
+        });
     }
 
     /** Wczytuje klientow z pliku */

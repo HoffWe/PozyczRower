@@ -16,15 +16,26 @@ import AI2.View.Components.AppButton;
 import AI2.View.ViewModel.RentViewModel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Panel zarządzania wypożyczeniami.
  * Dane pobierane z serwisu. ID NIE jest wyświetlane w tabeli.
+ * Co {@value #STATUS_CHECK_INTERVAL_MS} ms automatycznie sprawdzany jest status
+ * wypożyczeń – przeterminowane wskakują na górę i są zaznaczane na czerwono
+ * bez konieczności ręcznego odświeżania.
  *
  * @author Tomasz Piłat
  */
 public class RentPanel extends BaseListPanel {
+
+    /** Interwał automatycznego sprawdzania statusów wypożyczeń (w milisekundach). */
+    private static final int STATUS_CHECK_INTERVAL_MS = 60_000;
 
     /** Serwis wypożyczeń. */
     private final RentService rentService;
@@ -45,6 +56,19 @@ public class RentPanel extends BaseListPanel {
     private JButton endButton;
 
     /**
+     * Zbiór indeksów wierszy tabeli odpowiadających wypożyczeniom OVERDUE.
+     * Używany przez renderer do kolorowania tych wierszy na czerwono.
+     */
+    private final Set<Integer> overdueRows = new HashSet<>();
+
+    /**
+     * Timer Swing uruchamiany co {@value #STATUS_CHECK_INTERVAL_MS} ms.
+     * Sprawdza statusy na EDT – bezpieczne dla Swing.
+     * Zatrzymywany gdy panel zostaje usunięty z hierarchii komponentów.
+     */
+    private final Timer statusTimer;
+
+    /**
      * Tworzy panel zarządzania wypożyczeniami.
      *
      * @param rentService      serwis wypożyczeń
@@ -62,7 +86,34 @@ public class RentPanel extends BaseListPanel {
         this.bikeService      = bikeService;
         this.bikeModelService = bikeModelService;
         this.bikeTypeService  = bikeTypeService;
+
+        statusTimer = new Timer(STATUS_CHECK_INTERVAL_MS, e -> {
+            if (rentService.updateStatuses()) {
+                loadData();
+            }
+        });
+        statusTimer.setInitialDelay(STATUS_CHECK_INTERVAL_MS);
+
         loadData();
+    }
+
+    /**
+     * Uruchamia timer automatycznego odświeżania gdy panel zostaje
+     * dodany do hierarchii komponentów.
+     */
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        statusTimer.start();
+    }
+
+    /**
+     * Zatrzymuje timer gdy panel zostaje usunięty z hierarchii komponentów.
+     */
+    @Override
+    public void removeNotify() {
+        statusTimer.stop();
+        super.removeNotify();
     }
 
     /** {@inheritDoc} */
@@ -70,6 +121,22 @@ public class RentPanel extends BaseListPanel {
     protected void initExtraComponents() {
         endButton = new AppButton(LanguageManager.getString("button.end"));
         endButton.setEnabled(false);
+
+        // Renderer kolorujący wiersze OVERDUE na czerwono
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(
+                        t, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setForeground(overdueRows.contains(row)
+                            ? Color.RED
+                            : t.getForeground());
+                }
+                return c;
+            }
+        });
     }
 
     /** {@inheritDoc} */
@@ -103,7 +170,8 @@ public class RentPanel extends BaseListPanel {
                 LanguageManager.getString("bike.name"),
                 LanguageManager.getString("date.startDate"),
                 LanguageManager.getString("date.endDate"),
-                LanguageManager.getString("rent.status.name")
+                LanguageManager.getString("rent.status.name"),
+                LanguageManager.getString("rent.notes")
         };
     }
 
@@ -135,14 +203,27 @@ public class RentPanel extends BaseListPanel {
                     .toList();
         }
 
+        // OVERDUE na górze, reszta bez zmian kolejności
+        rents = new ArrayList<>(rents);
+        rents.sort((a, b) -> {
+            boolean aOver = a.getStatus() == RentStatus.OVERDUE;
+            boolean bOver = b.getStatus() == RentStatus.OVERDUE;
+            if (aOver == bOver) return 0;
+            return aOver ? -1 : 1;
+        });
+
+        overdueRows.clear();
         clearTable();
+        int rowIdx = 0;
         for (Rent r : rents) {
+            if (r.getStatus() == RentStatus.OVERDUE) overdueRows.add(rowIdx);
             Client client = clientService.getClientById(r.getClientId());
             Bike bike = bikeService.getBikeById(r.getBikeId());
             BikeModel bikeModel = bike != null
                     ? bikeModelService.getBikeModelById(bike.getBikeModelId()) : null;
             RentViewModel vm = new RentViewModel(r, client, bike, bikeModel);
             addRow(vm.getRentId(), vm.toRow());
+            rowIdx++;
         }
     }
 
@@ -189,32 +270,29 @@ public class RentPanel extends BaseListPanel {
             return;
         }
 
-        RentStatus status = rent.getStatus();
-        if (status != RentStatus.SCHEDULED && status != RentStatus.ACTIVE) {
-            JOptionPane.showMessageDialog(this,
-                    LanguageManager.getString("error.rent.cannotEdit"),
-                    LanguageManager.getString("error.title"),
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
         openDialog(
                 LanguageManager.getString("rent.editTitle"),
                 new EditRentPanel(rentService, bikeService, bikeModelService,
                         bikeTypeService, this, rent),
-                560, 360
+                560, 510
         );
     }
 
     /**
-     * Kończy wypożyczenie (ustawia status FINISHED, zwalnia rower).
+     * Kończy wypożyczenie – pyta o uwagi, ustawia status FINISHED i zwalnia rower.
      *
      * @param rentId identyfikator wypożyczenia
      * @author Tomasz Piłat
      */
     private void onEnd(int rentId) {
+        String notes = JOptionPane.showInputDialog(
+                this,
+                LanguageManager.getString("rent.returnNotes"),
+                LanguageManager.getString("button.end"),
+                JOptionPane.PLAIN_MESSAGE);
+        if (notes == null) return;   // użytkownik anulował
         try {
-            rentService.endRent(rentId);
+            rentService.endRent(rentId, notes);
             loadData();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),

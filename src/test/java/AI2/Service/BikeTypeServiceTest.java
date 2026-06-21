@@ -63,7 +63,7 @@ class BikeTypeServiceTest {
      */
     @Test
     void addBikeType_validData_returnsBikeType() {
-        BikeType result = service.addBikeType(new BikeTypeDTO("Górski", "Rower górski"));
+        BikeType result = service.addBikeType(new BikeTypeDTO("Górski", "Mountain", "Rower górski"));
         assertNotNull(result);
         assertEquals("Górski", result.getBikeTypeName());
     }
@@ -76,7 +76,7 @@ class BikeTypeServiceTest {
     @Test
     void addBikeType_emptyName_throwsException() {
         assertThrows(IllegalArgumentException.class,
-                () -> service.addBikeType(new BikeTypeDTO("", "opis")));
+                () -> service.addBikeType(new BikeTypeDTO("", "", "opis")));
     }
 
     /**
@@ -87,7 +87,7 @@ class BikeTypeServiceTest {
     @Test
     void addBikeType_emptyDescription_throwsException() {
         assertThrows(IllegalArgumentException.class,
-                () -> service.addBikeType(new BikeTypeDTO("Górski", "")));
+                () -> service.addBikeType(new BikeTypeDTO("Górski", "", "")));
     }
 
     /**
@@ -97,9 +97,9 @@ class BikeTypeServiceTest {
      */
     @Test
     void addBikeType_duplicateName_throwsException() {
-        service.addBikeType(new BikeTypeDTO("Górski", "Opis"));
+        service.addBikeType(new BikeTypeDTO("Górski", "", "Opis"));
         assertThrows(IllegalArgumentException.class,
-                () -> service.addBikeType(new BikeTypeDTO("Górski", "Inny opis")));
+                () -> service.addBikeType(new BikeTypeDTO("Górski", "", "Inny opis")));
     }
 
     /**
@@ -109,7 +109,7 @@ class BikeTypeServiceTest {
      */
     @Test
     void removeBikeType_existingId_returnsTrue() {
-        BikeType bt = service.addBikeType(new BikeTypeDTO("Miejski", "Opis"));
+        BikeType bt = service.addBikeType(new BikeTypeDTO("Miejski", "City", "Opis"));
         assertTrue(service.removeBikeType(bt.getBikeTypeId()));
     }
 
@@ -130,8 +130,8 @@ class BikeTypeServiceTest {
      */
     @Test
     void updateBikeType_validData_updatesType() {
-        BikeType bt = service.addBikeType(new BikeTypeDTO("Miejski", "Opis"));
-        service.updateBikeType(bt, new BikeTypeDTO("Szosowy", "Nowy opis"));
+        BikeType bt = service.addBikeType(new BikeTypeDTO("Miejski", "City", "Opis"));
+        service.updateBikeType(bt, new BikeTypeDTO("Szosowy", "Road", "Nowy opis"));
         assertEquals("Szosowy", service.getBikeTypeById(bt.getBikeTypeId()).getBikeTypeName());
     }
 
@@ -143,6 +143,6 @@ class BikeTypeServiceTest {
     @Test
     void updateBikeType_nullType_throwsException() {
         assertThrows(IllegalArgumentException.class,
-                () -> service.updateBikeType(null, new BikeTypeDTO("X", "Y")));
+                () -> service.updateBikeType(null, new BikeTypeDTO("X", "", "Y")));
     }
 }

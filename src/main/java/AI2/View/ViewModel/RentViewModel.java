@@ -37,6 +37,9 @@ public class RentViewModel {
     /** Zlokalizowany status wypożyczenia. */
     private final String status;
 
+    /** Uwagi do wypożyczenia lub zwrotu. */
+    private final String notes;
+
     /**
      * Tworzy ViewModel wypożyczenia z rozwiązanymi obiektami klienta i modelu roweru.
      *
@@ -60,6 +63,7 @@ public class RentViewModel {
                 ? rent.getReturnTime().format(FMT) : "";
         this.status = rent.getStatus() != null
                 ? rent.getStatus().getDisplayName() : "";
+        this.notes = rent.getNotes();
     }
 
     /**
@@ -123,12 +127,20 @@ public class RentViewModel {
     }
 
     /**
+     * Zwraca uwagi do wypożyczenia.
+     *
+     * @return uwagi lub pusty ciąg
+     * @author Tomasz Piłat
+     */
+    public String getNotes() { return notes; }
+
+    /**
      * Zwraca wartości wiersza tabeli (bez rentId).
      *
      * @return tablica danych do tabeli
      * @author Tomasz Piłat
      */
     public Object[] toRow() {
-        return new Object[]{ clientFullName, bikeInfo, startDate, endDate, status };
+        return new Object[]{ clientFullName, bikeInfo, startDate, endDate, status, notes };
     }
 }

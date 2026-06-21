@@ -47,10 +47,10 @@ public class DataSeeder {
 
         // ---- Typy rowerów ----
         if (typesEmpty) {
-            bikeTypeService.addBikeType(new BikeTypeDTO("Górski",   "Rower terenowy MTB"));
-            bikeTypeService.addBikeType(new BikeTypeDTO("Miejski",  "Rower do jazdy po mieście"));
-            bikeTypeService.addBikeType(new BikeTypeDTO("Szosowy",  "Rower wyścigowy na asfalt"));
-            bikeTypeService.addBikeType(new BikeTypeDTO("BMX",      "Rower wyczynowy / freestyle"));
+            bikeTypeService.addBikeType(new BikeTypeDTO("Górski",  "Mountain", "Rower terenowy MTB"));
+            bikeTypeService.addBikeType(new BikeTypeDTO("Miejski", "City",     "Rower do jazdy po mieście"));
+            bikeTypeService.addBikeType(new BikeTypeDTO("Szosowy", "Road",     "Rower wyścigowy na asfalt"));
+            bikeTypeService.addBikeType(new BikeTypeDTO("BMX",     "BMX",      "Rower wyczynowy / freestyle"));
             bikeTypeService.saveBikeTypes();
         }
 

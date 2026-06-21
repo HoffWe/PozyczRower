@@ -3,6 +3,8 @@ package AI2.Repository;
 import AI2.Enums.UserRole;
 import AI2.Model.User;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,21 +100,24 @@ public class UserRepository {
     // Zapis / odczyt
     // ----------------------------------------------------------------
 
-    /** Zapisuje wszystkich użytkowników do pliku. */
+    /** Zapisuje wszystkich użytkowników do pliku w oddzielnym wątku (DataOutputStream). */
     public void saveToFile() {
-        new File("data").mkdirs();
-        try (DataOutputStream dos = new DataOutputStream(
-                new BufferedOutputStream(new FileOutputStream(FILE_NAME)))) {
-            dos.writeInt(users.size());
-            for (User u : users) {
-                dos.writeInt(u.getId());
-                dos.writeUTF(u.getUsername());
-                dos.writeUTF(u.getPasswordHash());
-                dos.writeUTF(u.getRole().name());
+        List<User> snapshot = new ArrayList<>(users);
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream dos = new DataOutputStream(
+                    new BufferedOutputStream(new FileOutputStream(FILE_NAME)))) {
+                dos.writeInt(snapshot.size());
+                for (User u : snapshot) {
+                    dos.writeInt(u.getId());
+                    dos.writeUTF(u.getUsername());
+                    dos.writeUTF(u.getPasswordHash());
+                    dos.writeUTF(u.getRole().name());
+                }
+            } catch (IOException e) {
+                System.err.println("Błąd zapisu użytkowników: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Błąd zapisu użytkowników: " + e.getMessage());
-        }
+        });
     }
 
     /** Wczytuje użytkowników z pliku. */

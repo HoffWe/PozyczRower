@@ -48,7 +48,8 @@ public class BikeTypeService {
             }
         }
 
-        BikeType bikeType = new BikeType(0, safeName, safeDescription);
+        String safeNameEn = newType.nameEn() == null ? "" : newType.nameEn().trim();
+        BikeType bikeType = new BikeType(0, safeName, safeNameEn, safeDescription);
         bikeTypeRepository.addBikeType(bikeType);
         return bikeType;
     }
@@ -81,6 +82,7 @@ public class BikeTypeService {
         validateBikeTypeData(bikeTypeDTO);
 
         bikeType.setBikeTypeName(bikeTypeDTO.name().trim());
+        bikeType.setNameEn(bikeTypeDTO.nameEn() == null ? "" : bikeTypeDTO.nameEn().trim());
         bikeType.setBikeTypeDescription(bikeTypeDTO.description().trim());
         return bikeTypeRepository.updateBikeType(bikeType);
     }

@@ -97,13 +97,23 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         add(titleLabel, BorderLayout.NORTH);
 
-        // Środek: wyszukiwarka + tabela
+        // Środek: wyszukiwarka + (opcjonalny filtr) + tabela
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.setBackground(Color.WHITE);
 
         SearchPanel searchPanel = new SearchPanel();
         searchField = searchPanel.getSearchField();
-        centerPanel.add(searchPanel, BorderLayout.NORTH);
+
+        JPanel filterBar = buildFilterBar();
+        if (filterBar != null) {
+            JPanel topBar = new JPanel(new BorderLayout(0, 4));
+            topBar.setBackground(Color.WHITE);
+            topBar.add(searchPanel, BorderLayout.NORTH);
+            topBar.add(filterBar,   BorderLayout.SOUTH);
+            centerPanel.add(topBar, BorderLayout.NORTH);
+        } else {
+            centerPanel.add(searchPanel, BorderLayout.NORTH);
+        }
 
         JScrollPane scrollPane = new JScrollPane(table);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
@@ -121,6 +131,14 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
 
     /** Podklasy mogą nadpisać, aby wstawić dodatkowe przyciski między Edit a Delete. */
     protected void buildExtraButtons(JPanel buttonPanel) {}
+
+    /**
+     * Podklasy mogą nadpisać, aby zwrócić panel filtrów wyświetlany
+     * między wyszukiwarką a tabelą. Domyślnie zwraca {@code null} (brak paska filtrów).
+     *
+     * @return panel filtrów lub {@code null}
+     */
+    protected JPanel buildFilterBar() { return null; }
 
     /** Podklasy mogą nadpisać, aby zarejestrować listenery dla własnych przycisków. */
     protected void initExtraListeners() {}

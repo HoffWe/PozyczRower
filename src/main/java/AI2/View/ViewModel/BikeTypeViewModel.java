@@ -13,7 +13,7 @@ public class BikeTypeViewModel {
 
     public BikeTypeViewModel(BikeType bikeType) {
         this.id = bikeType.getBikeTypeId();
-        this.name = bikeType.getBikeTypeName();
+        this.name = bikeType.getDisplayName();
         this.description = bikeType.getBikeTypeDescription();
     }
 

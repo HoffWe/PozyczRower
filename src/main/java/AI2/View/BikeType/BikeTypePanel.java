@@ -49,7 +49,7 @@ public class BikeTypePanel extends BaseListPanel {
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             types = types.stream()
-                    .filter(bt -> bt.getBikeTypeName().toLowerCase().contains(lower)
+                    .filter(bt -> bt.getDisplayName().toLowerCase().contains(lower)
                             || bt.getBikeTypeDescription().toLowerCase().contains(lower))
                     .collect(Collectors.toList());
         }

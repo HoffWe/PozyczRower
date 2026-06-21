@@ -2,6 +2,8 @@ package AI2.Repository;
 
 import AI2.Model.BikeModel;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,17 +132,22 @@ public class BikeModelRepository {
      * @author Rafał Wojciechowski
      */
     public void saveBikeModelRepository() {
-        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
-            out.writeInt(currentBikeModelId);
-            out.writeInt(bikeModelList.size());
-            for (BikeModel bm : bikeModelList) {
-                out.writeInt(bm.getId());
-                out.writeUTF(bm.getBrand() == null ? "" : bm.getBrand());
-                out.writeUTF(bm.getModel() == null ? "" : bm.getModel());
+        List<BikeModel> snapshot = new ArrayList<>(bikeModelList);
+        int idSnapshot = currentBikeModelId;
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
+                out.writeInt(idSnapshot);
+                out.writeInt(snapshot.size());
+                for (BikeModel bm : snapshot) {
+                    out.writeInt(bm.getId());
+                    out.writeUTF(bm.getBrand() == null ? "" : bm.getBrand());
+                    out.writeUTF(bm.getModel() == null ? "" : bm.getModel());
+                }
+            } catch (IOException e) {
+                System.err.println("Błąd zapisu danych modeli rowerów: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Błąd zapisu danych modeli rowerów: " + e.getMessage());
-        }
+        });
     }
 
     /**

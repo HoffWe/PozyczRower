@@ -17,6 +17,7 @@ public class AddBikeTypePanel extends BaseFormPanel {
     private final BikeTypePanel parentPanel;
 
     private JTextField nameField;
+    private JTextField nameEnField;
     private JTextField descriptionField;
 
     public AddBikeTypePanel(BikeTypeService bikeTypeService, BikeTypePanel parentPanel) {
@@ -39,12 +40,14 @@ public class AddBikeTypePanel extends BaseFormPanel {
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
         nameField        = new JTextField(); nameField.setPreferredSize(size);
+        nameEnField      = new JTextField(); nameEnField.setPreferredSize(size);
         descriptionField = new JTextField(); descriptionField.setPreferredSize(size);
     }
 
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "bikeType.nameField",        nameField);
+        addFormRow(formPanel, gbc, "bikeType.nameFieldPl", nameField);
+        addFormRow(formPanel, gbc, "bikeType.nameFieldEn", nameEnField);
         addFormRow(formPanel, gbc, "bikeType.descriptionField", descriptionField);
     }
 
@@ -53,6 +56,7 @@ public class AddBikeTypePanel extends BaseFormPanel {
         try {
             bikeTypeService.addBikeType(new BikeTypeDTO(
                     nameField.getText().trim(),
+                    nameEnField.getText().trim(),
                     descriptionField.getText().trim()
             ));
             showSuccess("bikeType.added");

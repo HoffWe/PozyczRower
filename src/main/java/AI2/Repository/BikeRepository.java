@@ -3,6 +3,8 @@ package AI2.Repository;
 import AI2.Enums.BikeStatus;
 import AI2.Model.Bike;
 
+import AI2.Util.AppConfig;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,21 +149,26 @@ public class BikeRepository {
      * @author Rafał Wojciechowski
      */
     public void saveBikeRepository() {
-        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
-            out.writeInt(currentBikeId);
-            out.writeInt(bikeList.size());
-            for (Bike bike : bikeList) {
-                out.writeInt(bike.getBikeId());
-                out.writeInt(bike.getBikeModelId());
-                out.writeInt(bike.getBikeTypeId());
-                out.writeInt(bike.getWheelSize());
-                out.writeUTF(bike.getStatus() != null ? bike.getStatus().name() : "");
-                out.writeUTF(bike.getDescription() == null ? "" : bike.getDescription());
-                out.writeBoolean(bike.isDeleted());
+        List<Bike> snapshot = new ArrayList<>(bikeList);
+        int idSnapshot = currentBikeId;
+        AppConfig.SAVE_EXECUTOR.submit(() -> {
+            new File(AppConfig.DATA_DIR).mkdirs();
+            try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
+                out.writeInt(idSnapshot);
+                out.writeInt(snapshot.size());
+                for (Bike bike : snapshot) {
+                    out.writeInt(bike.getBikeId());
+                    out.writeInt(bike.getBikeModelId());
+                    out.writeInt(bike.getBikeTypeId());
+                    out.writeInt(bike.getWheelSize());
+                    out.writeUTF(bike.getStatus() != null ? bike.getStatus().name() : "");
+                    out.writeUTF(bike.getDescription() == null ? "" : bike.getDescription());
+                    out.writeBoolean(bike.isDeleted());
+                }
+            } catch (IOException e) {
+                System.err.println("Błąd zapisu danych rowerów: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Błąd zapisu danych rowerów: " + e.getMessage());
-        }
+        });
     }
 
     /**
