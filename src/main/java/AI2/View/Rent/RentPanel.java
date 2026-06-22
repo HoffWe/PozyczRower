@@ -27,8 +27,8 @@ import java.util.Set;
  * Panel zarządzania wypożyczeniami.
  * Dane pobierane z serwisu. ID NIE jest wyświetlane w tabeli.
  * Co {@value #STATUS_CHECK_INTERVAL_MS} ms automatycznie sprawdzany jest status
- * wypożyczeń – przeterminowane wskakują na górę i są zaznaczane na czerwono
- * bez konieczności ręcznego odświeżania.
+ * wypożyczeń – przeterminowane wskakują na górę i są zaznaczane na czerwono,
+ * oczekujące na zielono – bez konieczności ręcznego odświeżania.
  *
  * @author Tomasz Piłat
  */
@@ -37,34 +37,50 @@ public class RentPanel extends BaseListPanel {
     /** Interwał automatycznego sprawdzania statusów wypożyczeń (w milisekundach). */
     private static final int STATUS_CHECK_INTERVAL_MS = 60_000;
 
-    /** Serwis wypożyczeń. */
+    /** Sentinel – "brak filtra statusu". */
+    private static final Object STATUS_ALL = "ALL";
+
+    /** Kolor zielony dla wierszy PENDING. */
+    private static final Color COLOR_PENDING = new Color(0, 150, 0);
+
+    // ----------------------------------------------------------------
+    // Serwisy
+    // ----------------------------------------------------------------
+
     private final RentService rentService;
-
-    /** Serwis klientów. */
     private final ClientService clientService;
-
-    /** Serwis rowerów. */
     private final BikeService bikeService;
-
-    /** Serwis modeli rowerów. */
     private final BikeModelService bikeModelService;
-
-    /** Serwis typów rowerów. */
     private final BikeTypeService bikeTypeService;
+
+    // ----------------------------------------------------------------
+    // Komponenty
+    // ----------------------------------------------------------------
 
     /** Przycisk zakończenia wypożyczenia. */
     private JButton endButton;
 
+    /** Przycisk potwierdzenia wypożyczenia (PENDING → ACTIVE). */
+    private JButton confirmButton;
+
+    /** Przycisk anulowania wypożyczenia (SCHEDULED/PENDING → CANCELLED). */
+    private JButton cancelButton;
+
+    /** Combo box filtrowania wg statusu. */
+    private JComboBox<Object> statusFilterCombo;
+
     /**
-     * Zbiór indeksów wierszy tabeli odpowiadających wypożyczeniom OVERDUE.
-     * Używany przez renderer do kolorowania tych wierszy na czerwono.
+     * Zbiór indeksów wierszy OVERDUE – kolorowane na czerwono.
      */
     private final Set<Integer> overdueRows = new HashSet<>();
 
     /**
+     * Zbiór indeksów wierszy PENDING – kolorowane na zielono.
+     */
+    private final Set<Integer> pendingRows = new HashSet<>();
+
+    /**
      * Timer Swing uruchamiany co {@value #STATUS_CHECK_INTERVAL_MS} ms.
-     * Sprawdza statusy na EDT – bezpieczne dla Swing.
-     * Zatrzymywany gdy panel zostaje usunięty z hierarchii komponentów.
      */
     private final Timer statusTimer;
 
@@ -97,32 +113,58 @@ public class RentPanel extends BaseListPanel {
         loadData();
     }
 
-    /**
-     * Uruchamia timer automatycznego odświeżania gdy panel zostaje
-     * dodany do hierarchii komponentów.
-     */
+    /** Uruchamia timer gdy panel dodany do hierarchii. */
     @Override
     public void addNotify() {
         super.addNotify();
         statusTimer.start();
     }
 
-    /**
-     * Zatrzymuje timer gdy panel zostaje usunięty z hierarchii komponentów.
-     */
+    /** Zatrzymuje timer gdy panel usunięty z hierarchii. */
     @Override
     public void removeNotify() {
         statusTimer.stop();
         super.removeNotify();
     }
 
+    // ----------------------------------------------------------------
+    // BaseListPanel – inicjalizacja
+    // ----------------------------------------------------------------
+
     /** {@inheritDoc} */
     @Override
     protected void initExtraComponents() {
-        endButton = new AppButton(LanguageManager.getString("button.end"));
-        endButton.setEnabled(false);
+        endButton     = new AppButton(LanguageManager.getString("button.end"));
+        confirmButton = new AppButton(LanguageManager.getString("button.confirm"));
+        cancelButton  = new AppButton(LanguageManager.getString("button.cancel"));
 
-        // Renderer kolorujący wiersze OVERDUE na czerwono
+        endButton.setEnabled(false);
+        confirmButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+
+        // --- Filtr statusu ---
+        statusFilterCombo = new JComboBox<>();
+        statusFilterCombo.addItem(STATUS_ALL);
+        for (RentStatus s : RentStatus.values()) {
+            statusFilterCombo.addItem(s);
+        }
+        statusFilterCombo.setPreferredSize(new Dimension(160, 28));
+        statusFilterCombo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        statusFilterCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (STATUS_ALL.equals(value)) {
+                    setText(LanguageManager.getString("rent.filter.all"));
+                } else if (value instanceof RentStatus) {
+                    setText(((RentStatus) value).getDisplayName());
+                }
+                return this;
+            }
+        });
+
+        // Renderer kolorujący wiersze: OVERDUE – czerwono, PENDING – zielono
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object value,
@@ -130,9 +172,13 @@ public class RentPanel extends BaseListPanel {
                 Component c = super.getTableCellRendererComponent(
                         t, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
-                    c.setForeground(overdueRows.contains(row)
-                            ? Color.RED
-                            : t.getForeground());
+                    if (overdueRows.contains(row)) {
+                        c.setForeground(Color.RED);
+                    } else if (pendingRows.contains(row)) {
+                        c.setForeground(COLOR_PENDING);
+                    } else {
+                        c.setForeground(t.getForeground());
+                    }
                 }
                 return c;
             }
@@ -141,22 +187,60 @@ public class RentPanel extends BaseListPanel {
 
     /** {@inheritDoc} */
     @Override
+    protected JPanel buildFilterBar() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+        panel.setBackground(Color.WHITE);
+        JLabel label = new JLabel(LanguageManager.getString("rent.filter.status"));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        panel.add(label);
+        panel.add(statusFilterCombo);
+        return panel;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected void buildExtraButtons(JPanel buttonPanel) {
+        buttonPanel.add(confirmButton);
+        buttonPanel.add(cancelButton);
         buttonPanel.add(endButton);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void onSelectionChanged(boolean selected) {
-        endButton.setEnabled(selected);
+        if (!selected) {
+            endButton.setEnabled(false);
+            confirmButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            return;
+        }
+        int id = getSelectedId();
+        try {
+            Rent rent = rentService.getRentByID(id);
+            RentStatus s = rent.getStatus();
+            endButton.setEnabled(s == RentStatus.ACTIVE || s == RentStatus.OVERDUE
+                    || s == RentStatus.PENDING);
+            confirmButton.setEnabled(s == RentStatus.PENDING);
+            cancelButton.setEnabled(s == RentStatus.PENDING || s == RentStatus.SCHEDULED);
+        } catch (Exception ex) {
+            endButton.setEnabled(false);
+            confirmButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     protected void refreshLanguageTexts() {
         endButton.setText(LanguageManager.getString("button.end"));
+        confirmButton.setText(LanguageManager.getString("button.confirm"));
+        cancelButton.setText(LanguageManager.getString("button.cancel"));
+        if (statusFilterCombo != null) statusFilterCombo.repaint();
     }
 
+    // ----------------------------------------------------------------
+    // BaseListPanel – metody abstrakcyjne
+    // ----------------------------------------------------------------
 
     /** {@inheritDoc} */
     @Override
@@ -181,7 +265,21 @@ public class RentPanel extends BaseListPanel {
         rentService.updateStatuses();
         String query = searchField != null ? searchField.getText().trim() : "";
 
+        // Wybrany filtr statusu
+        Object sel = statusFilterCombo != null ? statusFilterCombo.getSelectedItem() : STATUS_ALL;
+        RentStatus filterStatus = (sel instanceof RentStatus) ? (RentStatus) sel : null;
+
         List<Rent> rents = rentService.getAllRents();
+
+        // Filtruj wg statusu
+        if (filterStatus != null) {
+            final RentStatus fs = filterStatus;
+            rents = rents.stream()
+                    .filter(r -> r.getStatus() == fs)
+                    .toList();
+        }
+
+        // Filtruj wg tekstu wyszukiwania
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             rents = rents.stream()
@@ -203,20 +301,21 @@ public class RentPanel extends BaseListPanel {
                     .toList();
         }
 
-        // OVERDUE na górze, reszta bez zmian kolejności
+        // OVERDUE na górze, potem PENDING, reszta bez zmian
         rents = new ArrayList<>(rents);
         rents.sort((a, b) -> {
-            boolean aOver = a.getStatus() == RentStatus.OVERDUE;
-            boolean bOver = b.getStatus() == RentStatus.OVERDUE;
-            if (aOver == bOver) return 0;
-            return aOver ? -1 : 1;
+            int pa = priority(a.getStatus());
+            int pb = priority(b.getStatus());
+            return Integer.compare(pa, pb);
         });
 
         overdueRows.clear();
+        pendingRows.clear();
         clearTable();
         int rowIdx = 0;
         for (Rent r : rents) {
-            if (r.getStatus() == RentStatus.OVERDUE) overdueRows.add(rowIdx);
+            if (r.getStatus() == RentStatus.OVERDUE)  overdueRows.add(rowIdx);
+            if (r.getStatus() == RentStatus.PENDING)  pendingRows.add(rowIdx);
             Client client = clientService.getClientById(r.getClientId());
             Bike bike = bikeService.getBikeById(r.getBikeId());
             BikeModel bikeModel = bike != null
@@ -227,18 +326,26 @@ public class RentPanel extends BaseListPanel {
         }
     }
 
+    /**
+     * Zwraca priorytet sortowania dla danego statusu (niższy = wyżej).
+     */
+    private int priority(RentStatus s) {
+        if (s == RentStatus.OVERDUE)  return 0;
+        if (s == RentStatus.PENDING)  return 1;
+        return 2;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void filterTable(String query) {
         loadData();
     }
 
-    /**
-     * Otwiera formularz dodawania nowego wypożyczenia.
-     * Po zapisie automatycznie odświeża listę wypożyczeń.
-     *
-     * @author Tomasz Piłat
-     */
+    // ----------------------------------------------------------------
+    // Akcje
+    // ----------------------------------------------------------------
+
+    /** {@inheritDoc} */
     @Override
     protected void onAdd() {
         openDialog(
@@ -250,7 +357,7 @@ public class RentPanel extends BaseListPanel {
     }
 
     /**
-     * Otwiera formularz edycji wypożyczenia. Sprawdza status – SCHEDULED i ACTIVE
+     * Otwiera formularz edycji wypożyczenia. Sprawdza status – SCHEDULED, PENDING i ACTIVE
      * mogą być edytowane; pozostałe są zablokowane.
      *
      * @param row wybrany wiersz tabeli
@@ -273,7 +380,7 @@ public class RentPanel extends BaseListPanel {
         openDialog(
                 LanguageManager.getString("rent.editTitle"),
                 new EditRentPanel(rentService, bikeService, bikeModelService,
-                        bikeTypeService, this, rent),
+                        bikeTypeService, this::loadData, rent),
                 560, 510
         );
     }
@@ -290,7 +397,7 @@ public class RentPanel extends BaseListPanel {
                 LanguageManager.getString("rent.returnNotes"),
                 LanguageManager.getString("button.end"),
                 JOptionPane.PLAIN_MESSAGE);
-        if (notes == null) return;   // użytkownik anulował
+        if (notes == null) return;
         try {
             rentService.endRent(rentId, notes);
             loadData();
@@ -301,7 +408,46 @@ public class RentPanel extends BaseListPanel {
     }
 
     /**
-     * Usuwa wypożyczenie po sprawdzeniu że jest w statusie SCHEDULED.
+     * Potwierdza wypożyczenie (PENDING → ACTIVE).
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @author Tomasz Piłat
+     */
+    private void onConfirm(int rentId) {
+        try {
+            rentService.confirmRent(rentId);
+            loadData();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Anuluje wypożyczenie (SCHEDULED/PENDING → CANCELLED).
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @author Tomasz Piłat
+     */
+    private void onCancel(int rentId) {
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                LanguageManager.getString("rent.cancelConfirm"),
+                LanguageManager.getString("button.cancel"),
+                JOptionPane.YES_NO_OPTION
+        );
+        if (result != JOptionPane.YES_OPTION) return;
+        try {
+            rentService.cancelRent(rentId);
+            loadData();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Usuwa wypożyczenie – tylko dla statusu SCHEDULED.
      *
      * @param row wybrany wiersz tabeli
      * @author Tomasz Piłat
@@ -353,5 +499,14 @@ public class RentPanel extends BaseListPanel {
             int id = getSelectedId();
             if (id != -1) onEnd(id);
         });
+        confirmButton.addActionListener(e -> {
+            int id = getSelectedId();
+            if (id != -1) onConfirm(id);
+        });
+        cancelButton.addActionListener(e -> {
+            int id = getSelectedId();
+            if (id != -1) onCancel(id);
+        });
+        statusFilterCombo.addActionListener(e -> loadData());
     }
 }

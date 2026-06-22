@@ -40,8 +40,8 @@ public class EditRentPanel extends BaseFormPanel {
     /** Serwis typów rowerów. */
     private final BikeTypeService bikeTypeService;
 
-    /** Nadrzędny panel listy wypożyczeń. */
-    private final RentPanel parentPanel;
+    /** Akcja po pomyślnym zapisie (np. odświeżenie listy nadrzędnej). */
+    private final Runnable onSuccess;
 
     /** Edytowane wypożyczenie. */
     private final Rent rent;
@@ -72,18 +72,18 @@ public class EditRentPanel extends BaseFormPanel {
      * @param bikeService      serwis rowerów
      * @param bikeModelService serwis modeli rowerów
      * @param bikeTypeService  serwis typów rowerów
-     * @param parentPanel      nadrzędny panel listy
+     * @param onSuccess        akcja po pomyślnym zapisie (np. {@code parentPanel::loadData})
      * @param rent             wypożyczenie do edycji
      * @author Tomasz Piłat
      */
     public EditRentPanel(RentService rentService, BikeService bikeService,
                          BikeModelService bikeModelService, BikeTypeService bikeTypeService,
-                         RentPanel parentPanel, Rent rent) {
+                         Runnable onSuccess, Rent rent) {
         this.rentService      = rentService;
         this.bikeService      = bikeService;
         this.bikeModelService = bikeModelService;
         this.bikeTypeService  = bikeTypeService;
-        this.parentPanel      = parentPanel;
+        this.onSuccess        = onSuccess;
         this.rent             = rent;
         init();
     }
@@ -137,12 +137,13 @@ public class EditRentPanel extends BaseFormPanel {
         // Zablokowania wg statusu
         boolean isScheduled  = rent.getStatus() == RentStatus.SCHEDULED;
         boolean isActive     = rent.getStatus() == RentStatus.ACTIVE;
-        boolean canEditDates = isScheduled || isActive;
+        boolean isPending    = rent.getStatus() == RentStatus.PENDING;
+        boolean canEditDates = isScheduled || isActive || isPending;
 
         selectBikeBtn.setEnabled(isScheduled);
         startDatePicker.setEnabled(isScheduled);
 
-        // Dla ACTIVE tylko data zakończenia edytowalna; dla pozostałych statusów – zablokowane
+        // Dla ACTIVE i PENDING tylko data zakończenia edytowalna; dla pozostałych statusów – zablokowane
         returnDatePicker.setEnabled(canEditDates);
 
         // Presety czasu trwania (dostępne dla SCHEDULED i ACTIVE)
@@ -179,7 +180,8 @@ public class EditRentPanel extends BaseFormPanel {
         try {
             boolean isScheduled  = rent.getStatus() == RentStatus.SCHEDULED;
             boolean isActive     = rent.getStatus() == RentStatus.ACTIVE;
-            boolean canEditDates = isScheduled || isActive;
+            boolean isPending    = rent.getStatus() == RentStatus.PENDING;
+            boolean canEditDates = isScheduled || isActive || isPending;
 
             if (canEditDates) {
                 // Pełna edycja dat i roweru
@@ -206,7 +208,7 @@ public class EditRentPanel extends BaseFormPanel {
             }
 
             showSuccess("rent.updated");
-            parentPanel.loadData();
+            if (onSuccess != null) onSuccess.run();
             closeDialog();
         } catch (Exception ex) {
             showError(ex.getMessage());

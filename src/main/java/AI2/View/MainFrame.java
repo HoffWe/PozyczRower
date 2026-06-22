@@ -39,9 +39,6 @@ import java.awt.event.WindowEvent;
  */
 public class MainFrame extends JFrame implements LanguageChangeListener {
 
-    // ----------------------------------------------------------------
-    // Klucze kart
-    // ----------------------------------------------------------------
 
     /** Klucz karty wypożyczeń. */
     static final String CARD_RENTS       = "RENTS";
@@ -61,9 +58,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /** Klucz karty pracowników (tylko ADMIN). */
     static final String CARD_WORKERS = "WORKERS";
 
-    // ----------------------------------------------------------------
-    // Pola
-    // ----------------------------------------------------------------
 
     /** Panel kart z widokami. */
     private final JPanel     contentPanel;
@@ -71,7 +65,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /** Menadżer kart. */
     private final CardLayout layout;
 
-    // Usługi
     private final RentService      rentService;
     private final ClientService    clientService;
     private final BikeTypeService  bikeTypeService;
@@ -85,7 +78,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /** Wywołanie zwrotne po wylogowaniu / ponownym logowaniu. */
     private final Runnable onLogout;
 
-    // Przyciski toolbara
     private JButton rentsButton;
     private JButton bikesButton;
     private JButton bikeTypesButton;
@@ -97,15 +89,11 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /** Etykieta zalogowanego użytkownika w toolbarze. */
     private JLabel userLabel;
 
-    // Pozycje menu
     private JMenuItem loginItem;
     private JMenuItem logoutItem;
     private JMenuItem exitItem;
     private JMenu     fileMenu;
 
-    // ----------------------------------------------------------------
-    // Konstruktor
-    // ----------------------------------------------------------------
 
     /**
      * Tworzy główne okno aplikacji dla zalogowanego użytkownika.
@@ -159,7 +147,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         UserRole role = currentUser.getRole();
 
-        // Dodaj tylko panele dostępne dla danej roli
         if (role.canAccess(CARD_RENTS)) {
             contentPanel.add(new RentPanel(rentService, clientService, bikeService,
                     bikeModelService, bikeTypeService), CARD_RENTS);
@@ -184,13 +171,9 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         add(contentPanel, BorderLayout.CENTER);
 
-        // Pokaż pierwszy dostępny panel
         showFirstAccessibleCard(role);
     }
 
-    // ----------------------------------------------------------------
-    // Menu Plik
-    // ----------------------------------------------------------------
 
     /**
      * Buduje pasek menu z pozycjami Plik → Zaloguj / Wyloguj / Zamknij.
@@ -241,10 +224,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         onLogout.run();
     }
 
-    // ----------------------------------------------------------------
-    // Toolbar
-    // ----------------------------------------------------------------
-
     /**
      * Buduje toolbar nawigacyjny. Pokazuje tylko przyciski dostępne dla roli użytkownika.
      *
@@ -288,7 +267,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         toolBar.add(Box.createHorizontalGlue());
 
-        // Etykieta zalogowanego użytkownika
+
         userLabel = new JLabel(LanguageManager.getString("user.loggedAs")
                 + " " + currentUser.getUsername()
                 + " (" + currentUser.getRole().getDisplayName() + ")");
@@ -335,9 +314,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         }
     }
 
-    // ----------------------------------------------------------------
-    // LanguageChangeListener
-    // ----------------------------------------------------------------
 
     /** {@inheritDoc} */
     @Override
@@ -365,10 +341,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         exitItem.setText(LanguageManager.getString("menu.exit"));
     }
 
-    // ----------------------------------------------------------------
-    // Zapis danych
-    // ----------------------------------------------------------------
-
     /**
      * Zapisuje dane do pliku przed zamknięciem aplikacji.
      *
@@ -386,10 +358,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         }
     }
 
-    // ----------------------------------------------------------------
-    // startLoginFlow  (wywoływane z Main i przy wylogowaniu)
-    // ----------------------------------------------------------------
-
     /**
      * Uruchamia przepływ logowania: okno login → okno główne.
      * Przy wylogowaniu wywoływane jest ponownie.
@@ -400,7 +368,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
                                 BikeTypeService bikeTypeService, BikeService bikeService,
                                 BikeModelService bikeModelService, UserService userService) {
         LoginDialog login = new LoginDialog(null, userService);
-        login.setVisible(true);         // blokuje – modal dialog
+        login.setVisible(true);
 
         User user = login.getLoggedUser();
         if (user == null) {

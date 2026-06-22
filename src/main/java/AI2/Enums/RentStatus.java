@@ -4,10 +4,11 @@ import AI2.Util.LanguageManager;
 
 public enum RentStatus {
     ACTIVE("rent.status.active"),
-    CLOSED("rent.status.closed"),
     OVERDUE("rent.status.overdue"),
     FINISHED("rent.status.finished"),
-    SCHEDULED("rent.status.scheduled");
+    SCHEDULED("rent.status.scheduled"),
+    PENDING("rent.status.pending"),
+    CANCELLED("rent.status.cancelled");
 
     private final String key;
 

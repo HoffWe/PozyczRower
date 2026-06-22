@@ -221,7 +221,8 @@ public class ClientPanel extends BaseListPanel {
 
         Window owner = javax.swing.SwingUtilities.getWindowAncestor(this);
         ClientRentsDialog dlg = new ClientRentsDialog(
-                owner, client, rentService, bikeService, bikeModelService);
+                owner, client, rentService, bikeService, bikeModelService,
+                bikeTypeService, clientService);
         dlg.setVisible(true);
     }
 }

@@ -40,6 +40,7 @@ public class ClientViewModel {
 
     /** Wartości do wierszy tabeli (bez ID). */
     public Object[] toRow() {
-        return new Object[]{ firstName, lastName, evidence, description };
+        return new Object[]{
+                firstName, lastName, evidence, description };
     }
 }

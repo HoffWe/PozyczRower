@@ -111,6 +111,25 @@ public class AddRentPanel extends BaseFormPanel {
     }
 
     /**
+     * Konstruktor z panelu klientów – klient pre-wybrany, własna akcja po zapisie.
+     *
+     * @param rentService      serwis wypożyczeń
+     * @param clientService    serwis klientów
+     * @param bikeService      serwis rowerów
+     * @param bikeModelService serwis modeli rowerów
+     * @param bikeTypeService  serwis typów rowerów
+     * @param onSuccess        akcja po pomyślnym zapisie
+     * @param preClient        pre-wybrany klient
+     * @author Tomasz Piłat
+     */
+    public AddRentPanel(RentService rentService, ClientService clientService,
+                        BikeService bikeService, BikeModelService bikeModelService,
+                        BikeTypeService bikeTypeService, Runnable onSuccess, Client preClient) {
+        this(rentService, clientService, bikeService, bikeModelService, bikeTypeService,
+                onSuccess, preClient, null);
+    }
+
+    /**
      * Konstruktor z panelu rowerów – rower jest pre-wybrany.
      *
      * @param rentService      serwis wypożyczeń

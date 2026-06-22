@@ -11,15 +11,9 @@ import javax.swing.*;
  * Punkt wejścia aplikacji PożyczRower.
  * Tworzy repozytoria, serwisy, wykonuje seed danych i uruchamia okno główne.
  *
- * @author Tomasz Piłat
  */
 public class Main {
 
-    /**
-     * Uruchamia aplikację.
-     *
-     * @param args argumenty wiersza poleceń (nieużywane)
-     */
     public static void main(String[] args) {
         BikeRepository bikeRepository = new BikeRepository();
         BikeTypeRepository bikeTypeRepository = new BikeTypeRepository();

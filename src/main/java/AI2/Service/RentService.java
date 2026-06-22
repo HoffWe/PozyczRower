@@ -88,7 +88,7 @@ public class RentService {
             throw new RuntimeException(LanguageManager.getString("error.rent.notFound"));
         }
         if (rent.getStatus() == RentStatus.FINISHED
-                || rent.getStatus() == RentStatus.CLOSED) {
+                || rent.getStatus() == RentStatus.CANCELLED) {
             throw new IllegalStateException(
                     LanguageManager.getString("error.rent.alreadyFinished"));
         }
@@ -207,18 +207,21 @@ public class RentService {
 
         for (Rent rent : getAllRents()) {
             RentStatus status = rent.getStatus();
-            if (status != RentStatus.SCHEDULED && status != RentStatus.ACTIVE) continue;
+            if (status != RentStatus.SCHEDULED
+                    && status != RentStatus.ACTIVE
+                    && status != RentStatus.PENDING) continue;
 
             if (rent.getReturnTime().isBefore(now)) {
-                if (status == RentStatus.SCHEDULED) {
+                // SCHEDULED/PENDING → OVERDUE: trzeba teraz oznaczyć rower jako wypożyczony
+                if (status == RentStatus.SCHEDULED || status == RentStatus.PENDING) {
                     markBikeRented(rent.getBikeId());
                 }
                 rent.setStatus(RentStatus.OVERDUE);
                 changed = true;
 
             } else if (status == RentStatus.SCHEDULED && !rent.getRentDate().isAfter(now)) {
-                rent.setStatus(RentStatus.ACTIVE);
-                markBikeRented(rent.getBikeId());
+                // Czas startu minął – czekamy na potwierdzenie pracownika
+                rent.setStatus(RentStatus.PENDING);
                 changed = true;
             }
         }
@@ -227,6 +230,51 @@ public class RentService {
             rentRepository.saveRentDataBase();
         }
         return changed;
+    }
+
+    /**
+     * Potwierdza rozpoczęcie wypożyczenia – zmienia status PENDING → ACTIVE
+     * i oznacza rower jako wypożyczony.
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws IllegalStateException jeśli wypożyczenie nie jest w statusie PENDING
+     * @author Tomasz Piłat
+     */
+    public void confirmRent(int rentId) {
+        Rent rent = rentRepository.getRentByID(rentId);
+        if (rent == null) {
+            throw new RuntimeException(LanguageManager.getString("error.rent.notFound"));
+        }
+        if (rent.getStatus() != RentStatus.PENDING) {
+            throw new IllegalStateException(
+                    LanguageManager.getString("error.rent.cannotConfirm"));
+        }
+        rent.setStatus(RentStatus.ACTIVE);
+        markBikeRented(rent.getBikeId());
+        rentRepository.updateRent(rent);
+    }
+
+    /**
+     * Anuluje wypożyczenie – zmienia status SCHEDULED/PENDING → CANCELLED.
+     *
+     * @param rentId identyfikator wypożyczenia
+     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws IllegalStateException jeśli wypożyczenie nie może być anulowane
+     * @author Tomasz Piłat
+     */
+    public void cancelRent(int rentId) {
+        Rent rent = rentRepository.getRentByID(rentId);
+        if (rent == null) {
+            throw new RuntimeException(LanguageManager.getString("error.rent.notFound"));
+        }
+        if (rent.getStatus() != RentStatus.PENDING
+                && rent.getStatus() != RentStatus.SCHEDULED) {
+            throw new IllegalStateException(
+                    LanguageManager.getString("error.rent.cannotCancel"));
+        }
+        rent.setStatus(RentStatus.CANCELLED);
+        rentRepository.updateRent(rent);
     }
 
     /**
@@ -305,7 +353,8 @@ public class RentService {
         return rentRepository.getRentDataBase().stream()
                 .filter(r -> r.getBikeId() == bikeId)
                 .filter(r -> r.getStatus() == RentStatus.SCHEDULED
-                          || r.getStatus() == RentStatus.ACTIVE)
+                          || r.getStatus() == RentStatus.ACTIVE
+                          || r.getStatus() == RentStatus.PENDING)
                 .noneMatch(r -> r.getRentDate().isBefore(end)
                              && r.getReturnTime().isAfter(start));
     }
@@ -322,6 +371,7 @@ public class RentService {
                 .filter(r -> r.getClientId() == clientId)
                 .anyMatch(r -> r.getStatus() == RentStatus.SCHEDULED
                             || r.getStatus() == RentStatus.ACTIVE
+                            || r.getStatus() == RentStatus.PENDING
                             || r.getStatus() == RentStatus.OVERDUE);
     }
 
@@ -337,6 +387,7 @@ public class RentService {
                 .filter(r -> r.getBikeId() == bikeId)
                 .anyMatch(r -> r.getStatus() == RentStatus.SCHEDULED
                             || r.getStatus() == RentStatus.ACTIVE
+                            || r.getStatus() == RentStatus.PENDING
                             || r.getStatus() == RentStatus.OVERDUE);
     }
 

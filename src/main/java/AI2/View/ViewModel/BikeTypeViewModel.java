@@ -29,6 +29,8 @@ public class BikeTypeViewModel {
 
     /** Wartości do wierszy tabeli (bez ID). */
     public Object[] toRow() {
-        return new Object[]{ name, description };
+        return new Object[]{
+                name, description
+        };
     }
 }
