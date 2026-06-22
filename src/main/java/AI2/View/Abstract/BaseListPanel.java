@@ -24,7 +24,6 @@ import java.util.List;
  */
 public abstract class BaseListPanel extends JPanel implements LanguageChangeListener {
 
-    // --- Komponenty ---
     protected DefaultTableModel tableModel;
     protected JTable table;
     protected JTextField searchField;
@@ -40,10 +39,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
      */
     protected final List<Integer> rowIds = new ArrayList<>();
 
-    // ----------------------------------------------------------------
-    // Konstruktor
-    // ----------------------------------------------------------------
-
     /**
      * Konstruktor nie wywołuje {@code loadData()} – podklasa musi wywołać
      * {@code loadData()} samodzielnie na końcu swojego konstruktora,
@@ -54,12 +49,7 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         initComponents();
         buildLayout();
         registerListeners();
-        // loadData() NIE jest wywoływane tutaj – zob. Javadoc
     }
-
-    // ----------------------------------------------------------------
-    // Inicjalizacja (wywoływana raz)
-    // ----------------------------------------------------------------
 
     private void initComponents() {
         tableModel = new DefaultTableModel(getColumnNames(), 0) {
@@ -92,12 +82,10 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Tytuł
         titleLabel = new JLabel(LanguageManager.getString(getTitleKey()), SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         add(titleLabel, BorderLayout.NORTH);
 
-        // Środek: wyszukiwarka + (opcjonalny filtr) + tabela
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.setBackground(Color.WHITE);
 
@@ -119,7 +107,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
-        // Dół: przyciski
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(addButton);
@@ -153,7 +140,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
             }
         });
 
-        // Pozwala podklasom zarejestrować listenery dla własnych przycisków
         initExtraListeners();
 
         table.addMouseListener(new MouseAdapter() {
@@ -181,10 +167,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
             public void changedUpdate(DocumentEvent e) { filterTable(searchField.getText()); }
         });
     }
-
-    // ----------------------------------------------------------------
-    // API dla podklas
-    // ----------------------------------------------------------------
 
     /** Wywoływane, gdy zmienia się zaznaczenie. Podklasy mogą reagować na zmiany stanu przycisków. */
     protected void onSelectionChanged(boolean selected) {}
@@ -216,10 +198,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         loadData();
     }
 
-    // ----------------------------------------------------------------
-    // Zmiana języka (LanguageChangeListener)
-    // ----------------------------------------------------------------
-
     @Override
     public void onLanguageChanged() {
         titleLabel.setText(LanguageManager.getString(getTitleKey()));
@@ -242,10 +220,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
     /** Podklasy nadpisują, aby odświeżyć dodatkowe teksty zależne od języka. */
     protected void refreshLanguageTexts() {}
 
-    // ----------------------------------------------------------------
-    // Pomocnicze – otwieranie okna dialogowego
-    // ----------------------------------------------------------------
-
     protected void openDialog(String title, JPanel panel, int width, int height) {
         JDialog dialog = new JDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this),
@@ -258,10 +232,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
-
-    // ----------------------------------------------------------------
-    // Metody abstrakcyjne do implementacji w podklasach
-    // ----------------------------------------------------------------
 
     /** Klucz i18n tytułu panelu, np. "client.management". */
     protected abstract String getTitleKey();

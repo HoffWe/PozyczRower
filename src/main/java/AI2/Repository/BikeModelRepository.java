@@ -167,8 +167,6 @@ public class BikeModelRepository {
                 String model = in.readUTF();
                 bikeModelList.add(new BikeModel(id, brand, model));
             }
-        } catch (IOException e) {
-            // Brak pliku przy pierwszym uruchomieniu jest normalny.
-        }
+        } catch (IOException ignored) {}
     }
 }

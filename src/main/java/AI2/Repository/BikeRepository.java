@@ -189,7 +189,6 @@ public class BikeRepository {
                 int wheelSize   = in.readInt();
                 String statusStr = in.readUTF();
                 String description = in.readUTF();
-                // Backward-compat: starszy format nie miał flagi deleted
                 boolean isDeleted = false;
                 try { isDeleted = in.readBoolean(); } catch (java.io.EOFException ignored) {}
 
@@ -198,8 +197,6 @@ public class BikeRepository {
                 bike.setDeleted(isDeleted);
                 bikeList.add(bike);
             }
-        } catch (IOException e) {
-            // Brak pliku przy pierwszym uruchomieniu jest normalny.
-        }
+        } catch (IOException ignored) {}
     }
 }

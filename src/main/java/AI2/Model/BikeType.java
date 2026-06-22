@@ -64,7 +64,6 @@ public class BikeType {
     public String getDisplayName() {
         if (!LanguageManager.isPolish()) {
             if (nameEn != null && !nameEn.isBlank()) return nameEn;
-            // Fallback: statyczny klucz dla starych danych (dat-plik bez nameEn)
             String key = "bikeType.name." + Normalizer
                     .normalize(name, Normalizer.Form.NFD)
                     .replaceAll("\\p{M}", "")
@@ -83,12 +82,6 @@ public class BikeType {
         this.description = description;
     }
 
-    /**
-     * Zwraca nazwę typu roweru (używana m.in. przez JComboBox).
-     *
-     * @return nazwa typu
-     * @author Adrian Karpiński
-     */
     /**
      * Zwraca przetłumaczoną nazwę (używana m.in. przez JComboBox).
      *

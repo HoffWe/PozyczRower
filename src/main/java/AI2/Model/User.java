@@ -32,10 +32,6 @@ public class User {
         this.role         = role;
     }
 
-    // ----------------------------------------------------------------
-    // Gettery i settery
-    // ----------------------------------------------------------------
-
     public int getId()                     { return id; }
     public void setId(int id)              { this.id = id; }
 

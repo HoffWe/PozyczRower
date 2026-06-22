@@ -54,6 +54,10 @@ public class ClientService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.client.evidenceEmpty"));
         }
+        if (!evidence.matches("^[A-Z]{3}[0-9]{6}$")) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.client.evidenceInvalid"));
+        }
         Client client = new Client(nextId++, name, surname, evidence, opis);
         clientRepository.addClient(client);
     }
@@ -102,6 +106,14 @@ public class ClientService {
      * @author Światosław Matsopa
      */
     public void updateClient(int id, String name, String surname, String evidence, String opis) {
+        if (evidence == null || evidence.isEmpty()) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.client.evidenceEmpty"));
+        }
+        if (!evidence.matches("^[A-Z]{3}[0-9]{6}$")) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.client.evidenceInvalid"));
+        }
         Client client = new Client(id, name, surname, evidence, opis);
         clientRepository.updateClient(client);
     }

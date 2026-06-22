@@ -175,12 +175,10 @@ public class BikeTypeRepository {
             int first = in.readInt();
             boolean hasNameEn;
             if (first == VERSION_MARKER) {
-                // Nowy format: VERSION_MARKER, version, currentId, count, ...
                 int version = in.readInt();
                 currentBikeTypeId = in.readInt();
                 hasNameEn = (version >= 2);
             } else {
-                // Stary format: pierwszy int to currentBikeTypeId
                 currentBikeTypeId = first;
                 hasNameEn = false;
             }
@@ -193,10 +191,6 @@ public class BikeTypeRepository {
                 String en   = hasNameEn ? in.readUTF() : "";
                 bikeTypeList.add(new BikeType(id, name, en, desc));
             }
-        } catch (IOException e) {
-            // Brak pliku przy pierwszym uruchomieniu apki jest normalny
-        }
+        } catch (IOException ignored) {}
     }
-
-
 }

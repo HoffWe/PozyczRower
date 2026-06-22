@@ -123,7 +123,6 @@ public class ClientRepository {
                 String surname = dis.readUTF();
                 String evidence = dis.readUTF();
                 String opis = dis.readUTF();
-                // Backward-compat: starszy format nie miał flagi deleted
                 boolean isDeleted = false;
                 try { isDeleted = dis.readBoolean(); } catch (java.io.EOFException ignored) {}
                 Client client = new Client(id, name, surname, evidence, opis);

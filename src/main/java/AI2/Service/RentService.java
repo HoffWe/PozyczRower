@@ -93,7 +93,6 @@ public class RentService {
                     LanguageManager.getString("error.rent.alreadyFinished"));
         }
 
-        // Zwróć rower do puli tylko jeśli faktycznie był wypożyczony (nie zaplanowany)
         Bike bike = bikeRepository.getBikeById(rent.getBikeId());
         if (bike != null && bike.getStatus() != BikeStatus.AVAILABLE) {
             bike.setStatus(BikeStatus.AVAILABLE);
@@ -363,7 +362,6 @@ public class RentService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.rent.clientNotFound"));
         }
-        // Tolerancja 5 minut – data startu jest ustawiana przy otwarciu formularza
         if (rent.getRentDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.rent.dateInPast"));

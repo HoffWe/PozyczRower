@@ -33,7 +33,6 @@ public class DataSeeder {
                                    ClientService clientService,
                                    BikeService bikeService,
                                    UserService userService) {
-        // ---- Użytkownicy – domyślny admin (zawsze sprawdzaj, niezależnie od pozostałych danych) ----
         if (userService.isEmpty()) {
             userService.addUser("admin", "admin", UserRole.ADMIN);
         }
@@ -45,7 +44,6 @@ public class DataSeeder {
 
         if (!typesEmpty && !modelsEmpty && !clientsEmpty && !bikesEmpty) return;
 
-        // ---- Typy rowerów ----
         if (typesEmpty) {
             bikeTypeService.addBikeType(new BikeTypeDTO("Górski",  "Mountain", "Rower terenowy MTB"));
             bikeTypeService.addBikeType(new BikeTypeDTO("Miejski", "City",     "Rower do jazdy po mieście"));
@@ -54,7 +52,6 @@ public class DataSeeder {
             bikeTypeService.saveBikeTypes();
         }
 
-        // ---- Modele rowerów ----
         if (modelsEmpty) {
             bikeModelService.addBikeModel(new BikeModelDTO("Trek",       "Marlin 5"));
             bikeModelService.addBikeModel(new BikeModelDTO("Trek",       "X-Caliber 8"));
@@ -65,7 +62,6 @@ public class DataSeeder {
             bikeModelService.saveBikeModels();
         }
 
-        // ---- Klienci ----
         if (clientsEmpty) {
             clientService.addClient("Jan",    "Kowalski",   "ABC123456", "Stały klient");
             clientService.addClient("Anna",   "Nowak",      "DEF234567", "");
@@ -74,9 +70,7 @@ public class DataSeeder {
             clientService.addClient("Tomasz", "Zieliński",  "MNO567890", "Wycieczki weekendowe");
         }
 
-        // ---- Rowery ----
         if (bikesEmpty) {
-            // Pobierz IDs (generowane przez repozytoria zaczynające od 1)
             int gorski  = idOfType(bikeTypeService, "Górski");
             int miejski = idOfType(bikeTypeService, "Miejski");
             int szosowy = idOfType(bikeTypeService, "Szosowy");
@@ -89,19 +83,15 @@ public class DataSeeder {
             int allez     = idOfModel(bikeModelService, "Specialized", "Allez");
             int slammer   = idOfModel(bikeModelService, "GT",          "Slammer");
 
-            // Górskie
             bikeService.addBike(marlin5,  gorski,  29, BikeStatus.AVAILABLE, "");
             bikeService.addBike(marlin5,  gorski,  29, BikeStatus.AVAILABLE, "Lekka zarysowanie ramy");
             bikeService.addBike(xcaliber, gorski,  27, BikeStatus.AVAILABLE, "");
             bikeService.addBike(talon,    gorski,  29, BikeStatus.AVAILABLE, "");
-            // Miejskie
             bikeService.addBike(escape,   miejski, 28, BikeStatus.AVAILABLE, "Koszyk w zestawie");
             bikeService.addBike(escape,   miejski, 28, BikeStatus.AVAILABLE, "");
             bikeService.addBike(escape,   miejski, 26, BikeStatus.AVAILABLE, "");
-            // Szosowe
             bikeService.addBike(allez,    szosowy, 28, BikeStatus.AVAILABLE, "");
             bikeService.addBike(allez,    szosowy, 28, BikeStatus.AVAILABLE, "");
-            // BMX
             bikeService.addBike(slammer,  bmx,     20, BikeStatus.AVAILABLE, "");
         }
     }

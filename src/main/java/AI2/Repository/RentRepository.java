@@ -109,7 +109,6 @@ public class RentRepository {
                         new Timestamp(inputStream.readLong()).toLocalDateTime();
 
                 RentStatus status = RentStatus.valueOf(inputStream.readUTF());
-                // Backward-compat: starszy format nie miał pola notes
                 String notes = "";
                 try { notes = inputStream.readUTF(); } catch (java.io.EOFException ignored) {}
 

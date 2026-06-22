@@ -75,7 +75,6 @@ public class UserService {
         if (user.getUsername() == null || user.getUsername().isBlank())
             throw new IllegalArgumentException("Nazwa użytkownika nie może być pusta.");
 
-        // Sprawdź duplikat nazwy (pomijając samego siebie)
         User existing = userRepository.getUserByUsername(user.getUsername());
         if (existing != null && existing.getId() != user.getId())
             throw new IllegalArgumentException("Użytkownik o tej nazwie już istnieje.");
@@ -125,10 +124,6 @@ public class UserService {
     public boolean isEmpty() {
         return userRepository.isEmpty();
     }
-
-    // ----------------------------------------------------------------
-    // Hashowanie hasła
-    // ----------------------------------------------------------------
 
     /**
      * Hashuje hasło algorytmem SHA-256.

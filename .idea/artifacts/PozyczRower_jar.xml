@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PozyczRower:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PozyczRower_jar</output-path>
+    <root id="archive" name="PozyczRower.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="PozyczRower" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/lgooddatepicker/LGoodDatePicker/11.2.1/LGoodDatePicker-11.2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

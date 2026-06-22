@@ -76,10 +76,6 @@ public class Rent {
         this.notes      = "";
     }
 
-    // ----------------------------------------------------------------
-    // Gettery / settery
-    // ----------------------------------------------------------------
-
     /** @return identyfikator wypożyczenia */
     public int getId() { return id; }
 

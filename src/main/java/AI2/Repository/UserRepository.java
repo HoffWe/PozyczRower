@@ -96,10 +96,6 @@ public class UserRepository {
         return users.isEmpty();
     }
 
-    // ----------------------------------------------------------------
-    // Zapis / odczyt
-    // ----------------------------------------------------------------
-
     /** Zapisuje wszystkich użytkowników do pliku w oddzielnym wątku (DataOutputStream). */
     public void saveToFile() {
         List<User> snapshot = new ArrayList<>(users);

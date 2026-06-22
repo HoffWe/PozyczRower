@@ -19,17 +19,11 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
     protected JButton submitButton;
     private JLabel titleLabel;
 
-    // ----------------------------------------------------------------
-    // Konstruktor
-    // ----------------------------------------------------------------
-
     /**
      * Konstruktor nie buduje UI – podklasa musi wywołać {@link #init()}
      * jako ostatnią instrukcję swojego konstruktora, po ustawieniu własnych pól.
      */
-    protected BaseFormPanel() {
-        // Celowo pusty – zob. Javadoc
-    }
+    protected BaseFormPanel() {}
 
     /**
      * Inicjalizuje i buduje UI panelu formularza.
@@ -43,10 +37,6 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
         registerListeners();
     }
 
-    // ----------------------------------------------------------------
-    // Inicjalizacja
-    // ----------------------------------------------------------------
-
     private void initComponents() {
         submitButton = new AppButton(LanguageManager.getString(getSubmitButtonKey()));
         initFormComponents();
@@ -59,19 +49,16 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Tytuł
         titleLabel = new JLabel(LanguageManager.getString(getTitleKey()), SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         add(titleLabel, BorderLayout.NORTH);
 
-        // Formularz
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = createDefaultGbc();
         buildForm(formPanel, gbc);
         add(formPanel, BorderLayout.CENTER);
 
-        // Przycisk zapisu
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(submitButton);
@@ -81,10 +68,6 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
     private void registerListeners() {
         submitButton.addActionListener(e -> onSubmit());
     }
-
-    // ----------------------------------------------------------------
-    // Helpers dla podklas
-    // ----------------------------------------------------------------
 
     /** Domyślne GridBagConstraints dla formularzy. */
     protected GridBagConstraints createDefaultGbc() {
@@ -137,10 +120,6 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
         JOptionPane.showMessageDialog(this, LanguageManager.getString(messageKey));
     }
 
-    // ----------------------------------------------------------------
-    // Zmiana języka
-    // ----------------------------------------------------------------
-
     @Override
     public void onLanguageChanged() {
         titleLabel.setText(LanguageManager.getString(getTitleKey()));
@@ -150,10 +129,6 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
 
     /** Podklasy nadpisują, aby odświeżyć etykiety pól formularza. */
     protected void refreshLanguageTexts() {}
-
-    // ----------------------------------------------------------------
-    // Metody abstrakcyjne
-    // ----------------------------------------------------------------
 
     protected abstract String getTitleKey();
     protected abstract String getSubmitButtonKey();

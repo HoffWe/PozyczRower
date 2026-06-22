@@ -17,8 +17,6 @@ public class LanguageManager {
 
     private static final List<LanguageChangeListener> listeners = new ArrayList<>();
 
-    // --- Locale ---
-
     public static Locale getLocale() {
         return locale;
     }
@@ -45,8 +43,6 @@ public class LanguageManager {
         return "pl".equals(locale.getLanguage());
     }
 
-    // --- Tłumaczenia ---
-
     public static String getString(String key) {
         try {
             return resourceBundle.getString(key);
@@ -54,8 +50,6 @@ public class LanguageManager {
             return "!" + key + "!";
         }
     }
-
-    // --- Słuchacze ---
 
     public static void addListener(LanguageChangeListener listener) {
         if (!listeners.contains(listener)) {

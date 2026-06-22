@@ -14,10 +14,6 @@ import java.util.concurrent.Executors;
  */
 public final class AppConfig {
 
-    // ----------------------------------------------------------------
-    // Parametry konfiguracyjne
-    // ----------------------------------------------------------------
-
     /**
      * Liczba wątków w puli używanej do asynchronicznego zapisu danych.
      * Wartość 2 zapewnia przeplatanie zapisów bez przeciążania dysku.
@@ -29,10 +25,6 @@ public final class AppConfig {
      * Wszystkie repozytoria tworzą pliki w tym katalogu.
      */
     public static final String DATA_DIR = "data";
-
-    // ----------------------------------------------------------------
-    // Współdzielona pula wątków
-    // ----------------------------------------------------------------
 
     /**
      * Pula wątków używana przez wszystkie repozytoria do zapisu danych w tle.
