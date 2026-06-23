@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
  */
 public class ClientPanel extends BaseListPanel {
 
-    private final ClientService    clientService;
-    private final RentService      rentService;
-    private final BikeService      bikeService;
+    private final ClientService clientService;
+    private final RentService  rentService;
+    private final BikeService  bikeService;
     private final BikeModelService bikeModelService;
     private final BikeTypeService  bikeTypeService;
 
@@ -35,21 +35,21 @@ public class ClientPanel extends BaseListPanel {
     public ClientPanel(ClientService clientService, RentService rentService,
                        BikeService bikeService, BikeModelService bikeModelService,
                        BikeTypeService bikeTypeService) {
-        this.clientService    = clientService;
-        this.rentService      = rentService;
-        this.bikeService      = bikeService;
+        this.clientService = clientService;
+        this.rentService = rentService;
+        this.bikeService = bikeService;
         this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
+        this.bikeTypeService = bikeTypeService;
         loadData();
     }
 
-    // ----------------------------------------------------------------
+    //
     // BaseListPanel – dodatkowe komponenty
-    // ----------------------------------------------------------------
+    //
 
     @Override
     protected void initExtraComponents() {
-        rentButton      = new AppButton(LanguageManager.getString("button.rent"));
+        rentButton = new AppButton(LanguageManager.getString("button.rent"));
         showRentsButton = new AppButton(LanguageManager.getString("button.showRents"));
         showRentsButton.setPreferredSize(new Dimension(180, 40));
         rentButton.setEnabled(false);
@@ -80,9 +80,9 @@ public class ClientPanel extends BaseListPanel {
         showRentsButton.addActionListener(e -> onShowRents());
     }
 
-    // ----------------------------------------------------------------
+    //
     // BaseListPanel – implementacja metod abstrakcyjnych
-    // ----------------------------------------------------------------
+    //
 
     @Override
     protected String getTitleKey() {
@@ -107,10 +107,10 @@ public class ClientPanel extends BaseListPanel {
         if (!query.isEmpty()) {
             clients = clients.stream()
                     .filter(c ->
-                            contains(c.getName(),     query) ||
-                            contains(c.getSurname(),  query) ||
-                            contains(c.getEvidence(), query) ||
-                            contains(c.getOpis(),     query))
+                            contains(c.getName(), query) ||
+                            contains(c.getSurname(),query) ||
+                            contains(c.getEvidence(),query) ||
+                            contains(c.getOpis(),query))
                     .collect(Collectors.toList());
         }
 
@@ -149,7 +149,6 @@ public class ClientPanel extends BaseListPanel {
                     LanguageManager.getString("error.title"));
             return;
         }
-
         openDialog(
                 LanguageManager.getString("client.editTitle"),
                 new EditClientPanel(clientService, client, this),
@@ -161,7 +160,6 @@ public class ClientPanel extends BaseListPanel {
     protected void onDelete(int row) {
         int id = getSelectedId();
         if (id == -1) return;
-
         int result = JOptionPane.showConfirmDialog(
                 this,
                 LanguageManager.getString("client.deleteConfirm"),
@@ -184,9 +182,9 @@ public class ClientPanel extends BaseListPanel {
         }
     }
 
-    // ----------------------------------------------------------------
+    //
     // Wypożycz
-    // ----------------------------------------------------------------
+    //
 
     private void onRent() {
         int id = getSelectedId();
@@ -203,9 +201,9 @@ public class ClientPanel extends BaseListPanel {
         );
     }
 
-    // ----------------------------------------------------------------
+    //
     // Wypożyczenia klienta
-    // ----------------------------------------------------------------
+    //
 
     /**
      * Otwiera dialog z listą wypożyczeń zaznaczonego klienta.

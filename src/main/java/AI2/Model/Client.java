@@ -3,10 +3,7 @@ package AI2.Model;
 /**
  *
  *
- *
- *
  * @author Sviatoslav Matsopa
- *
  *
  *
  */
@@ -26,7 +23,8 @@ public class Client {
     private boolean deleted;
 
     /** Konstruktor domyslny */
-    public Client() {}
+    public Client() {
+    }
 
     /**
      * Konstruktor z parametrami
