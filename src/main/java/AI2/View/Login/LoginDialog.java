@@ -45,7 +45,7 @@ public class LoginDialog extends JDialog {
         setLayout(new BorderLayout(10, 10));
         ((JComponent) getContentPane()).setBorder(
                 BorderFactory.createEmptyBorder(24, 36, 20, 36));
-        getContentPane().setBackground(Color.WHITE);
+//        getContentPane().setBackground(Color.WHITE);
 
         // --- Tytuł ---
         JLabel title = new JLabel(LanguageManager.getString("login.title"), SwingConstants.CENTER);
@@ -55,7 +55,7 @@ public class LoginDialog extends JDialog {
 
         // --- Formularz ---
         JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
+//        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill    = GridBagConstraints.HORIZONTAL;
         gbc.insets  = new Insets(6, 4, 6, 4);
@@ -92,7 +92,7 @@ public class LoginDialog extends JDialog {
 
         // --- Przycisk ---
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        btnPanel.setBackground(Color.WHITE);
+//        btnPanel.setBackground(Color.WHITE);
         AppButton loginBtn = new AppButton(LanguageManager.getString("login.button"));
         loginBtn.addActionListener(e -> tryLogin());
         btnPanel.add(loginBtn);

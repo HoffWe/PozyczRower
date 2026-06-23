@@ -46,7 +46,7 @@ class BikeTypeServiceTest {
                 }
                 return false;
             }
-            @Override public List<BikeType> getAllBikesTypes() { return new ArrayList<>(list); }
+            @Override public List<BikeType> getAllBikeTypes() { return new ArrayList<>(list); }
             @Override public BikeType getBikeTypeById(int id) {
                 return list.stream().filter(b -> b.getBikeTypeId() == id).findFirst().orElse(null);
             }

@@ -4,6 +4,7 @@ import AI2.Model.BikeType;
 
 /**
  * ViewModel dla typu roweru – dane wyświetlane w tabeli (bez ID).
+ * @author Adrian Karpiński
  */
 public class BikeTypeViewModel {
 

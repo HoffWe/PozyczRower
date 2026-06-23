@@ -29,7 +29,7 @@ public class SearchPanel extends JPanel implements LanguageChangeListener {
         placeholder = LanguageManager.getString("search");
 
         setLayout(new BorderLayout(4, 0));
-        setBackground(Color.WHITE);
+//        setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
 
         // --- ikona ---

@@ -134,9 +134,9 @@ public class RentPanel extends BaseListPanel {
     /** {@inheritDoc} */
     @Override
     protected void initExtraComponents() {
-        endButton     = new AppButton(LanguageManager.getString("button.end"));
+        endButton = new AppButton(LanguageManager.getString("button.end"));
         confirmButton = new AppButton(LanguageManager.getString("button.confirm"));
-        cancelButton  = new AppButton(LanguageManager.getString("button.cancel"));
+        cancelButton = new AppButton(LanguageManager.getString("button.cancel"));
 
         endButton.setEnabled(false);
         confirmButton.setEnabled(false);
@@ -164,26 +164,23 @@ public class RentPanel extends BaseListPanel {
             }
         });
 
-        // Renderer kolorujący wiersze: OVERDUE – czerwono, PENDING – zielono
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(
-                        t, value, isSelected, hasFocus, row, column);
-                if (!isSelected) {
-                    if (overdueRows.contains(row)) {
-                        c.setForeground(Color.RED);
-                    } else if (pendingRows.contains(row)) {
-                        c.setForeground(COLOR_PENDING);
-                    } else {
-                        c.setForeground(t.getForeground());
-                    }
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, column);
+
+                if (overdueRows.contains(row)) {
+                    c.setForeground(Color.decode("#E11D48")); // Użycie naszej czerwieni COLOR_DANGER
+                } else if (pendingRows.contains(row)) {
+                    c.setForeground(COLOR_PENDING);
+                } else {
+                    c.setForeground(isSelected ? t.getSelectionForeground() : t.getForeground());
                 }
+
                 return c;
             }
-        });
-    }
+        });    }
 
     /** {@inheritDoc} */
     @Override

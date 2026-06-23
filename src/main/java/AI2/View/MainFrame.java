@@ -41,16 +41,16 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
 
     /** Klucz karty wypożyczeń. */
-    static final String CARD_RENTS       = "RENTS";
+    static final String CARD_RENTS = "RENTS";
 
     /** Klucz karty klientów. */
-    static final String CARD_CLIENTS     = "CLIENTS";
+    static final String CARD_CLIENTS = "CLIENTS";
 
     /** Klucz karty typów rowerów. */
-    static final String CARD_BIKE_TYPES  = "BIKE_TYPES";
+    static final String CARD_BIKE_TYPES = "BIKE_TYPES";
 
     /** Klucz karty rowerów. */
-    static final String CARD_BIKES       = "BIKES";
+    static final String CARD_BIKES = "BIKES";
 
     /** Klucz karty modeli rowerów. */
     static final String CARD_BIKE_MODELS = "BIKE_MODELS";
@@ -60,7 +60,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
 
     /** Panel kart z widokami. */
-    private final JPanel     contentPanel;
+    private final JPanel contentPanel;
 
     /** Menadżer kart. */
     private final CardLayout layout;
@@ -78,12 +78,12 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /** Wywołanie zwrotne po wylogowaniu / ponownym logowaniu. */
     private final Runnable onLogout;
 
-    private JButton rentsButton;
-    private JButton bikesButton;
-    private JButton bikeTypesButton;
-    private JButton clientsButton;
-    private JButton bikeModelsButton;
-    private JButton workersButton;
+    private JToggleButton rentsButton;
+    private JToggleButton bikesButton;
+    private JToggleButton bikeTypesButton;
+    private JToggleButton clientsButton;
+    private JToggleButton bikeModelsButton;
+    private JToggleButton workersButton;
     private JButton langButton;
 
     /** Etykieta zalogowanego użytkownika w toolbarze. */
@@ -229,6 +229,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
      *
      * @return skonfigurowany pasek narzędzi
      * @author Tomasz Piłat
+     * @author Adrian Karpiński
      */
     private JToolBar buildToolBar() {
         JToolBar toolBar = new JToolBar();
@@ -237,12 +238,12 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         UserRole role = currentUser.getRole();
 
-        rentsButton      = new JButton(LanguageManager.getString("rent.name"));
-        bikesButton      = new JButton(LanguageManager.getString("bike.name"));
-        bikeTypesButton  = new JButton(LanguageManager.getString("bikeType.name"));
-        clientsButton    = new JButton(LanguageManager.getString("client.name"));
-        bikeModelsButton = new JButton(LanguageManager.getString("bikeModel.name"));
-        workersButton    = new JButton(LanguageManager.getString("workers.name"));
+        rentsButton      = new JToggleButton(LanguageManager.getString("rent.name"));
+        bikesButton      = new JToggleButton(LanguageManager.getString("bike.name"));
+        bikeTypesButton  = new JToggleButton(LanguageManager.getString("bikeType.name"));
+        clientsButton    = new JToggleButton(LanguageManager.getString("client.name"));
+        bikeModelsButton = new JToggleButton(LanguageManager.getString("bikeModel.name"));
+        workersButton    = new JToggleButton(LanguageManager.getString("workers.name"));
 
         styleToolbarButton(rentsButton);
         styleToolbarButton(bikesButton);
@@ -251,6 +252,8 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         styleToolbarButton(bikeModelsButton);
         styleToolbarButton(workersButton);
 
+        ButtonGroup buttonGroup = new ButtonGroup();
+
         rentsButton.addActionListener(e      -> layout.show(contentPanel, CARD_RENTS));
         bikesButton.addActionListener(e      -> layout.show(contentPanel, CARD_BIKES));
         bikeTypesButton.addActionListener(e  -> layout.show(contentPanel, CARD_BIKE_TYPES));
@@ -258,13 +261,36 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         bikeModelsButton.addActionListener(e -> layout.show(contentPanel, CARD_BIKE_MODELS));
         workersButton.addActionListener(e    -> layout.show(contentPanel, CARD_WORKERS));
 
-        if (role.canAccess(CARD_RENTS))       toolBar.add(rentsButton);
-        if (role.canAccess(CARD_BIKES))       toolBar.add(bikesButton);
-        if (role.canAccess(CARD_BIKE_MODELS)) toolBar.add(bikeModelsButton);
-        if (role.canAccess(CARD_BIKE_TYPES))  toolBar.add(bikeTypesButton);
-        if (role.canAccess(CARD_CLIENTS))     toolBar.add(clientsButton);
-        if (role.canAccess(CARD_WORKERS))     toolBar.add(workersButton);
-
+        if (role.canAccess(CARD_RENTS)) {
+            rentsButton.addActionListener(e -> layout.show(contentPanel, CARD_RENTS));
+            toolBar.add(rentsButton);
+            buttonGroup.add(rentsButton);
+        }
+        if (role.canAccess(CARD_BIKES)) {
+            bikesButton.addActionListener(e -> layout.show(contentPanel, CARD_BIKES));
+            toolBar.add(bikesButton);
+            buttonGroup.add(bikesButton);
+        }
+        if (role.canAccess(CARD_BIKE_MODELS)) {
+            bikeModelsButton.addActionListener(e -> layout.show(contentPanel, CARD_BIKE_MODELS));
+            toolBar.add(bikeModelsButton);
+            buttonGroup.add(bikeModelsButton);
+        }
+        if (role.canAccess(CARD_BIKE_TYPES)) {
+            bikeTypesButton.addActionListener(e -> layout.show(contentPanel, CARD_BIKE_TYPES));
+            toolBar.add(bikeTypesButton);
+            buttonGroup.add(bikeTypesButton);
+        }
+        if (role.canAccess(CARD_CLIENTS)) {
+            clientsButton.addActionListener(e -> layout.show(contentPanel, CARD_CLIENTS));
+            toolBar.add(clientsButton);
+            buttonGroup.add(clientsButton);
+        }
+        if (role.canAccess(CARD_WORKERS)) {
+            workersButton.addActionListener(e -> layout.show(contentPanel, CARD_WORKERS));
+            toolBar.add(workersButton);
+            buttonGroup.add(workersButton);
+        }
         toolBar.add(Box.createHorizontalGlue());
 
 
@@ -292,10 +318,11 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
      * @param btn przycisk do ostylowania
      * @author Tomasz Piłat
      */
-    private void styleToolbarButton(JButton btn) {
+    private void styleToolbarButton(AbstractButton btn) {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.putClientProperty("JButton.buttonType", "tab");
     }
 
     /**
@@ -305,15 +332,26 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
      */
     private void showFirstAccessibleCard(UserRole role) {
         String[] order = { CARD_RENTS, CARD_BIKES, CARD_CLIENTS,
-                           CARD_BIKE_TYPES, CARD_BIKE_MODELS, CARD_WORKERS };
+                CARD_BIKE_TYPES, CARD_BIKE_MODELS, CARD_WORKERS };
+
         for (String card : order) {
             if (role.canAccess(card)) {
+
                 layout.show(contentPanel, card);
+
+                switch (card) {
+                    case CARD_RENTS -> rentsButton.setSelected(true);
+                    case CARD_BIKES -> bikesButton.setSelected(true);
+                    case CARD_CLIENTS -> clientsButton.setSelected(true);
+                    case CARD_BIKE_TYPES -> bikeTypesButton.setSelected(true);
+                    case CARD_BIKE_MODELS -> bikeModelsButton.setSelected(true);
+                    case CARD_WORKERS -> workersButton.setSelected(true);
+                }
+
                 return;
             }
         }
     }
-
 
     /** {@inheritDoc} */
     @Override
