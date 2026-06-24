@@ -79,11 +79,21 @@ public class BikeTypeService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.bikeType.null"));
         }
+
         validateBikeTypeData(bikeTypeDTO);
 
-        bikeType.setBikeTypeName(bikeTypeDTO.name().trim());
-        bikeType.setBikeTypeNameEn(bikeTypeDTO.nameEn() == null ? "" : bikeTypeDTO.nameEn().trim());
-        bikeType.setBikeTypeDescription(bikeTypeDTO.description().trim());
+        String safeName = bikeTypeDTO.name().trim();
+        String safeDescription = bikeTypeDTO.description().trim();
+        String safeNameEn = bikeTypeDTO.nameEn() == null ? "" : bikeTypeDTO.nameEn().trim();
+
+        if (isBikeTypeNameTaken(safeName, bikeType.getBikeTypeId())) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bikeType.nameExists"));
+        }
+
+        bikeType.setBikeTypeName(safeName);
+        bikeType.setBikeTypeNameEn(safeNameEn);
+        bikeType.setBikeTypeDescription(safeDescription);
 
         return bikeTypeRepository.updateBikeType(bikeType);
     }
@@ -130,5 +140,24 @@ public class BikeTypeService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.bikeType.descriptionEmpty"));
         }
+    }
+
+    /**
+     * Sprawdza, czy nazwa typu roweru jest już zajęta przez inny rekord.
+     *
+     * @param name nazwa do sprawdzenia
+     * @param excludedId identyfikator rekordu, który ma być pominięty
+     * @return {@code true} jeśli nazwa istnieje w innym rekordzie
+     */
+    private boolean isBikeTypeNameTaken(String name, Integer excludedId) {
+        for (BikeType bikeType : bikeTypeRepository.getAllBikeTypes()) {
+            if (excludedId != null && bikeType.getBikeTypeId() == excludedId) {
+                continue;
+            }
+            if (bikeType.getBikeTypeName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

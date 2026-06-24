@@ -18,7 +18,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //ustawienia flatlafa
         Color bgNeutral = Color.decode("#F5F5F0");
         Color textNavy = Color.decode("#1A2B3C");
         Color primaryGreen= Color.decode("#2E7D32");
@@ -27,9 +26,8 @@ public class Main {
         UIManager.put("Component.arc", 15);
         UIManager.put("TextComponent.arc", 15);
 
-        UIManager.put("ScrollPane.arc", 15); // Zaokrągla listy rowerów i duże pole uwag!
-        UIManager.put("ComboBox.arc", 15);   // Zaokrągla rozwijane listy i wybór daty
-
+        UIManager.put("ScrollPane.arc", 15);
+        UIManager.put("ComboBox.arc", 15);
         UIManager.put("Panel.background", bgNeutral);
         UIManager.put("RootPane.background", bgNeutral);
         UIManager.put("Label.foreground", textNavy);

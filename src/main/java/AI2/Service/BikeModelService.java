@@ -79,10 +79,19 @@ public class BikeModelService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.bikeModel.null"));
         }
+
         validateBikeModelData(dto);
 
-        bikeModel.setBrand(dto.brand().trim());
-        bikeModel.setModel(dto.model().trim());
+        String safeBrand = dto.brand().trim();
+        String safeModel = dto.model().trim();
+
+        if (isBikeModelTaken(safeBrand, safeModel, bikeModel.getId())) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bikeModel.nameExists"));
+        }
+
+        bikeModel.setBrand(safeBrand);
+        bikeModel.setModel(safeModel);
         return bikeModelRepository.updateBikeModel(bikeModel);
     }
 
@@ -132,5 +141,25 @@ public class BikeModelService {
             throw new IllegalArgumentException(
                     LanguageManager.getString("error.bikeModel.modelEmpty"));
         }
+    }
+    /**
+     * Sprawdza, czy para marka + model jest już zajęta przez inny rekord.
+     *
+     * @param brand marka do sprawdzenia
+     * @param model model do sprawdzenia
+     * @param excludedId identyfikator rekordu, który ma być pominięty
+     * @return {@code true} jeśli taka para istnieje w innym rekordzie
+     */
+    private boolean isBikeModelTaken(String brand, String model, Integer excludedId) {
+        for (BikeModel bikeModel : bikeModelRepository.getAllBikeModels()) {
+            if (excludedId != null && bikeModel.getId() == excludedId) {
+                continue;
+            }
+            if (bikeModel.getBrand().equalsIgnoreCase(brand)
+                    && bikeModel.getModel().equalsIgnoreCase(model)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

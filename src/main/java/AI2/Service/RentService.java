@@ -60,19 +60,6 @@ public class RentService {
     }
 
     /**
-     * Kończy wypożyczenie – ustawia status FINISHED i zwraca rower (AVAILABLE).
-     * Deleguje do {@link #endRent(int, String)} z pustymi uwagami.
-     *
-     * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException jeśli wypożyczenie nie istnieje
-     * @throws IllegalStateException jeśli wypożyczenie jest już zakończone
-     * @author Tomasz Piłat
-     */
-    public void endRent(int rentId) {
-        endRent(rentId, "");
-    }
-
-    /**
      * Kończy wypożyczenie – ustawia status FINISHED, zwraca rower (AVAILABLE)
      * i zapisuje uwagi przy zwrocie.
      *

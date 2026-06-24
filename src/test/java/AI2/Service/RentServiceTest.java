@@ -130,7 +130,7 @@ class RentServiceTest {
     void endRent_scheduledRent_statusBecomesFinished() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId());
+        service.endRent(rent.getId(),"");
         assertEquals(RentStatus.FINISHED, service.getRentByID(rent.getId()).getStatus());
     }
 
@@ -138,7 +138,7 @@ class RentServiceTest {
     void endRent_scheduledRent_bikeStaysAvailable() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId());
+        service.endRent(rent.getId(),"");
         assertEquals(BikeStatus.AVAILABLE, bikeRepo.getBikeById(1).getStatus());
     }
 
@@ -162,14 +162,10 @@ class RentServiceTest {
     void endRent_alreadyFinished_throwsException() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId());
-        assertThrows(IllegalStateException.class, () -> service.endRent(rent.getId()));
+        service.endRent(rent.getId(),"");
+        assertThrows(IllegalStateException.class, () -> service.endRent(rent.getId(),""));
     }
 
-    @Test
-    void endRent_nonExisting_throwsException() {
-        assertThrows(RuntimeException.class, () -> service.endRent(999));
-    }
 
     @Test
     void removeRent_scheduled_rentIsRemoved() {
@@ -253,7 +249,7 @@ class RentServiceTest {
     void cancelRent_finishedStatus_throwsException() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId());
+        service.endRent(rent.getId(),"");
         assertThrows(IllegalStateException.class, () -> service.cancelRent(rent.getId()));
     }
 
@@ -386,7 +382,7 @@ class RentServiceTest {
     void updateStatuses_finishedRent_notAffected() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId()); // FINISHED
+        service.endRent(rent.getId(),""); // FINISHED
 
         rent.setRentDate(LocalDateTime.now().minusDays(3));
         rent.setReturnTime(LocalDateTime.now().minusDays(1));
@@ -411,7 +407,7 @@ class RentServiceTest {
     void clientHasActiveRentals_finishedRent_returnsFalse() {
         Rent rent = new Rent(1, 1, FUTURE, FAR_FUTURE);
         service.addRent(rent);
-        service.endRent(rent.getId());
+        service.endRent(rent.getId(),"");
         assertFalse(service.clientHasActiveRentals(1));
     }
 

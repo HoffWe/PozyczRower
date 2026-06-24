@@ -31,7 +31,7 @@ public class BikeModelRepository {
      * @author Rafał Wojciechowski
      */
     public BikeModelRepository() {
-        bikeModelList      = new ArrayList<>();
+        bikeModelList= new ArrayList<>();
         currentBikeModelId = 0;
         loadBikeModelRepository();
     }
