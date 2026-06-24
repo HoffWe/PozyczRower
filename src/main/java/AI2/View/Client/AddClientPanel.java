@@ -26,9 +26,9 @@ public class AddClientPanel extends BaseFormPanel {
         init();
     }
 
-    // ----------------------------------------------------------------
+    //
     // BaseFormPanel
-    // ----------------------------------------------------------------
+    //
 
     @Override
     protected String getTitleKey() { return "client.nameAdd"; }
@@ -39,10 +39,10 @@ public class AddClientPanel extends BaseFormPanel {
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField     = new JTextField(); nameField.setPreferredSize(size);
-        surnameField  = new JTextField(); surnameField.setPreferredSize(size);
+        nameField = new JTextField(); nameField.setPreferredSize(size);
+        surnameField = new JTextField(); surnameField.setPreferredSize(size);
         evidenceField = new JTextField(); evidenceField.setPreferredSize(size);
-        opisField     = new JTextField(); opisField.setPreferredSize(size);
+        opisField = new JTextField(); opisField.setPreferredSize(size);
     }
 
     @Override

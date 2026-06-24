@@ -28,16 +28,16 @@ public class ClientService {
      */
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-        this.nextId           = clientRepository.getNextId();
+        this.nextId = clientRepository.getNextId();
     }
 
     /**
      * Dodaje nowego klienta z automatycznym ID.
      *
-     * @param name     imię klienta
-     * @param surname  nazwisko klienta
+     * @param name imię klienta
+     * @param surname nazwisko klienta
      * @param evidence numer dowodu klienta
-     * @param opis     opis klienta
+     * @param opis opis klienta
      * @throws IllegalArgumentException jeśli imię, nazwisko lub numer dowodu są puste
      * @author Światosław Matsopa
      */
@@ -67,6 +67,7 @@ public class ClientService {
      *
      * @return lista klientów
      * @author Światosław Matsopa
+     *
      */
     public List<Client> getAllClients() {
         return clientRepository.getAllClients().stream()
@@ -98,11 +99,11 @@ public class ClientService {
     /**
      * Aktualizuje dane klienta.
      *
-     * @param id       identyfikator klienta
-     * @param name     nowe imię
-     * @param surname  nowe nazwisko
+     * @param id identyfikator klienta
+     * @param name nowe imię
+     * @param surname nowe nazwisko
      * @param evidence nowy numer dowodu
-     * @param opis     nowy opis
+     * @param opis nowy opis
      * @author Światosław Matsopa
      */
     public void updateClient(int id, String name, String surname, String evidence, String opis) {

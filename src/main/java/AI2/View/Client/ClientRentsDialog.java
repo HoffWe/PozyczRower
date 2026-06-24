@@ -155,11 +155,11 @@ public class ClientRentsDialog extends JDialog {
         topPanel.setBackground(Color.WHITE);
         topPanel.add(showFinishedBox);
 
-        addButton     = new AppButton(LanguageManager.getString("button.add"));
-        editButton    = new AppButton(LanguageManager.getString("button.edit"));
+        addButton = new AppButton(LanguageManager.getString("button.add"));
+        editButton = new AppButton(LanguageManager.getString("button.edit"));
         confirmButton = new AppButton(LanguageManager.getString("button.confirm"));
-        cancelButton  = new AppButton(LanguageManager.getString("button.cancel"));
-        endButton     = new AppButton(LanguageManager.getString("button.end"));
+        cancelButton = new AppButton(LanguageManager.getString("button.cancel"));
+        endButton = new AppButton(LanguageManager.getString("button.end"));
 
         editButton.setEnabled(false);
         confirmButton.setEnabled(false);
@@ -193,9 +193,9 @@ public class ClientRentsDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    // ----------------------------------------------------------------
+    //
     // Logika przycisków
-    // ----------------------------------------------------------------
+    //
 
     /**
      * Aktualizuje stan przycisków na podstawie statusu zaznaczonego wiersza.
@@ -228,9 +228,9 @@ public class ClientRentsDialog extends JDialog {
         }
     }
 
-    // ----------------------------------------------------------------
+    //
     // Akcje
-    // ----------------------------------------------------------------
+    //
 
     /** Otwiera formularz dodawania nowego wypozyczenia dla tego klienta */
     private void onAdd() {
@@ -336,9 +336,9 @@ public class ClientRentsDialog extends JDialog {
         }
     }
 
-    // ----------------------------------------------------------------
+    //
     // Dane
-    // ----------------------------------------------------------------
+    //
 
     /** Pobiera swieże dane z serwisu i przebudowuje tabele */
     private void reloadAndRebuild(boolean showFinished) {
@@ -386,7 +386,6 @@ public class ClientRentsDialog extends JDialog {
                     }
                 }
             } catch (Exception ignored) {}
-
             rowIds.add(r.getId());
             tableModel.addRow(new Object[]{
                     bikeInfo,
@@ -396,7 +395,6 @@ public class ClientRentsDialog extends JDialog {
             });
             rowIdx++;
         }
-
         updateButtonStates();
     }
 }

@@ -26,14 +26,14 @@ public class EditClientPanel extends BaseFormPanel {
     public EditClientPanel(ClientService clientService, Client client,
                            ClientPanel parentPanel) {
         this.clientService = clientService;
-        this.client        = client;
-        this.parentPanel   = parentPanel;
+        this.client = client;
+        this.parentPanel = parentPanel;
         init();
     }
 
-    // ----------------------------------------------------------------
+    //
     // BaseFormPanel
-    // ----------------------------------------------------------------
+    //
 
     @Override
     protected String getTitleKey() { return "client.editTitle"; }
@@ -44,17 +44,17 @@ public class EditClientPanel extends BaseFormPanel {
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField     = new JTextField(client.getName());     nameField.setPreferredSize(size);
-        surnameField  = new JTextField(client.getSurname());  surnameField.setPreferredSize(size);
+        nameField = new JTextField(client.getName());     nameField.setPreferredSize(size);
+        surnameField = new JTextField(client.getSurname());  surnameField.setPreferredSize(size);
         evidenceField = new JTextField(client.getEvidence()); evidenceField.setPreferredSize(size);
-        opisField     = new JTextField(client.getOpis());     opisField.setPreferredSize(size);
+        opisField = new JTextField(client.getOpis());     opisField.setPreferredSize(size);
     }
 
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "client.firstName",   nameField);
-        addFormRow(formPanel, gbc, "client.lastName",    surnameField);
-        addFormRow(formPanel, gbc, "client.evidence",    evidenceField);
+        addFormRow(formPanel, gbc, "client.firstName",  nameField);
+        addFormRow(formPanel, gbc, "client.lastName", surnameField);
+        addFormRow(formPanel, gbc, "client.evidence",  evidenceField);
         addFormRow(formPanel, gbc, "client.description", opisField);
     }
 

@@ -105,7 +105,6 @@ public class ClientRepository {
             }
         });
     }
-
     /** Wczytuje klientow z pliku */
     private void loadFromFile() {
         File file = new File(FILE_NAME);
@@ -129,7 +128,6 @@ public class ClientRepository {
                 client.setDeleted(isDeleted);
                 clients.add(client);
             }
-
             dis.close();
             fis.close();
         } catch (IOException e) {
