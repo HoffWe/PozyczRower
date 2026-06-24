@@ -69,7 +69,7 @@ public class BikeModelService {
      * Aktualizuje istniejący model roweru.
      *
      * @param bikeModel model roweru do zaktualizowania
-     * @param dto       nowe dane z widoku
+     * @param dto nowe dane z widoku
      * @return {@code true} jeśli aktualizacja się powiodła
      * @throws IllegalArgumentException jeśli model jest null lub dane niepoprawne
      * @author Rafał Wojciechowski

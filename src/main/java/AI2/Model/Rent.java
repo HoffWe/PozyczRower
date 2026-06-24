@@ -63,17 +63,17 @@ public class Rent {
     /**
      * Konstruktor skrócony – nowe wypożyczenie bez statusu i uwag.
      *
-     * @param bikeId     identyfikator roweru
-     * @param clientId   identyfikator klienta
-     * @param startDate  data rozpoczęcia
+     * @param bikeId identyfikator roweru
+     * @param clientId identyfikator klienta
+     * @param startDate data rozpoczęcia
      * @param returnTime data zwrotu
      */
     public Rent(int bikeId, int clientId, LocalDateTime startDate, LocalDateTime returnTime) {
-        this.bikeId     = bikeId;
-        this.clientId   = clientId;
-        this.rentDate   = startDate;
+        this.bikeId = bikeId;
+        this.clientId = clientId;
+        this.rentDate = startDate;
         this.returnTime = returnTime;
-        this.notes      = "";
+        this.notes = "";
     }
 
     /** @return identyfikator wypożyczenia */

@@ -50,7 +50,7 @@ public class UserService {
      *
      * @param username nazwa użytkownika
      * @param password hasło w postaci jawnej (zostanie zahaszowane)
-     * @param role     rola
+     * @param role rola
      * @throws IllegalArgumentException jeśli dane są niepoprawne lub użytkownik już istnieje
      */
     public void addUser(String username, String password, UserRole role) {
@@ -67,7 +67,7 @@ public class UserService {
     /**
      * Aktualizuje dane użytkownika. Jeśli newPassword jest puste, hasło nie zmienia się.
      *
-     * @param user        użytkownik z nowymi danymi (id musi być poprawne)
+     * @param user użytkownik z nowymi danymi (id musi być poprawne)
      * @param newPassword nowe hasło (lub pusty string — wtedy hasło bez zmiany)
      * @throws IllegalArgumentException jeśli dane są niepoprawne
      */

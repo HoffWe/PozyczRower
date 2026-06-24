@@ -25,7 +25,7 @@ public class BikeModel {
      * @author Rafał Wojciechowski
      */
     public BikeModel(int id, String brand, String model) {
-        this.id    = id;
+        this.id = id;
         this.brand = brand;
         this.model = model;
     }

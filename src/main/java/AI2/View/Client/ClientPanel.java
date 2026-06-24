@@ -194,7 +194,6 @@ public class ClientPanel extends BaseListPanel {
     /**
      * Otwiera dialog z listą wypożyczeń zaznaczonego klienta.
      *
-     * @author Tomasz Piłat
      */
     private void onShowRents() {
         int id = getSelectedId();

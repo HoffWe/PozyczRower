@@ -30,7 +30,6 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
      * Musi być wywołana jako ostatnia instrukcja konstruktora podklasy.
      */
     protected final void init() {
-//        setBackground(Color.WHITE);
         initComponents();
         buildLayout();
         registerListeners();
@@ -65,13 +64,11 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
         add(titleLabel, BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-//        formPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = createDefaultGbc();
         buildForm(formPanel, gbc);
         add(formPanel, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-//        buttonPanel.setBackground(Color.WHITE);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));;
         buttonPanel.add(submitButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }

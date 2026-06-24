@@ -124,8 +124,8 @@ public class BikeService {
      * Sprawdza poprawność danych roweru.
      *
      * @param bikeModelId identyfikator modelu roweru (musi być > 0)
-     * @param bikeTypeId  identyfikator typu roweru (musi być > 0)
-     * @param wheelSize   rozmiar koła (musi być > 0)
+     * @param bikeTypeId identyfikator typu roweru (musi być > 0)
+     * @param wheelSize rozmiar koła (musi być > 0)
      * @throws IllegalArgumentException jeśli któraś wartość jest niepoprawna
      * @author Rafał Wojciechowski
      */

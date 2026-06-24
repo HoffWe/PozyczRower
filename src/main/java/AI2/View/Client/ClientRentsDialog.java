@@ -50,18 +50,18 @@ public class ClientRentsDialog extends JDialog {
     /** Kolor dla aktywnych i oczekujacych wierszy. */
     private static final Color COLOR_GREEN = new Color(0, 150, 0);
 
-    private final RentService      rentService;
-    private final BikeService      bikeService;
+    private final RentService rentService;
+    private final BikeService bikeService;
     private final BikeModelService bikeModelService;
-    private final BikeTypeService  bikeTypeService;
-    private final ClientService    clientService;
-    private final Client           client;
+    private final BikeTypeService bikeTypeService;
+    private final ClientService clientService;
+    private final Client  client;
 
-    private List<Rent>              allRents;
+    private List<Rent> allRents;
     private final DefaultTableModel tableModel;
-    private final List<Integer>     rowIds      = new ArrayList<>();
-    private final List<Integer>     overdueRows = new ArrayList<>();
-    private final List<Integer>     greenRows   = new ArrayList<>();
+    private final List<Integer> rowIds = new ArrayList<>();
+    private final List<Integer> overdueRows = new ArrayList<>();
+    private final List<Integer> greenRows = new ArrayList<>();
 
     private JTable table;
     private JButton addButton;
@@ -181,9 +181,9 @@ public class ClientRentsDialog extends JDialog {
 
         setLayout(new BorderLayout(8, 8));
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(topPanel,               BorderLayout.NORTH);
+        add(topPanel,BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
-        add(buttonPanel,            BorderLayout.SOUTH);
+        add(buttonPanel,BorderLayout.SOUTH);
 
         rebuildTable(false);
 
@@ -195,7 +195,6 @@ public class ClientRentsDialog extends JDialog {
      * Aktualizuje stan przycisków na podstawie statusu zaznaczonego wiersza.
      * Brak zaznaczenia wyłącza wszystkie przyciski akcji.
      *
-     * @author Rafał Wojciechowski
      */
     private void updateButtonStates() {
         int row = table.getSelectedRow();
@@ -339,7 +338,6 @@ public class ClientRentsDialog extends JDialog {
      *
      * @param showFinished {@code true} – wyświetla wszystkie statusy;
      *                     {@code false} – ukrywa zakończone ({@link RentStatus#FINISHED})
-     * @author Rafał Wojciechowski
      */
     private void rebuildTable(boolean showFinished) {
         if (allRents == null) {
@@ -358,8 +356,8 @@ public class ClientRentsDialog extends JDialog {
         int rowIdx = 0;
         for (Rent r : visible) {
             RentStatus s = r.getStatus();
-            if (s == RentStatus.OVERDUE)                            overdueRows.add(rowIdx);
-            if (s == RentStatus.PENDING)  greenRows.add(rowIdx);
+            if (s == RentStatus.OVERDUE) overdueRows.add(rowIdx);
+            if (s == RentStatus.PENDING) greenRows.add(rowIdx);
 
             String bikeInfo = "ID:" + r.getBikeId();
             try {
@@ -375,7 +373,7 @@ public class ClientRentsDialog extends JDialog {
             rowIds.add(r.getId());
             tableModel.addRow(new Object[]{
                     bikeInfo,
-                    r.getRentDate()   != null ? r.getRentDate().format(FMT)   : "-",
+                    r.getRentDate() != null ? r.getRentDate().format(FMT)   : "-",
                     r.getReturnTime() != null ? r.getReturnTime().format(FMT) : "-",
                     s != null ? s.getDisplayName() : "-"
             });

@@ -34,25 +34,33 @@ public class EditClientPanel extends BaseFormPanel {
     }
 
     @Override
-    protected String getTitleKey() { return "client.editTitle"; }
+    protected String getTitleKey() {
+        return "client.editTitle";
+    }
 
     @Override
-    protected String getSubmitButtonKey() { return "button.save"; }
+    protected String getSubmitButtonKey() {
+        return "button.save";
+    }
 
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField = new JTextField(client.getName());     nameField.setPreferredSize(size);
-        surnameField = new JTextField(client.getSurname());  surnameField.setPreferredSize(size);
-        evidenceField = new JTextField(client.getEvidence()); evidenceField.setPreferredSize(size);
-        opisField = new JTextField(client.getOpis());     opisField.setPreferredSize(size);
+        nameField = new JTextField(client.getName());
+        nameField.setPreferredSize(size);
+        surnameField = new JTextField(client.getSurname());
+        surnameField.setPreferredSize(size);
+        evidenceField = new JTextField(client.getEvidence());
+        evidenceField.setPreferredSize(size);
+        opisField = new JTextField(client.getOpis());
+        opisField.setPreferredSize(size);
     }
 
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "client.firstName",  nameField);
+        addFormRow(formPanel, gbc, "client.firstName", nameField);
         addFormRow(formPanel, gbc, "client.lastName", surnameField);
-        addFormRow(formPanel, gbc, "client.evidence",  evidenceField);
+        addFormRow(formPanel, gbc, "client.evidence",evidenceField);
         addFormRow(formPanel, gbc, "client.description", opisField);
     }
 
