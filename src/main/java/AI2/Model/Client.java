@@ -40,60 +40,54 @@ public class Client {
 
     /** Zwraca ID klienta */
     public int getId() {
-
         return id;
     }
     /** Ustawia ID klienta */
     public void setId(int id) {
-
         this.id = id;
     }
     /** Zwraca imie klienta */
     public String getName() {
-
         return name;
     }
     /** Ustawia imie klienta */
     public void setName(String name) {
-
         this.name = name;
     }
     /** Zwraca nazwisko klienta */
     public String getSurname() {
-
         return surname;
     }
     /** Ustawia nazwisko klienta */
     public void setSurname(String surname) {
-
         this.surname = surname;
     }
     /** Zwraca numer dowodu */
     public String getEvidence() {
-
         return evidence;
     }
     /** Ustawia numer dowodu */
     public void setEvidence(String evidence) {
-
         this.evidence = evidence;
     }
     /** Zwraca opis */
     public String getOpis() {
-
         return opis;
     }
     /** Ustawia opis */
     public void setOpis(String opis) {
-
         this.opis = opis;
     }
 
     /** Zwraca czy klient jest miękko usunięty. */
-    public boolean isDeleted() { return deleted; }
+    public boolean isDeleted() {
+        return deleted;
+    }
 
     /** Ustawia flagę miękkiego usunięcia. */
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     @Override
     public String toString() {

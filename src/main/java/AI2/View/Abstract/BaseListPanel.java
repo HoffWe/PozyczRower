@@ -87,7 +87,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         add(titleLabel, BorderLayout.NORTH);
 
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-//        centerPanel.setBackground(Color.WHITE);
 
         SearchPanel searchPanel = new SearchPanel();
         searchField = searchPanel.getSearchField();
@@ -95,7 +94,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         JPanel filterBar = buildFilterBar();
         if (filterBar != null) {
             JPanel topBar = new JPanel(new BorderLayout(0, 4));
-//            topBar.setBackground(Color.WHITE);
             topBar.add(searchPanel, BorderLayout.NORTH);
             topBar.add(filterBar,   BorderLayout.SOUTH);
             centerPanel.add(topBar, BorderLayout.NORTH);
@@ -108,7 +106,6 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-//        buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buildExtraButtons(buttonPanel);

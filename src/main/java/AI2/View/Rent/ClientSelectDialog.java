@@ -43,7 +43,7 @@ public class ClientSelectDialog extends JDialog {
     /**
      * Tworzy okno dialogowe wyboru klienta.
      *
-     * @param owner         okno nadrzędne
+     * @param owner okno nadrzędne
      * @param clientService serwis klientów
      * @author Tomasz Piłat
      */
@@ -58,7 +58,9 @@ public class ClientSelectDialog extends JDialog {
                 LanguageManager.getString("client.lastName"),
                 LanguageManager.getString("client.evidence")
         }, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return false; }
+            @Override public boolean isCellEditable(int row, int col) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -73,7 +75,6 @@ public class ClientSelectDialog extends JDialog {
             }
         });
 
-        // Wyszukiwarka
         SearchPanel searchPanel = new SearchPanel();
         JTextField searchField  = searchPanel.getSearchField();
         searchField.getDocument().addDocumentListener(new DocumentListener() {
@@ -90,13 +91,11 @@ public class ClientSelectDialog extends JDialog {
 
         setLayout(new BorderLayout(10, 10));
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(searchPanel,           BorderLayout.NORTH);
+        add(searchPanel,BorderLayout.NORTH);
         add(new JScrollPane(table),BorderLayout.CENTER);
-        add(south,                 BorderLayout.SOUTH);
+        add(south,BorderLayout.SOUTH);
 
-        // Załaduj pełną listę
         filter("");
-
         setSize(460, 400);
         setResizable(false);
         setLocationRelativeTo(owner);
@@ -115,9 +114,9 @@ public class ClientSelectDialog extends JDialog {
 
         List<Client> filtered = q.isEmpty() ? allClients : allClients.stream()
                 .filter(c ->
-                        contains(c.getName(),     q) ||
-                        contains(c.getSurname(),  q) ||
-                        contains(c.getEvidence(), q))
+                        contains(c.getName(),q) ||
+                        contains(c.getSurname(),q) ||
+                        contains(c.getEvidence(),q))
                 .collect(Collectors.toList());
 
         for (Client c : filtered) {
@@ -139,5 +138,7 @@ public class ClientSelectDialog extends JDialog {
     }
 
     /** Zwraca wybranego klienta lub {@code null} jeśli anulowano. */
-    public Client getSelectedClient() { return selectedClient; }
+    public Client getSelectedClient() {
+        return selectedClient;
+    }
 }

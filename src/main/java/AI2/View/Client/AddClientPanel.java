@@ -22,19 +22,20 @@ public class AddClientPanel extends BaseFormPanel {
 
     public AddClientPanel(ClientService clientService, ClientPanel parentPanel) {
         this.clientService = clientService;
-        this.parentPanel   = parentPanel;
+        this.parentPanel = parentPanel;
         init();
     }
 
-    //
-    // BaseFormPanel
-    //
 
     @Override
-    protected String getTitleKey() { return "client.nameAdd"; }
+    protected String getTitleKey() {
+        return "client.nameAdd";
+    }
 
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add";
+    }
 
     @Override
     protected void initFormComponents() {
@@ -47,10 +48,10 @@ public class AddClientPanel extends BaseFormPanel {
 
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "client.firstName",   nameField);
-        addFormRow(formPanel, gbc, "client.lastName",    surnameField);
-        addFormRow(formPanel, gbc, "client.evidence",    evidenceField);
-        addFormRow(formPanel, gbc, "client.description", opisField);
+        addFormRow(formPanel, gbc, "client.firstName",nameField);
+        addFormRow(formPanel, gbc, "client.lastName",surnameField);
+        addFormRow(formPanel, gbc, "client.evidence",evidenceField);
+        addFormRow(formPanel, gbc, "client.description",opisField);
     }
 
     @Override

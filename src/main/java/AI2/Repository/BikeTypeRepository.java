@@ -148,8 +148,8 @@ public class BikeTypeRepository {
             new File(AppConfig.DATA_DIR).mkdirs();
 
             try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
-                out.writeInt(VERSION_MARKER);   // znacznik wersji
-                out.writeInt(FILE_VERSION);      // numer wersji formatu
+                out.writeInt(VERSION_MARKER);
+                out.writeInt(FILE_VERSION);
                 out.writeInt(idSnapshot);
                 out.writeInt(snapshot.size());
 

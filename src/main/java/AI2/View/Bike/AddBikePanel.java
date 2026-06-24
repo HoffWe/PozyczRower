@@ -54,28 +54,32 @@ public class AddBikePanel extends BaseFormPanel {
     /**
      * Tworzy panel dodawania roweru.
      *
-     * @param bikeService      serwis rowerów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param parentPanel      nadrzędny panel listy
+     * @param bikeTypeService serwis typów rowerów
+     * @param parentPanel nadrzędny panel listy
      * @author Rafał Wojciechowski
      */
     public AddBikePanel(BikeService bikeService, BikeModelService bikeModelService,
                         BikeTypeService bikeTypeService, BikePanel parentPanel) {
-        this.bikeService      = bikeService;
+        this.bikeService = bikeService;
         this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
-        this.parentPanel      = parentPanel;
+        this.bikeTypeService = bikeTypeService;
+        this.parentPanel = parentPanel;
         init();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String getTitleKey() { return "bike.nameAdd"; }
+    protected String getTitleKey() {
+        return "bike.nameAdd";
+    }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add";
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -117,11 +121,11 @@ public class AddBikePanel extends BaseFormPanel {
     /** {@inheritDoc} */
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "bike.model",       modelCombo);
-        addFormRow(formPanel, gbc, "bike.type",        typeCombo);
-        addFormRow(formPanel, gbc, "bike.wheelSize",   wheelSizeField);
-        addFormRow(formPanel, gbc, "bike.status",      statusCombo);
-        addFormRow(formPanel, gbc, "bike.description", descriptionField);
+        addFormRow(formPanel, gbc, "bike.model",modelCombo);
+        addFormRow(formPanel, gbc, "bike.type",typeCombo);
+        addFormRow(formPanel, gbc, "bike.wheelSize",wheelSizeField);
+        addFormRow(formPanel, gbc, "bike.status",statusCombo);
+        addFormRow(formPanel, gbc, "bike.description",descriptionField);
     }
 
     /** {@inheritDoc} */
@@ -129,7 +133,7 @@ public class AddBikePanel extends BaseFormPanel {
     protected void onSubmit() {
         try {
             BikeModel selectedModel = (BikeModel) modelCombo.getSelectedItem();
-            BikeType  selectedType  = (BikeType)  typeCombo.getSelectedItem();
+            BikeType  selectedType = (BikeType) typeCombo.getSelectedItem();
 
             if (selectedModel == null) {
                 throw new IllegalArgumentException(

@@ -9,9 +9,9 @@ import AI2.Enums.UserRole;
  */
 public class User {
 
-    private int      id;
-    private String   username;
-    private String   passwordHash;
+    private int id;
+    private String username;
+    private String passwordHash;
     private UserRole role;
 
     /** Domyślny konstruktor. */
@@ -20,29 +20,45 @@ public class User {
     /**
      * Tworzy użytkownika z podanymi danymi.
      *
-     * @param id           identyfikator
-     * @param username     nazwa użytkownika
+     * @param id identyfikator
+     * @param username nazwa użytkownika
      * @param passwordHash skrót SHA-256 hasła
-     * @param role         rola
+     * @param role rola
      */
     public User(int id, String username, String passwordHash, UserRole role) {
-        this.id           = id;
-        this.username     = username;
+        this.id = id;
+        this.username = username;
         this.passwordHash = passwordHash;
-        this.role         = role;
+        this.role = role;
     }
 
-    public int getId()                     { return id; }
-    public void setId(int id)              { this.id = id; }
+    public int getId(){
+        return id;
+    }
+    public void setId(int id)
+    { this.id = id;
+    }
 
-    public String getUsername()            { return username; }
-    public void setUsername(String u)      { this.username = u; }
+    public String getUsername()
+    { return username;
+    }
+    public void setUsername(String u)
+    { this.username = u;
+    }
 
-    public String getPasswordHash()        { return passwordHash; }
-    public void setPasswordHash(String h)  { this.passwordHash = h; }
+    public String getPasswordHash()
+    { return passwordHash;
+    }
+    public void setPasswordHash(String h)
+    { this.passwordHash = h;
+    }
 
-    public UserRole getRole()              { return role; }
-    public void setRole(UserRole role)     { this.role = role; }
+    public UserRole getRole()
+    { return role;
+    }
+    public void setRole(UserRole role)
+    { this.role = role;
+    }
 
     @Override
     public String toString() {

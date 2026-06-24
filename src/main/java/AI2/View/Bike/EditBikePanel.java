@@ -59,30 +59,34 @@ public class EditBikePanel extends BaseFormPanel {
     /**
      * Tworzy panel edycji roweru.
      *
-     * @param bikeService      serwis rowerów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param bike             rower do edycji
-     * @param parentPanel      nadrzędny panel listy
+     * @param bikeTypeService serwis typów rowerów
+     * @param bike rower do edycji
+     * @param parentPanel nadrzędny panel listy
      * @author Rafał Wojciechowski
      */
     public EditBikePanel(BikeService bikeService, BikeModelService bikeModelService,
                          BikeTypeService bikeTypeService, Bike bike, BikePanel parentPanel) {
-        this.bikeService      = bikeService;
-        this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
-        this.bike             = bike;
-        this.parentPanel      = parentPanel;
+        this.bikeService= bikeService;
+        this.bikeModelService= bikeModelService;
+        this.bikeTypeService= bikeTypeService;
+        this.bike= bike;
+        this.parentPanel= parentPanel;
         init();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String getTitleKey() { return "bike.editTitle"; }
+    protected String getTitleKey() {
+        return "bike.editTitle";
+    }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() { return "button.save"; }
+    protected String getSubmitButtonKey() {
+        return "button.save";
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -131,11 +135,11 @@ public class EditBikePanel extends BaseFormPanel {
     /** {@inheritDoc} */
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "bike.model",       modelLabel);
-        addFormRow(formPanel, gbc, "bike.type",        typeCombo);
-        addFormRow(formPanel, gbc, "bike.wheelSize",   wheelSizeField);
-        addFormRow(formPanel, gbc, "bike.status",      statusCombo);
-        addFormRow(formPanel, gbc, "bike.description", descriptionField);
+        addFormRow(formPanel, gbc, "bike.model",modelLabel);
+        addFormRow(formPanel, gbc, "bike.type",typeCombo);
+        addFormRow(formPanel, gbc, "bike.wheelSize",wheelSizeField);
+        addFormRow(formPanel, gbc, "bike.status",statusCombo);
+        addFormRow(formPanel, gbc, "bike.description",descriptionField);
     }
 
     /** {@inheritDoc} */
@@ -152,7 +156,6 @@ public class EditBikePanel extends BaseFormPanel {
             int wheelSize = Integer.parseInt(wheelSizeField.getText().trim());
             if (wheelSize <= 0) throw new NumberFormatException();
 
-            // bikeModelId pozostaje bez zmian
             bike.setBikeTypeId(selectedType.getBikeTypeId());
             bike.setWheelSize(wheelSize);
             bike.setStatus((BikeStatus) statusCombo.getSelectedItem());

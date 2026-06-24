@@ -37,9 +37,9 @@ public enum UserRole {
      */
     public boolean canAccess(String card) {
         return switch (this) {
-            case RENTAL_WORKER -> Set.of("RENTS", "BIKES", "CLIENTS").contains(card);
-            case TECHNICIAN    -> Set.of("BIKES", "BIKE_TYPES", "BIKE_MODELS").contains(card);
-            case ADMIN         -> true;
+            case RENTAL_WORKER-> Set.of("RENTS", "BIKES", "CLIENTS").contains(card);
+            case TECHNICIAN-> Set.of("BIKES", "BIKE_TYPES", "BIKE_MODELS").contains(card);
+            case ADMIN-> true;
         };
     }
 }

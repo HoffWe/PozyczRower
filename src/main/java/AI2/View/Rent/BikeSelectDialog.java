@@ -59,23 +59,20 @@ public class BikeSelectDialog extends JDialog {
     /** Spinner do wyboru ilości rowerów z zaznaczonej grupy. */
     private final JSpinner quantitySpinner;
 
-    // ----------------------------------------------------------------
-    // Wewnętrzna klasa pomocnicza — jedna grupa rowerów
-    // ----------------------------------------------------------------
 
     /** Przechowuje jedną grupę rowerów wraz z rozwiązanymi nazwami. */
     private static class GroupEntry {
         final List<Bike> bikes;
-        final String     typeName;
-        final String     brand;
-        final String     model;
-        final int        wheelSize;
+        final String typeName;
+        final String brand;
+        final String model;
+        final int wheelSize;
 
         GroupEntry(List<Bike> bikes, BikeType bt, BikeModel bm) {
-            this.bikes     = bikes;
-            this.typeName  = bt != null ? bt.getDisplayName() : "?";
-            this.brand     = bm != null ? bm.getBrand()        : "?";
-            this.model     = bm != null ? bm.getModel()        : "?";
+            this.bikes = bikes;
+            this.typeName = bt != null ? bt.getDisplayName() : "?";
+            this.brand = bm != null ? bm.getBrand() : "?";
+            this.model = bm != null ? bm.getModel() : "?";
             this.wheelSize = bikes.get(0).getWheelSize();
         }
 
@@ -91,9 +88,6 @@ public class BikeSelectDialog extends JDialog {
         }
     }
 
-    // ----------------------------------------------------------------
-    // Konstruktory
-    // ----------------------------------------------------------------
 
     /**
      * Tworzy okno dialogowe wyboru rowerów z filtrowaniem okresu i wykluczaniem
@@ -136,7 +130,6 @@ public class BikeSelectDialog extends JDialog {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // Dostępne rowery: AVAILABLE + wolne w okresie + nie wykluczone
         List<Bike> available = bikeService.getAllBikes().stream()
                 .filter(b -> {
                     if (b.getStatus() != BikeStatus.AVAILABLE) return false;
@@ -150,7 +143,6 @@ public class BikeSelectDialog extends JDialog {
                 })
                 .collect(Collectors.toList());
 
-        // Grupowanie wg (bikeModelId | bikeTypeId | wheelSize)
         Map<String, List<Bike>> grouped = new LinkedHashMap<>();
         for (Bike b : available) {
             String key = b.getBikeModelId() + "|" + b.getBikeTypeId() + "|" + b.getWheelSize();
@@ -164,12 +156,10 @@ public class BikeSelectDialog extends JDialog {
             allGroups.add(new GroupEntry(bikes, bt, bm));
         }
 
-        // Spinner ilości
         quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1, 1));
         quantitySpinner.setEnabled(false);
         quantitySpinner.setPreferredSize(new Dimension(60, 30));
 
-        // Aktualizuj max spinnera przy zmianie zaznaczenia
         table.getSelectionModel().addListSelectionListener(e -> {
             if (e.getValueIsAdjusting()) return;
             int row = table.getSelectedRow();
@@ -193,7 +183,6 @@ public class BikeSelectDialog extends JDialog {
         JButton selectButton = new AppButton(LanguageManager.getString("button.select"));
         selectButton.addActionListener(e -> confirmSelection());
 
-        // Wyszukiwarka
         SearchPanel searchPanel = new SearchPanel();
         JTextField  searchField = searchPanel.getSearchField();
         searchField.getDocument().addDocumentListener(new DocumentListener() {
@@ -202,7 +191,6 @@ public class BikeSelectDialog extends JDialog {
             public void changedUpdate(DocumentEvent e) { filter(searchField.getText()); }
         });
 
-        // Układ
         JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 4));
         south.add(new JLabel(LanguageManager.getString("bike.quantity") + ":"));
         south.add(quantitySpinner);
@@ -214,7 +202,6 @@ public class BikeSelectDialog extends JDialog {
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(south,                  BorderLayout.SOUTH);
 
-        // Załaduj pełną listę
         filter("");
 
         setSize(620, 440);
@@ -245,10 +232,6 @@ public class BikeSelectDialog extends JDialog {
                 rentService, periodStart, periodEnd, Collections.emptySet());
     }
 
-    // ----------------------------------------------------------------
-    // Filtrowanie
-    // ----------------------------------------------------------------
-
     /**
      * Przebudowuje tabelę pokazując tylko grupy pasujące do zapytania.
      * Filtruje po typie, marce, modelu i rozmiarze koła.
@@ -272,10 +255,6 @@ public class BikeSelectDialog extends JDialog {
         }
     }
 
-    // ----------------------------------------------------------------
-    // Zatwierdzenie
-    // ----------------------------------------------------------------
-
     /**
      * Zatwierdza wybór: pobiera pierwsze {@code quantity} rowerów z zaznaczonej grupy.
      *
@@ -290,17 +269,15 @@ public class BikeSelectDialog extends JDialog {
         dispose();
     }
 
-    // ----------------------------------------------------------------
-    // Wyniki
-    // ----------------------------------------------------------------
-
     /**
      * Zwraca listę wybranych rowerów (pusta = anulowano).
      *
      * @return wybrane rowery
      * @author Tomasz Piłat
      */
-    public List<Bike> getSelectedBikes() { return selectedBikes; }
+    public List<Bike> getSelectedBikes() {
+        return selectedBikes;
+    }
 
     /**
      * Wygodna metoda zwracająca pierwszy wybrany rower (dla EditRentPanel).

@@ -34,7 +34,9 @@ public class BikeModelPanel extends BaseListPanel {
 
     /** {@inheritDoc} */
     @Override
-    protected String getTitleKey() { return "bikeModel.management"; }
+    protected String getTitleKey() {
+        return "bikeModel.management";
+    }
 
     /** {@inheritDoc} */
     @Override

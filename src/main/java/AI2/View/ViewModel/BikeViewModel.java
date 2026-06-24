@@ -36,7 +36,7 @@ public class BikeViewModel {
     /**
      * Tworzy ViewModel roweru z rozwiązanymi obiektami modelu i typu.
      *
-     * @param bike      rower
+     * @param bike rower
      * @param bikeModel model roweru (może być {@code null})
      * @param bikeType  typ roweru (może być {@code null})
      * @author Rafał Wojciechowski

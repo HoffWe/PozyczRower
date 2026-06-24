@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public class ClientPanel extends BaseListPanel {
 
     private final ClientService clientService;
-    private final RentService  rentService;
-    private final BikeService  bikeService;
+    private final RentService rentService;
+    private final BikeService bikeService;
     private final BikeModelService bikeModelService;
-    private final BikeTypeService  bikeTypeService;
+    private final BikeTypeService bikeTypeService;
 
     private JButton rentButton;
     private JButton showRentsButton;
@@ -42,11 +42,6 @@ public class ClientPanel extends BaseListPanel {
         this.bikeTypeService = bikeTypeService;
         loadData();
     }
-
-    //
-    // BaseListPanel – dodatkowe komponenty
-    //
-
     @Override
     protected void initExtraComponents() {
         rentButton = new AppButton(LanguageManager.getString("button.rent"));
@@ -79,10 +74,6 @@ public class ClientPanel extends BaseListPanel {
         rentButton.addActionListener(e -> onRent());
         showRentsButton.addActionListener(e -> onShowRents());
     }
-
-    //
-    // BaseListPanel – implementacja metod abstrakcyjnych
-    //
 
     @Override
     protected String getTitleKey() {
@@ -182,10 +173,6 @@ public class ClientPanel extends BaseListPanel {
         }
     }
 
-    //
-    // Wypożycz
-    //
-
     private void onRent() {
         int id = getSelectedId();
         if (id == -1) return;
@@ -201,9 +188,6 @@ public class ClientPanel extends BaseListPanel {
         );
     }
 
-    //
-    // Wypożyczenia klienta
-    //
 
     /**
      * Otwiera dialog z listą wypożyczeń zaznaczonego klienta.

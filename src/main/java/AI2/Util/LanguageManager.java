@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 /**
  * Zarządza językiem aplikacji i powiadamia zarejestrowanych słuchaczy
  * o każdej zmianie.
+ * @author Adrian Karpiński
  */
 public class LanguageManager {
 

@@ -32,9 +32,9 @@ public class BikeService {
      * Dodaje nowy rower do systemu.
      *
      * @param bikeModelId identyfikator modelu roweru
-     * @param bikeTypeId  identyfikator typu roweru
-     * @param wheelSize   rozmiar koła
-     * @param status      status roweru
+     * @param bikeTypeId identyfikator typu roweru
+     * @param wheelSize rozmiar koła
+     * @param status status roweru
      * @param description opis roweru
      * @return dodany rower
      * @throws IllegalArgumentException jeśli dane są niepoprawne

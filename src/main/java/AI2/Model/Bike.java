@@ -38,23 +38,23 @@ public class Bike {
     /**
      * Tworzy nowy rower.
      *
-     * @param bikeId      identyfikator roweru
+     * @param bikeId identyfikator roweru
      * @param bikeModelId identyfikator modelu roweru
-     * @param bikeTypeId  identyfikator typu roweru
-     * @param wheelSize   rozmiar koła
-     * @param status      status roweru
+     * @param bikeTypeId identyfikator typu roweru
+     * @param wheelSize rozmiar koła
+     * @param status status roweru
      * @param description opis roweru
      * @author Rafał Wojciechowski
      */
     public Bike(int bikeId, int bikeModelId, int bikeTypeId,
                 int wheelSize, BikeStatus status, String description) {
-        this.bikeId      = bikeId;
+        this.bikeId = bikeId;
         this.bikeModelId = bikeModelId;
-        this.bikeTypeId  = bikeTypeId;
-        this.wheelSize   = wheelSize;
-        this.status      = status;
+        this.bikeTypeId = bikeTypeId;
+        this.wheelSize = wheelSize;
+        this.status = status;
         this.description = description;
-        this.deleted     = false;
+        this.deleted = false;
     }
 
     /**
@@ -71,7 +71,9 @@ public class Bike {
      * @param bikeId identyfikator roweru
      * @author Rafał Wojciechowski
      */
-    public void setBikeId(int bikeId) { this.bikeId = bikeId; }
+    public void setBikeId(int bikeId) {
+        this.bikeId = bikeId;
+    }
 
     /**
      * Zwraca identyfikator modelu roweru.
@@ -79,7 +81,9 @@ public class Bike {
      * @return identyfikator modelu
      * @author Rafał Wojciechowski
      */
-    public int getBikeModelId() { return bikeModelId; }
+    public int getBikeModelId() {
+        return bikeModelId;
+    }
 
     /**
      * Ustawia identyfikator modelu roweru.
@@ -87,7 +91,9 @@ public class Bike {
      * @param bikeModelId identyfikator modelu
      * @author Rafał Wojciechowski
      */
-    public void setBikeModelId(int bikeModelId) { this.bikeModelId = bikeModelId; }
+    public void setBikeModelId(int bikeModelId) {
+        this.bikeModelId = bikeModelId;
+    }
 
     /**
      * Zwraca identyfikator typu roweru.
@@ -95,7 +101,9 @@ public class Bike {
      * @return identyfikator typu
      * @author Rafał Wojciechowski
      */
-    public int getBikeTypeId() { return bikeTypeId; }
+    public int getBikeTypeId() {
+        return bikeTypeId;
+    }
 
     /**
      * Ustawia identyfikator typu roweru.
@@ -103,7 +111,9 @@ public class Bike {
      * @param bikeTypeId identyfikator typu
      * @author Rafał Wojciechowski
      */
-    public void setBikeTypeId(int bikeTypeId) { this.bikeTypeId = bikeTypeId; }
+    public void setBikeTypeId(int bikeTypeId) {
+        this.bikeTypeId = bikeTypeId;
+    }
 
     /**
      * Zwraca rozmiar koła roweru.
@@ -111,7 +121,9 @@ public class Bike {
      * @return rozmiar koła
      * @author Rafał Wojciechowski
      */
-    public int getWheelSize() { return wheelSize; }
+    public int getWheelSize() {
+        return wheelSize;
+    }
 
     /**
      * Ustawia rozmiar koła roweru.
@@ -119,7 +131,9 @@ public class Bike {
      * @param wheelSize rozmiar koła
      * @author Rafał Wojciechowski
      */
-    public void setWheelSize(int wheelSize) { this.wheelSize = wheelSize; }
+    public void setWheelSize(int wheelSize) {
+        this.wheelSize = wheelSize;
+    }
 
     /**
      * Zwraca status roweru.
@@ -127,7 +141,9 @@ public class Bike {
      * @return status roweru
      * @author Rafał Wojciechowski
      */
-    public BikeStatus getStatus() { return status; }
+    public BikeStatus getStatus() {
+        return status;
+    }
 
     /**
      * Ustawia status roweru.
@@ -135,7 +151,9 @@ public class Bike {
      * @param status status roweru
      * @author Rafał Wojciechowski
      */
-    public void setStatus(BikeStatus status) { this.status = status; }
+    public void setStatus(BikeStatus status) {
+        this.status = status;
+    }
 
     /**
      * Zwraca opis roweru.
@@ -143,7 +161,9 @@ public class Bike {
      * @return opis roweru
      * @author Rafał Wojciechowski
      */
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * Ustawia opis roweru.
@@ -151,11 +171,17 @@ public class Bike {
      * @param description opis roweru
      * @author Rafał Wojciechowski
      */
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     /** Zwraca czy rower jest miękko usunięty. */
-    public boolean isDeleted() { return deleted; }
+    public boolean isDeleted() {
+        return deleted;
+    }
 
     /** Ustawia flagę miękkiego usunięcia. */
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }

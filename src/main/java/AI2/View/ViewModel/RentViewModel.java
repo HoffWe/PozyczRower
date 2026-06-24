@@ -43,9 +43,9 @@ public class RentViewModel {
     /**
      * Tworzy ViewModel wypożyczenia z rozwiązanymi obiektami klienta i modelu roweru.
      *
-     * @param rent      wypożyczenie
-     * @param client    klient (może być {@code null})
-     * @param bike      rower (może być {@code null})
+     * @param rent wypożyczenie
+     * @param client klient (może być {@code null})
+     * @param bike rower (może być {@code null})
      * @param bikeModel model roweru (może być {@code null})
      * @author Tomasz Piłat
      */
@@ -132,7 +132,9 @@ public class RentViewModel {
      * @return uwagi lub pusty ciąg
      * @author Tomasz Piłat
      */
-    public String getNotes() { return notes; }
+    public String getNotes() {
+        return notes;
+    }
 
     /**
      * Zwraca wartości wiersza tabeli (bez rentId).

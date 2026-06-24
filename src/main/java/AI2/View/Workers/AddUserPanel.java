@@ -27,11 +27,6 @@ public class AddUserPanel extends BaseFormPanel {
         this.parentPanel   = parentPanel;
         init();
     }
-
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
-
     @Override
     protected String getTitleKey() { return "workers.nameAdd"; }
 

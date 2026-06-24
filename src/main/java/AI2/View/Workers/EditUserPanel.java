@@ -17,12 +17,12 @@ import java.awt.*;
  */
 public class EditUserPanel extends BaseFormPanel {
 
-    private final UserService  userService;
-    private final User         user;
+    private final UserService userService;
+    private final User user;
     private final WorkersPanel parentPanel;
 
-    private JTextField          usernameField;
-    private JPasswordField      passwordField;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
     private JComboBox<UserRole> roleCombo;
 
     public EditUserPanel(UserService userService, User user, WorkersPanel parentPanel) {
@@ -32,15 +32,15 @@ public class EditUserPanel extends BaseFormPanel {
         init();
     }
 
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
+    @Override
+    protected String getTitleKey() {
+        return "workers.editTitle";
+    }
 
     @Override
-    protected String getTitleKey() { return "workers.editTitle"; }
-
-    @Override
-    protected String getSubmitButtonKey() { return "button.save"; }
+    protected String getSubmitButtonKey() {
+        return "button.save";
+    }
 
     @Override
     protected void initFormComponents() {
@@ -71,19 +71,16 @@ public class EditUserPanel extends BaseFormPanel {
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
         addFormRow(formPanel, gbc, "user.username", usernameField);
         addFormRow(formPanel, gbc, "user.passwordNew", passwordField);
-        addFormRow(formPanel, gbc, "user.role",     roleCombo);
+        addFormRow(formPanel, gbc, "user.role", roleCombo);
     }
 
     @Override
     protected void onSubmit() {
         try {
             String newPassword = new String(passwordField.getPassword());
-            // Klonujemy dane do tymczasowego obiektu, żeby nie mutować oryginału
-            // przed pomyślnym zapisem przez serwis.
             User draft = new User(user.getId(), usernameField.getText().trim(),
                     user.getPasswordHash(), (UserRole) roleCombo.getSelectedItem());
             userService.updateUser(draft, newPassword);
-            // Synchronizujemy oryginał dopiero po sukcesie
             user.setUsername(draft.getUsername());
             user.setRole(draft.getRole());
             user.setPasswordHash(draft.getPasswordHash());

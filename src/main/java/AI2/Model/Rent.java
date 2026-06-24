@@ -42,22 +42,22 @@ public class Rent {
     /**
      * Konstruktor pełny (używany przy wczytywaniu z pliku).
      *
-     * @param id         identyfikator
-     * @param bikeId     identyfikator roweru
-     * @param clientId   identyfikator klienta
-     * @param rentDate   data rozpoczęcia
+     * @param id identyfikator
+     * @param bikeId identyfikator roweru
+     * @param clientId identyfikator klienta
+     * @param rentDate data rozpoczęcia
      * @param returnTime data zwrotu
-     * @param status     status wypożyczenia
+     * @param status status wypożyczenia
      */
     public Rent(int id, int bikeId, int clientId, LocalDateTime rentDate,
                 LocalDateTime returnTime, RentStatus status) {
-        this.id         = id;
-        this.bikeId     = bikeId;
-        this.clientId   = clientId;
-        this.rentDate   = rentDate;
+        this.id = id;
+        this.bikeId = bikeId;
+        this.clientId = clientId;
+        this.rentDate = rentDate;
         this.returnTime = returnTime;
-        this.status     = status;
-        this.notes      = "";
+        this.status = status;
+        this.notes = "";
     }
 
     /**
@@ -77,52 +77,80 @@ public class Rent {
     }
 
     /** @return identyfikator wypożyczenia */
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
     /** @param id identyfikator wypożyczenia */
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /** @return identyfikator roweru */
-    public int getBikeId() { return bikeId; }
+    public int getBikeId() {
+        return bikeId;
+    }
 
     /** @param bikeId identyfikator roweru */
-    public void setBikeId(int bikeId) { this.bikeId = bikeId; }
+    public void setBikeId(int bikeId) {
+        this.bikeId = bikeId;
+    }
 
     /** @return identyfikator klienta */
-    public int getClientId() { return clientId; }
+    public int getClientId() {
+        return clientId;
+    }
 
     /** @param clientId identyfikator klienta */
-    public void setClientId(int clientId) { this.clientId = clientId; }
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
 
     /** @return data i czas rozpoczęcia */
-    public LocalDateTime getRentDate() { return rentDate; }
+    public LocalDateTime getRentDate() {
+        return rentDate;
+    }
 
     /** @param rentDate data i czas rozpoczęcia */
-    public void setRentDate(LocalDateTime rentDate) { this.rentDate = rentDate; }
+    public void setRentDate(LocalDateTime rentDate) {
+        this.rentDate = rentDate;
+    }
 
     /** @return planowana data i czas zwrotu */
-    public LocalDateTime getReturnTime() { return returnTime; }
+    public LocalDateTime getReturnTime() {
+        return returnTime;
+    }
 
     /** @param returnTime planowana data i czas zwrotu */
-    public void setReturnTime(LocalDateTime returnTime) { this.returnTime = returnTime; }
+    public void setReturnTime(LocalDateTime returnTime) {
+        this.returnTime = returnTime;
+    }
 
     /** @return status wypożyczenia */
-    public RentStatus getStatus() { return status; }
+    public RentStatus getStatus() {
+        return status;
+    }
 
     /** @param status status wypożyczenia */
-    public void setStatus(RentStatus status) { this.status = status; }
+    public void setStatus(RentStatus status) {
+        this.status = status;
+    }
 
     /**
      * Zwraca uwagi do wypożyczenia.
      *
      * @return uwagi lub pusty ciąg (nigdy {@code null})
      */
-    public String getNotes() { return notes == null ? "" : notes; }
+    public String getNotes() {
+        return notes == null ? "" : notes;
+    }
 
     /**
      * Ustawia uwagi do wypożyczenia.
      *
      * @param notes uwagi (może być {@code null} – traktowane jako pusty ciąg)
      */
-    public void setNotes(String notes) { this.notes = notes == null ? "" : notes; }
+    public void setNotes(String notes) {
+        this.notes = notes == null ? "" : notes;
+    }
 }

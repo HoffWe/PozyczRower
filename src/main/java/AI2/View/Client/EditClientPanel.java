@@ -31,10 +31,6 @@ public class EditClientPanel extends BaseFormPanel {
         init();
     }
 
-    //
-    // BaseFormPanel
-    //
-
     @Override
     protected String getTitleKey() { return "client.editTitle"; }
 

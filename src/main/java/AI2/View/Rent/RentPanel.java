@@ -43,19 +43,12 @@ public class RentPanel extends BaseListPanel {
     /** Kolor zielony dla wierszy PENDING. */
     private static final Color COLOR_PENDING = new Color(0, 150, 0);
 
-    // ----------------------------------------------------------------
-    // Serwisy
-    // ----------------------------------------------------------------
-
     private final RentService rentService;
     private final ClientService clientService;
     private final BikeService bikeService;
     private final BikeModelService bikeModelService;
     private final BikeTypeService bikeTypeService;
 
-    // ----------------------------------------------------------------
-    // Komponenty
-    // ----------------------------------------------------------------
 
     /** Przycisk zakończenia wypożyczenia. */
     private JButton endButton;
@@ -87,21 +80,21 @@ public class RentPanel extends BaseListPanel {
     /**
      * Tworzy panel zarządzania wypożyczeniami.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
+     * @param bikeTypeService serwis typów rowerów
      * @author Tomasz Piłat
      */
     public RentPanel(RentService rentService, ClientService clientService,
                      BikeService bikeService, BikeModelService bikeModelService,
                      BikeTypeService bikeTypeService) {
-        this.rentService      = rentService;
-        this.clientService    = clientService;
-        this.bikeService      = bikeService;
+        this.rentService= rentService;
+        this.clientService= clientService;
+        this.bikeService= bikeService;
         this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
+        this.bikeTypeService = bikeTypeService;
 
         statusTimer = new Timer(STATUS_CHECK_INTERVAL_MS, e -> {
             if (rentService.updateStatuses()) {
@@ -127,10 +120,6 @@ public class RentPanel extends BaseListPanel {
         super.removeNotify();
     }
 
-    // ----------------------------------------------------------------
-    // BaseListPanel – inicjalizacja
-    // ----------------------------------------------------------------
-
     /** {@inheritDoc} */
     @Override
     protected void initExtraComponents() {
@@ -142,7 +131,6 @@ public class RentPanel extends BaseListPanel {
         confirmButton.setEnabled(false);
         cancelButton.setEnabled(false);
 
-        // --- Filtr statusu ---
         statusFilterCombo = new JComboBox<>();
         statusFilterCombo.addItem(STATUS_ALL);
         for (RentStatus s : RentStatus.values()) {
@@ -235,10 +223,6 @@ public class RentPanel extends BaseListPanel {
         if (statusFilterCombo != null) statusFilterCombo.repaint();
     }
 
-    // ----------------------------------------------------------------
-    // BaseListPanel – metody abstrakcyjne
-    // ----------------------------------------------------------------
-
     /** {@inheritDoc} */
     @Override
     protected String getTitleKey() { return "rent.management"; }
@@ -262,13 +246,11 @@ public class RentPanel extends BaseListPanel {
         rentService.updateStatuses();
         String query = searchField != null ? searchField.getText().trim() : "";
 
-        // Wybrany filtr statusu
         Object sel = statusFilterCombo != null ? statusFilterCombo.getSelectedItem() : STATUS_ALL;
         RentStatus filterStatus = (sel instanceof RentStatus) ? (RentStatus) sel : null;
 
         List<Rent> rents = rentService.getAllRents();
 
-        // Filtruj wg statusu
         if (filterStatus != null) {
             final RentStatus fs = filterStatus;
             rents = rents.stream()
@@ -276,7 +258,6 @@ public class RentPanel extends BaseListPanel {
                     .toList();
         }
 
-        // Filtruj wg tekstu wyszukiwania
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             rents = rents.stream()
@@ -298,7 +279,6 @@ public class RentPanel extends BaseListPanel {
                     .toList();
         }
 
-        // OVERDUE na górze, potem PENDING, reszta bez zmian
         rents = new ArrayList<>(rents);
         rents.sort((a, b) -> {
             int pa = priority(a.getStatus());
@@ -338,9 +318,6 @@ public class RentPanel extends BaseListPanel {
         loadData();
     }
 
-    // ----------------------------------------------------------------
-    // Akcje
-    // ----------------------------------------------------------------
 
     /** {@inheritDoc} */
     @Override

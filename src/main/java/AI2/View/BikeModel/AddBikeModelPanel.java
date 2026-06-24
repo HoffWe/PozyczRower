@@ -42,11 +42,13 @@ public class AddBikeModelPanel extends BaseFormPanel {
 
     /** {@inheritDoc} */
     @Override
-    protected String getTitleKey() { return "bikeModel.nameAdd"; }
+    protected String getTitleKey() {
+        return "bikeModel.nameAdd"; }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add"; }
 
     /** {@inheritDoc} */
     @Override

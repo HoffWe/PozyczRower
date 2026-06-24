@@ -29,15 +29,12 @@ public class SearchPanel extends JPanel implements LanguageChangeListener {
         placeholder = LanguageManager.getString("search");
 
         setLayout(new BorderLayout(4, 0));
-//        setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
 
-        // --- ikona ---
         JLabel icon = new JLabel("🔍");
         icon.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
         add(icon, BorderLayout.WEST);
 
-        // --- pole z własnym placeholder'em ---
         searchField = new JTextField() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -63,13 +60,11 @@ public class SearchPanel extends JPanel implements LanguageChangeListener {
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         searchField.setPreferredSize(new Dimension(300, 35));
 
-        // repaint placeholder przy zysku/stracie focusu
         searchField.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) { searchField.repaint(); }
             @Override public void focusLost(FocusEvent e)   { searchField.repaint(); }
         });
 
-        // pokaż/ukryj clearButton w miarę pisania
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e)  { updateClear(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e)  { updateClear(); }
@@ -78,7 +73,6 @@ public class SearchPanel extends JPanel implements LanguageChangeListener {
 
         add(searchField, BorderLayout.CENTER);
 
-        // --- przycisk czyszczenia ---
         clearButton = new JButton("✕");
         clearButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         clearButton.setFocusPainted(false);

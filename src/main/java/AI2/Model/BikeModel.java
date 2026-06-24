@@ -19,7 +19,7 @@ public class BikeModel {
     /**
      * Tworzy nowy model roweru.
      *
-     * @param id    unikalny identyfikator
+     * @param id unikalny identyfikator
      * @param brand marka roweru
      * @param model nazwa modelu roweru
      * @author Rafał Wojciechowski
@@ -36,7 +36,9 @@ public class BikeModel {
      * @return identyfikator modelu
      * @author Rafał Wojciechowski
      */
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
     /**
      * Ustawia identyfikator modelu roweru.
@@ -44,7 +46,9 @@ public class BikeModel {
      * @param id identyfikator modelu
      * @author Rafał Wojciechowski
      */
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /**
      * Zwraca markę roweru.
@@ -52,7 +56,9 @@ public class BikeModel {
      * @return marka roweru
      * @author Rafał Wojciechowski
      */
-    public String getBrand() { return brand; }
+    public String getBrand() {
+        return brand;
+    }
 
     /**
      * Ustawia markę roweru.
@@ -60,7 +66,9 @@ public class BikeModel {
      * @param brand marka roweru
      * @author Rafał Wojciechowski
      */
-    public void setBrand(String brand) { this.brand = brand; }
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
     /**
      * Zwraca nazwę modelu roweru.
@@ -68,7 +76,9 @@ public class BikeModel {
      * @return nazwa modelu
      * @author Rafał Wojciechowski
      */
-    public String getModel() { return model; }
+    public String getModel() {
+        return model;
+    }
 
     /**
      * Ustawia nazwę modelu roweru.
@@ -76,7 +86,9 @@ public class BikeModel {
      * @param model nazwa modelu
      * @author Rafał Wojciechowski
      */
-    public void setModel(String model) { this.model = model; }
+    public void setModel(String model) {
+        this.model = model;
+    }
 
     /**
      * Zwraca tekstową reprezentację modelu roweru (Marka Model).

@@ -42,19 +42,23 @@ public class EditBikeModelPanel extends BaseFormPanel {
      */
     public EditBikeModelPanel(BikeModelService bikeModelService, BikeModel bikeModel,
                               BikeModelPanel parentPanel) {
-        this.bikeModelService = bikeModelService;
-        this.bikeModel        = bikeModel;
-        this.parentPanel      = parentPanel;
+        this.bikeModelService= bikeModelService;
+        this.bikeModel= bikeModel;
+        this.parentPanel= parentPanel;
         init();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String getTitleKey() { return "bikeModel.editTitle"; }
+    protected String getTitleKey() {
+        return "bikeModel.editTitle";
+    }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() { return "button.save"; }
+    protected String getSubmitButtonKey() {
+        return "button.save";
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -49,35 +49,29 @@ public class AddRentPanel extends BaseFormPanel {
     /** Akcja wykonywana po pomyślnym dodaniu wypożyczenia/wypożyczeń. */
     private final Runnable onSuccess;
 
-    // --- Stan ---
     private Client     selectedClient;
     private final List<Bike>   selectedBikes  = new ArrayList<>();
 
-    // --- Komponenty ---
-    private JTextField         clientDisplayField;
-    private JButton            selectClientBtn;
-    private JPanel             clientSelectorPanel;
+    private JTextField clientDisplayField;
+    private JButton selectClientBtn;
+    private JPanel clientSelectorPanel;
 
-    private DateTimePicker     startDatePicker;
-    private DateTimePicker     returnDatePicker;
-    private JPanel             presetPanel;
+    private DateTimePicker startDatePicker;
+    private DateTimePicker returnDatePicker;
+    private JPanel presetPanel;
 
     private DefaultListModel<String> bikesListModel;
-    private JList<String>      bikesList;
-    private JButton            addBikeBtn;
-    private JButton            removeBikeBtn;
-    private JPanel             bikesPanel;
+    private JList<String> bikesList;
+    private JButton addBikeBtn;
+    private JButton removeBikeBtn;
+    private JPanel bikesPanel;
 
-    private JTextArea          notesArea;
-
-    // ----------------------------------------------------------------
-    // Konstruktory
-    // ----------------------------------------------------------------
+    private JTextArea notesArea;
 
     /**
      * Konstruktor z panelu wypożyczeń – pełny zestaw serwisów, brak pre-selekcji.
      *
-     * @param rentService      serwis wypożyczeń
+     * @param rentService serwis wypożyczeń
      * @param clientService    serwis klientów
      * @param bikeService      serwis rowerów
      * @param bikeModelService serwis modeli rowerów
@@ -148,22 +142,6 @@ public class AddRentPanel extends BaseFormPanel {
     }
 
     /**
-     * Konstruktor z panelu wypożyczeń – brak pre-selekcji, odświeża RentPanel po zapisie.
-     * (Zachowany dla wstecznej kompatybilności.)
-     *
-     * @param rentService   serwis wypożyczeń
-     * @param clientService serwis klientów
-     * @param parentPanel   nadrzędny panel listy wypożyczeń
-     * @param bikeService   serwis rowerów
-     * @author Tomasz Piłat
-     */
-    public AddRentPanel(RentService rentService, ClientService clientService,
-                        RentPanel parentPanel, BikeService bikeService) {
-        this(rentService, clientService, bikeService, null, null,
-                parentPanel::loadData, null, null);
-    }
-
-    /**
      * Konstruktor główny – wspólna logika wszystkich wariantów.
      *
      * @param rentService      serwis wypożyczeń
@@ -193,24 +171,21 @@ public class AddRentPanel extends BaseFormPanel {
         init();
     }
 
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
-
     /** {@inheritDoc} */
     @Override
     protected String getTitleKey() { return "rent.nameAdd"; }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add";
+    }
 
     /** {@inheritDoc} */
     @Override
     protected void initFormComponents() {
         Dimension pickerSize = defaultFieldSize();
 
-        // --- Klient ---
         clientDisplayField = new JTextField();
         clientDisplayField.setEditable(false);
         clientDisplayField.setPreferredSize(new Dimension(220, 35));
@@ -227,10 +202,9 @@ public class AddRentPanel extends BaseFormPanel {
             clientDisplayField.setText(LanguageManager.getString("dialog.none.selected"));
         }
 
-        // --- Daty ---
         startDatePicker = new DateTimePicker();
         startDatePicker.setPreferredSize(pickerSize);
-        startDatePicker.setDateTimeStrict(LocalDateTime.now());   // domyślnie teraz
+        startDatePicker.setDateTimeStrict(LocalDateTime.now());
         returnDatePicker = new DateTimePicker();
         returnDatePicker.setPreferredSize(pickerSize);
 
@@ -239,18 +213,15 @@ public class AddRentPanel extends BaseFormPanel {
         returnDatePicker.getDatePicker().addDateChangeListener(e -> onDatesChanged());
         returnDatePicker.getTimePicker().addTimeChangeListener(e -> onDatesChanged());
 
-        // --- Presety czasu trwania ---
         presetPanel = buildPresetPanel();
 
-        // --- Lista rowerów ---
         bikesListModel = new DefaultListModel<>();
         bikesList      = new JList<>(bikesListModel);
         bikesList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         bikesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         bikesList.setFixedCellHeight(28);
-        bikesList.setVisibleRowCount(5);   // JList sam liczy preferowaną wysokość
+        bikesList.setVisibleRowCount(5);
 
-        // Pre-wybrany rower (jeśli jest)
         for (Bike b : selectedBikes) {
             bikesListModel.addElement(bikeLabel(b));
         }
@@ -279,7 +250,6 @@ public class AddRentPanel extends BaseFormPanel {
         bikeBtnPanel.add(addBikeBtn);
         bikeBtnPanel.add(removeBikeBtn);
 
-        // Scroll pane bez fiksu rozmiaru — JList.visibleRowCount kontroluje wysokość
         JScrollPane bikesScroll = new JScrollPane(bikesList);
         bikesScroll.setMinimumSize(new Dimension(280, 28 * 3));
 
@@ -288,7 +258,6 @@ public class AddRentPanel extends BaseFormPanel {
         bikesPanel.add(bikesScroll,   BorderLayout.CENTER);
         bikesPanel.add(bikeBtnPanel,  BorderLayout.SOUTH);
 
-        // --- Uwagi ---
         notesArea = new JTextArea(3, 20);
         notesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         notesArea.setLineWrap(true);
@@ -303,7 +272,6 @@ public class AddRentPanel extends BaseFormPanel {
         addFormRow(formPanel, gbc, "rent.duration",   presetPanel);
         addFormRow(formPanel, gbc, "date.endDate",    returnDatePicker);
 
-        // Wiersz rowerów – fill = BOTH + weighty, żeby GridBag przydzielił mu wysokość
         gbc.fill    = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         gbc.gridx   = 0; gbc.weightx = 0.0;
@@ -313,7 +281,6 @@ public class AddRentPanel extends BaseFormPanel {
         formPanel.add(bikesPanel, gbc);
         gbc.gridy++;
 
-        // Wiersz uwag
         gbc.fill    = GridBagConstraints.BOTH;
         gbc.weighty = 0.3;
         addFormRow(formPanel, gbc, "rent.notes", new JScrollPane(notesArea));
@@ -368,11 +335,6 @@ public class AddRentPanel extends BaseFormPanel {
             showError(ex.getMessage());
         }
     }
-
-    // ----------------------------------------------------------------
-    // Listenery / helpers
-    // ----------------------------------------------------------------
-
     /**
      * Reaguje na zmianę dat – włącza/wyłącza przycisk dodawania roweru.
      *

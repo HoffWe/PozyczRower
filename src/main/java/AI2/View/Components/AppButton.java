@@ -5,18 +5,11 @@ import java.awt.*;
 
 public class AppButton extends JButton {
 
-//    public static final Color COLOR_GREEN = Color.decode("#2E7D32");
-//    public static final Color COLOR_ORANGE = Color.decode("#F57C00");
-//    public static final Color COLOR_RED = Color.decode("#E11D48");
-//    public static final Color COLOR_BLUE = Color.decode("#1A2B3C");
 
-
-    //zwykle przyciski
     public AppButton(String text) {
         super(text);
     }
 
-    //kolorowe przyciski akcji
     public AppButton(String text, Color actionColor) {
         super(text);
         styleOutlinedButton(actionColor);

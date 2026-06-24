@@ -32,8 +32,8 @@ public class RentService {
     /**
      * Tworzy serwis wypożyczeń i ustawia statusy przeterminowane.
      *
-     * @param rentRepository   repozytorium wypożyczeń
-     * @param bikeRepository   repozytorium rowerów
+     * @param rentRepository repozytorium wypożyczeń
+     * @param bikeRepository repozytorium rowerów
      * @param clientRepository repozytorium klientów
      * @author Tomasz Piłat
      */
@@ -64,7 +64,7 @@ public class RentService {
      * Deleguje do {@link #endRent(int, String)} z pustymi uwagami.
      *
      * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
      * @throws IllegalStateException jeśli wypożyczenie jest już zakończone
      * @author Tomasz Piłat
      */
@@ -78,7 +78,7 @@ public class RentService {
      *
      * @param rentId identyfikator wypożyczenia
      * @param notes  uwagi przy zwrocie (może być pusty)
-     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
      * @throws IllegalStateException jeśli wypożyczenie jest już zakończone
      * @author Tomasz Piłat
      */
@@ -110,7 +110,7 @@ public class RentService {
      * Usuwa wypożyczenie. Można usunąć tylko wypożyczenia ze statusem SCHEDULED.
      *
      * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException         jeśli wypożyczenie nie istnieje
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
      * @throws IllegalArgumentException jeśli wypożyczenie nie jest SCHEDULED
      * @author Tomasz Piłat
      */
@@ -212,7 +212,6 @@ public class RentService {
                     && status != RentStatus.PENDING) continue;
 
             if (rent.getReturnTime().isBefore(now)) {
-                // SCHEDULED/PENDING → OVERDUE: trzeba teraz oznaczyć rower jako wypożyczony
                 if (status == RentStatus.SCHEDULED || status == RentStatus.PENDING) {
                     markBikeRented(rent.getBikeId());
                 }
@@ -220,7 +219,6 @@ public class RentService {
                 changed = true;
 
             } else if (status == RentStatus.SCHEDULED && !rent.getRentDate().isAfter(now)) {
-                // Czas startu minął – czekamy na potwierdzenie pracownika
                 rent.setStatus(RentStatus.PENDING);
                 changed = true;
             }
@@ -237,7 +235,7 @@ public class RentService {
      * i oznacza rower jako wypożyczony.
      *
      * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
      * @throws IllegalStateException jeśli wypożyczenie nie jest w statusie PENDING
      * @author Tomasz Piłat
      */
@@ -259,7 +257,7 @@ public class RentService {
      * Anuluje wypożyczenie – zmienia status SCHEDULED/PENDING → CANCELLED.
      *
      * @param rentId identyfikator wypożyczenia
-     * @throws RuntimeException      jeśli wypożyczenie nie istnieje
+     * @throws RuntimeException jeśli wypożyczenie nie istnieje
      * @throws IllegalStateException jeśli wypożyczenie nie może być anulowane
      * @author Tomasz Piłat
      */
@@ -344,8 +342,8 @@ public class RentService {
      * Konflikty z wypożyczeniami SCHEDULED i ACTIVE są brane pod uwagę.
      *
      * @param bikeId identyfikator roweru
-     * @param start  data rozpoczęcia
-     * @param end    data zakończenia
+     * @param start data rozpoczęcia
+     * @param end data zakończenia
      * @return {@code true} jeśli rower jest dostępny w całym przedziale
      * @author Tomasz Piłat
      */

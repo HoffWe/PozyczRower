@@ -5,7 +5,7 @@ import AI2.Model.BikeModel;
 /**
  * ViewModel dla modelu roweru – dane wyświetlane w tabeli (bez ID).
  *
- * @author Rafał Wojciechowski
+ * @author Adrian Karpiński
  */
 public class BikeModelViewModel {
 
@@ -22,7 +22,6 @@ public class BikeModelViewModel {
      * Tworzy ViewModel na podstawie modelu roweru.
      *
      * @param bikeModel model roweru
-     * @author Rafał Wojciechowski
      */
     public BikeModelViewModel(BikeModel bikeModel) {
         this.id    = bikeModel.getId();
@@ -34,7 +33,6 @@ public class BikeModelViewModel {
      * Zwraca identyfikator modelu roweru.
      *
      * @return identyfikator
-     * @author Rafał Wojciechowski
      */
     public int getId() {
         return id;
@@ -44,7 +42,6 @@ public class BikeModelViewModel {
      * Zwraca markę roweru.
      *
      * @return marka
-     * @author Rafał Wojciechowski
      */
     public String getBrand() {
         return brand;
@@ -54,7 +51,6 @@ public class BikeModelViewModel {
      * Zwraca nazwę modelu roweru.
      *
      * @return nazwa modelu
-     * @author Rafał Wojciechowski
      */
     public String getModel() {
         return model;
@@ -64,7 +60,6 @@ public class BikeModelViewModel {
      * Zwraca wartości wiersza tabeli (bez ID).
      *
      * @return tablica danych do tabeli
-     * @author Rafał Wojciechowski
      */
     public Object[] toRow() {
         return new Object[]{ brand, model };

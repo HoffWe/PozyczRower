@@ -29,16 +29,8 @@ import java.util.stream.Collectors;
  */
 public class BikePanel extends BaseListPanel {
 
-    // ----------------------------------------------------------------
-    // Sentinel – "brak filtra statusu"
-    // ----------------------------------------------------------------
-
     /** Obiekt sentinel reprezentujący opcję "Wszystkie" w combo filtra statusu. */
     private static final Object STATUS_ALL = "ALL";
-
-    // ----------------------------------------------------------------
-    // Serwisy
-    // ----------------------------------------------------------------
 
     /** Serwis rowerów. */
     private final BikeService bikeService;
@@ -55,10 +47,6 @@ public class BikePanel extends BaseListPanel {
     /** Serwis klientów (dla formularza wypożyczenia). */
     private final ClientService clientService;
 
-    // ----------------------------------------------------------------
-    // Komponenty
-    // ----------------------------------------------------------------
-
     /** Przycisk otwierający formularz wypożyczenia dla zaznaczonego roweru. */
     private JButton rentButton;
 
@@ -69,42 +57,32 @@ public class BikePanel extends BaseListPanel {
      */
     private JComboBox<Object> statusFilterCombo;
 
-    // ----------------------------------------------------------------
-    // Konstruktor
-    // ----------------------------------------------------------------
-
     /**
      * Tworzy panel zarządzania rowerami.
      *
-     * @param bikeService      serwis rowerów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
+     * @param bikeTypeService serwis typów rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
      * @author Rafał Wojciechowski
      */
     public BikePanel(BikeService bikeService, BikeModelService bikeModelService,
                      BikeTypeService bikeTypeService, RentService rentService,
                      ClientService clientService) {
-        this.bikeService      = bikeService;
-        this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
-        this.rentService      = rentService;
-        this.clientService    = clientService;
+        this.bikeService= bikeService;
+        this.bikeModelService= bikeModelService;
+        this.bikeTypeService= bikeTypeService;
+        this.rentService= rentService;
+        this.clientService= clientService;
         loadData();
     }
-
-    // ----------------------------------------------------------------
-    // BaseListPanel – dodatkowe komponenty
-    // ----------------------------------------------------------------
-
     /** {@inheritDoc} */
     @Override
     protected void initExtraComponents() {
         rentButton = new AppButton(LanguageManager.getString("button.rent"));
         rentButton.setEnabled(false);
 
-        // --- Filtr statusu ---
         statusFilterCombo = new JComboBox<>();
         statusFilterCombo.addItem(STATUS_ALL);
         for (BikeStatus s : BikeStatus.values()) {
@@ -166,10 +144,6 @@ public class BikePanel extends BaseListPanel {
         statusFilterCombo.addActionListener(e -> loadData());
     }
 
-    // ----------------------------------------------------------------
-    // BaseListPanel – metody abstrakcyjne
-    // ----------------------------------------------------------------
-
     /** {@inheritDoc} */
     @Override
     protected String getTitleKey() { return "bike.management"; }
@@ -193,21 +167,16 @@ public class BikePanel extends BaseListPanel {
     public void loadData() {
         String query = searchField != null ? searchField.getText().trim() : "";
 
-        // Ustal wybrany filtr statusu
         Object sel = statusFilterCombo != null ? statusFilterCombo.getSelectedItem() : STATUS_ALL;
         BikeStatus filterStatus = (sel instanceof BikeStatus) ? (BikeStatus) sel : null;
 
         List<Bike> bikes = bikeService.getAllBikes();
-
-        // Filtruj wg statusu
         if (filterStatus != null) {
             final BikeStatus fs = filterStatus;
             bikes = bikes.stream()
                     .filter(b -> b.getStatus() == fs)
                     .collect(Collectors.toList());
         }
-
-        // Filtruj wg tekstu wyszukiwania
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             bikes = bikes.stream()
@@ -293,10 +262,6 @@ public class BikePanel extends BaseListPanel {
             }
         }
     }
-
-    // ----------------------------------------------------------------
-    // Wypożycz
-    // ----------------------------------------------------------------
 
     /**
      * Otwiera formularz dodawania wypożyczenia z pre-wybranym rowerem.

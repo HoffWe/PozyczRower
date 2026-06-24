@@ -25,20 +25,6 @@ public class WorkersPanel extends BaseListPanel {
         loadData();
     }
 
-    // ----------------------------------------------------------------
-    // BaseListPanel – brak dodatkowych komponentów
-    // ----------------------------------------------------------------
-
-    @Override protected void initExtraComponents()              {}
-    @Override protected void buildExtraButtons(JPanel panel)   {}
-    @Override protected void onSelectionChanged(boolean sel)   {}
-    @Override protected void refreshLanguageTexts()            {}
-    @Override protected void initExtraListeners()              {}
-
-    // ----------------------------------------------------------------
-    // BaseListPanel – implementacje
-    // ----------------------------------------------------------------
-
     @Override
     protected String getTitleKey() { return "workers.management"; }
 
@@ -103,7 +89,6 @@ public class WorkersPanel extends BaseListPanel {
         int id = getSelectedId();
         if (id == -1) return;
 
-        // Nie pozwól usunąć ostatniego admina
         User user = userService.getUserById(id);
         if (user != null && user.getRole() == UserRole.ADMIN) {
             long adminCount = userService.getAllUsers().stream()

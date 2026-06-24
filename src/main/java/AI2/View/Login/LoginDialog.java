@@ -36,26 +36,17 @@ public class LoginDialog extends JDialog {
         this.userService = userService;
         buildUI();
     }
-
-    // ----------------------------------------------------------------
-    // Budowanie interfejsu
-    // ----------------------------------------------------------------
-
     private void buildUI() {
         setLayout(new BorderLayout(10, 10));
         ((JComponent) getContentPane()).setBorder(
                 BorderFactory.createEmptyBorder(24, 36, 20, 36));
-//        getContentPane().setBackground(Color.WHITE);
 
-        // --- Tytuł ---
         JLabel title = new JLabel(LanguageManager.getString("login.title"), SwingConstants.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
         add(title, BorderLayout.NORTH);
 
-        // --- Formularz ---
         JPanel form = new JPanel(new GridBagLayout());
-//        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill    = GridBagConstraints.HORIZONTAL;
         gbc.insets  = new Insets(6, 4, 6, 4);
@@ -63,7 +54,6 @@ public class LoginDialog extends JDialog {
 
         Dimension fieldSize = new Dimension(220, 32);
 
-        // Nazwa użytkownika
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         form.add(new JLabel(LanguageManager.getString("user.username") + ":"), gbc);
         gbc.gridx = 1; gbc.weightx = 1;
@@ -72,7 +62,6 @@ public class LoginDialog extends JDialog {
         usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         form.add(usernameField, gbc);
 
-        // Hasło
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         form.add(new JLabel(LanguageManager.getString("user.password") + ":"), gbc);
         gbc.gridx = 1; gbc.weightx = 1;
@@ -81,7 +70,6 @@ public class LoginDialog extends JDialog {
         passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         form.add(passwordField, gbc);
 
-        // Komunikat błędu
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         errorLabel = new JLabel(" ");
         errorLabel.setForeground(Color.RED);
@@ -90,15 +78,12 @@ public class LoginDialog extends JDialog {
 
         add(form, BorderLayout.CENTER);
 
-        // --- Przycisk ---
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//        btnPanel.setBackground(Color.WHITE);
         AppButton loginBtn = new AppButton(LanguageManager.getString("login.button"));
         loginBtn.addActionListener(e -> tryLogin());
         btnPanel.add(loginBtn);
         add(btnPanel, BorderLayout.SOUTH);
 
-        // Enter uruchamia logowanie
         getRootPane().setDefaultButton(loginBtn);
 
         setSize(380, 270);
@@ -106,10 +91,6 @@ public class LoginDialog extends JDialog {
         setLocationRelativeTo(getOwner());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
-
-    // ----------------------------------------------------------------
-    // Logowanie
-    // ----------------------------------------------------------------
 
     private void tryLogin() {
         String username = usernameField.getText().trim();
@@ -123,10 +104,6 @@ public class LoginDialog extends JDialog {
             passwordField.requestFocus();
         }
     }
-
-    // ----------------------------------------------------------------
-    // Publiczne API
-    // ----------------------------------------------------------------
 
     /**
      * Zwraca zalogowanego użytkownika po zamknięciu dialogu.

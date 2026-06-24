@@ -50,7 +50,6 @@ public class ClientRentsDialog extends JDialog {
     /** Kolor dla aktywnych i oczekujacych wierszy. */
     private static final Color COLOR_GREEN = new Color(0, 150, 0);
 
-    // serwisy
     private final RentService      rentService;
     private final BikeService      bikeService;
     private final BikeModelService bikeModelService;
@@ -58,32 +57,30 @@ public class ClientRentsDialog extends JDialog {
     private final ClientService    clientService;
     private final Client           client;
 
-    // dane tabeli
     private List<Rent>              allRents;
     private final DefaultTableModel tableModel;
     private final List<Integer>     rowIds      = new ArrayList<>();
     private final List<Integer>     overdueRows = new ArrayList<>();
     private final List<Integer>     greenRows   = new ArrayList<>();
 
-    // komponenty
-    private JTable    table;
-    private JButton   addButton;
-    private JButton   editButton;
-    private JButton   confirmButton;
-    private JButton   cancelButton;
-    private JButton   endButton;
+    private JTable table;
+    private JButton addButton;
+    private JButton editButton;
+    private JButton confirmButton;
+    private JButton cancelButton;
+    private JButton endButton;
     private JCheckBox showFinishedBox;
 
     /**
      * Tworzy dialog wyswietlajacy wypozyczenia klienta.
      *
-     * @param owner            okno nadrzedne
-     * @param client           klient ktorego wypozyczenia wyswietlamy
-     * @param rentService      serwis wypozyczen
-     * @param bikeService      serwis rowerow
+     * @param owner okno nadrzedne
+     * @param client klient ktorego wypozyczenia wyswietlamy
+     * @param rentService serwis wypozyczen
+     * @param bikeService serwis rowerow
      * @param bikeModelService serwis modeli rowerow
-     * @param bikeTypeService  serwis typow rowerow
-     * @param clientService    serwis klientow
+     * @param bikeTypeService serwis typow rowerow
+     * @param clientService serwis klientow
      * @author Światosław Matsopa
      */
     public ClientRentsDialog(Window owner, Client client,
@@ -97,12 +94,12 @@ public class ClientRentsDialog extends JDialog {
                       + ": " + client.getName() + " " + client.getSurname(),
               ModalityType.APPLICATION_MODAL);
 
-        this.client           = client;
-        this.rentService      = rentService;
-        this.bikeService      = bikeService;
-        this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
-        this.clientService    = clientService;
+        this.client= client;
+        this.rentService= rentService;
+        this.bikeService= bikeService;
+        this.bikeModelService= bikeModelService;
+        this.bikeTypeService= bikeTypeService;
+        this.clientService= clientService;
 
         tableModel = new DefaultTableModel(new String[]{
                 LanguageManager.getString("bike.name"),
@@ -110,7 +107,9 @@ public class ClientRentsDialog extends JDialog {
                 LanguageManager.getString("date.endDate"),
                 LanguageManager.getString("rent.status.name")
         }, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return false; }
+            @Override public boolean isCellEditable(int row, int col) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -126,9 +125,9 @@ public class ClientRentsDialog extends JDialog {
                 Component c = super.getTableCellRendererComponent(
                         t, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
-                    if (overdueRows.contains(row))       c.setForeground(COLOR_OVERDUE);
-                    else if (greenRows.contains(row))    c.setForeground(COLOR_GREEN);
-                    else                                 c.setForeground(t.getForeground());
+                    if (overdueRows.contains(row)) c.setForeground(COLOR_OVERDUE);
+                    else if (greenRows.contains(row)) c.setForeground(COLOR_GREEN);
+                    else c.setForeground(t.getForeground());
                 }
                 return c;
             }
@@ -192,11 +191,6 @@ public class ClientRentsDialog extends JDialog {
         setResizable(true);
         setLocationRelativeTo(owner);
     }
-
-    //
-    // Logika przycisków
-    //
-
     /**
      * Aktualizuje stan przycisków na podstawie statusu zaznaczonego wiersza.
      * Brak zaznaczenia wyłącza wszystkie przyciski akcji.
@@ -227,10 +221,6 @@ public class ClientRentsDialog extends JDialog {
             endButton.setEnabled(false);
         }
     }
-
-    //
-    // Akcje
-    //
 
     /** Otwiera formularz dodawania nowego wypozyczenia dla tego klienta */
     private void onAdd() {
@@ -280,7 +270,7 @@ public class ClientRentsDialog extends JDialog {
     /**
      * Potwierdza zaznaczone wypozyczenie - zmienia status PENDING na ACTIVE.
      *
-     * @author Rafał Wojciechowski
+     * @author Tomasz Piłat
      */
     private void onConfirm() {
         int row = table.getSelectedRow();
@@ -336,10 +326,6 @@ public class ClientRentsDialog extends JDialog {
         }
     }
 
-    //
-    // Dane
-    //
-
     /** Pobiera swieże dane z serwisu i przebudowuje tabele */
     private void reloadAndRebuild(boolean showFinished) {
         allRents = rentService.findClientRents(client.getId());
@@ -348,7 +334,7 @@ public class ClientRentsDialog extends JDialog {
 
     /**
      * Przebudowuje zawartość tabeli na podstawie listy wypożyczeń.
-     * Koloruje wiersze OVERDUE na czerwono, ACTIVE i PENDING na zielono.
+     * Koloruje wiersze OVERDUE na czerwono, PENDING na zielono.
      * Resetuje stan przycisków po każdej przebudowie.
      *
      * @param showFinished {@code true} – wyświetla wszystkie statusy;
@@ -373,7 +359,7 @@ public class ClientRentsDialog extends JDialog {
         for (Rent r : visible) {
             RentStatus s = r.getStatus();
             if (s == RentStatus.OVERDUE)                            overdueRows.add(rowIdx);
-            if (s == RentStatus.ACTIVE || s == RentStatus.PENDING)  greenRows.add(rowIdx);
+            if (s == RentStatus.PENDING)  greenRows.add(rowIdx);
 
             String bikeInfo = "ID:" + r.getBikeId();
             try {
