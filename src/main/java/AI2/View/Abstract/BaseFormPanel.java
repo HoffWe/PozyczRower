@@ -31,7 +31,7 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
      */
     protected final void init() {
         LanguageManager.addListener(this);
-        setBackground(Color.WHITE);
+//        setBackground(Color.WHITE);
         initComponents();
         buildLayout();
         registerListeners();
@@ -54,13 +54,13 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
         add(titleLabel, BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
+//        formPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = createDefaultGbc();
         buildForm(formPanel, gbc);
         add(formPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setBackground(Color.WHITE);
+//        buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(submitButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }

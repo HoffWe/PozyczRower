@@ -22,26 +22,28 @@ public class AddBikeTypePanel extends BaseFormPanel {
 
     public AddBikeTypePanel(BikeTypeService bikeTypeService, BikeTypePanel parentPanel) {
         this.bikeTypeService = bikeTypeService;
-        this.parentPanel     = parentPanel;
+        this.parentPanel = parentPanel;
         init();
     }
 
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
+    @Override
+    protected String getTitleKey() {
+        return "bikeType.nameAdd";
+    }
 
     @Override
-    protected String getTitleKey() { return "bikeType.nameAdd"; }
-
-    @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add";
+    }
 
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField        = new JTextField(); nameField.setPreferredSize(size);
-        nameEnField      = new JTextField(); nameEnField.setPreferredSize(size);
+
+        nameField = new JTextField(); nameField.setPreferredSize(size);
+        nameEnField = new JTextField(); nameEnField.setPreferredSize(size);
         descriptionField = new JTextField(); descriptionField.setPreferredSize(size);
+
     }
 
     @Override
@@ -54,7 +56,7 @@ public class AddBikeTypePanel extends BaseFormPanel {
     @Override
     protected void onSubmit() {
         try {
-            bikeTypeService.addBikeType(new BikeTypeDTO(
+                bikeTypeService.addBikeType(new BikeTypeDTO(
                     nameField.getText().trim(),
                     nameEnField.getText().trim(),
                     descriptionField.getText().trim()
@@ -62,6 +64,7 @@ public class AddBikeTypePanel extends BaseFormPanel {
             showSuccess("bikeType.added");
             parentPanel.loadData();
             closeDialog();
+
         } catch (Exception ex) {
             showError(ex.getMessage());
         }

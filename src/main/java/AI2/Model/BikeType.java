@@ -18,9 +18,9 @@ public class BikeType {
     private String description;
 
     public BikeType(int id, String name, String nameEn, String description) {
-        this.id          = id;
-        this.name        = name;
-        this.nameEn      = nameEn == null ? "" : nameEn;
+        this.id = id;
+        this.name = name;
+        this.nameEn = nameEn == null ? "" : nameEn;
         this.description = description;
     }
 
@@ -32,6 +32,7 @@ public class BikeType {
     public int getBikeTypeId() {
         return id;
     }
+
     public void setBikeTypeId(int id) {
         this.id = id;
     }
@@ -39,15 +40,25 @@ public class BikeType {
     public String getBikeTypeName() {
         return name;
     }
+
     public void setBikeTypeName(String name) {
         this.name = name;
     }
 
-    public String getNameEn() {
+    public String getBikeTypeNameEn() {
         return nameEn == null ? "" : nameEn;
     }
-    public void setNameEn(String nameEn) {
+
+    public void setBikeTypeNameEn(String nameEn) {
         this.nameEn = nameEn == null ? "" : nameEn;
+    }
+
+    public String getBikeTypeDescription() {
+        return description;
+    }
+
+    public void setBikeTypeDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -64,29 +75,24 @@ public class BikeType {
     public String getDisplayName() {
         if (!LanguageManager.isPolish()) {
             if (nameEn != null && !nameEn.isBlank()) return nameEn;
+
             String key = "bikeType.name." + Normalizer
                     .normalize(name, Normalizer.Form.NFD)
                     .replaceAll("\\p{M}", "")
                     .toLowerCase(Locale.ROOT)
                     .replace(" ", "_");
             String translated = LanguageManager.getString(key);
+
             return translated.startsWith("!") ? name : translated;
         }
         return name;
     }
 
-    public String getBikeTypeDescription() {
-        return description;
-    }
-    public void setBikeTypeDescription(String description) {
-        this.description = description;
-    }
 
     /**
      * Zwraca przetłumaczoną nazwę (używana m.in. przez JComboBox).
      *
      * @return przetłumaczona nazwa
-     * @author Adrian Karpiński
      */
     @Override
     public String toString() {

@@ -21,7 +21,6 @@ public class BikeTypeService {
      * Tworzy serwis typów rowerów.
      *
      * @param bikeTypeRepository repozytorium typów rowerów
-     * @author Adrian Karpiński
      */
     public BikeTypeService(BikeTypeRepository bikeTypeRepository) {
         this.bikeTypeRepository = bikeTypeRepository;
@@ -33,24 +32,27 @@ public class BikeTypeService {
      * @param newType dane nowego typu roweru
      * @return dodany typ roweru
      * @throws IllegalArgumentException jeśli nazwa jest pusta lub już istnieje
-     * @author Adrian Karpiński
      */
     public BikeType addBikeType(BikeTypeDTO newType) {
         validateBikeTypeData(newType);
 
-        String safeName        = newType.name().trim();
+        String safeName = newType.name().trim();
         String safeDescription = newType.description().trim();
 
-        for (BikeType bikeType : bikeTypeRepository.getAllBikesTypes()) {
+        for (BikeType bikeType : bikeTypeRepository.getAllBikeTypes()) {
+
             if (bikeType.getBikeTypeName().equals(safeName)) {
                 throw new IllegalArgumentException(
                         LanguageManager.getString("error.bikeType.nameExists"));
             }
+
         }
 
         String safeNameEn = newType.nameEn() == null ? "" : newType.nameEn().trim();
         BikeType bikeType = new BikeType(0, safeName, safeNameEn, safeDescription);
+
         bikeTypeRepository.addBikeType(bikeType);
+
         return bikeType;
     }
 
@@ -59,7 +61,6 @@ public class BikeTypeService {
      *
      * @param bikeTypeId identyfikator typu roweru
      * @return {@code true} jeśli typ roweru został usunięty
-     * @author Adrian Karpiński
      */
     public boolean removeBikeType(int bikeTypeId) {
         return bikeTypeRepository.removeBikeType(bikeTypeId);
@@ -68,11 +69,10 @@ public class BikeTypeService {
     /**
      * Aktualizuje istniejący typ roweru.
      *
-     * @param bikeType    typ roweru do zaktualizowania
+     * @param bikeType typ roweru do zaktualizowania
      * @param bikeTypeDTO nowe dane z widoku
-     * @return {@code true} jeśli aktualizacja się powiodła
+     * @return {@code true} jeśli aktualizacja się powiodłsa
      * @throws IllegalArgumentException jeśli typ jest null lub dane niepoprawne
-     * @author Adrian Karpiński
      */
     public boolean updateBikeType(BikeType bikeType, BikeTypeDTO bikeTypeDTO) {
         if (bikeType == null) {
@@ -82,8 +82,9 @@ public class BikeTypeService {
         validateBikeTypeData(bikeTypeDTO);
 
         bikeType.setBikeTypeName(bikeTypeDTO.name().trim());
-        bikeType.setNameEn(bikeTypeDTO.nameEn() == null ? "" : bikeTypeDTO.nameEn().trim());
+        bikeType.setBikeTypeNameEn(bikeTypeDTO.nameEn() == null ? "" : bikeTypeDTO.nameEn().trim());
         bikeType.setBikeTypeDescription(bikeTypeDTO.description().trim());
+
         return bikeTypeRepository.updateBikeType(bikeType);
     }
 
@@ -91,10 +92,9 @@ public class BikeTypeService {
      * Zwraca wszystkie typy rowerów.
      *
      * @return lista typów rowerów
-     * @author Adrian Karpiński
      */
     public List<BikeType> getAllBikeTypes() {
-        return bikeTypeRepository.getAllBikesTypes();
+        return bikeTypeRepository.getAllBikeTypes();
     }
 
     /**
@@ -102,7 +102,6 @@ public class BikeTypeService {
      *
      * @param bikeTypeId identyfikator typu roweru
      * @return typ roweru albo {@code null} gdy nie znaleziono
-     * @author Adrian Karpiński
      */
     public BikeType getBikeTypeById(int bikeTypeId) {
         return bikeTypeRepository.getBikeTypeById(bikeTypeId);
@@ -111,7 +110,6 @@ public class BikeTypeService {
     /**
      * Zapisuje dane typów rowerów do pliku.
      *
-     * @author Adrian Karpiński
      */
     public void saveBikeTypes() {
         bikeTypeRepository.saveBikeTypeRepository();
@@ -122,7 +120,6 @@ public class BikeTypeService {
      *
      * @param dto dane do walidacji
      * @throws IllegalArgumentException jeśli nazwa lub opis są puste
-     * @author Adrian Karpiński
      */
     private void validateBikeTypeData(BikeTypeDTO dto) {
         if (dto.name() == null || dto.name().isBlank()) {

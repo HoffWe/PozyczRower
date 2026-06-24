@@ -3,7 +3,6 @@ package AI2.View.BikeType;
 import AI2.DTO.BikeTypeDTO;
 import AI2.Model.BikeType;
 import AI2.Service.BikeTypeService;
-import AI2.Util.LanguageManager;
 import AI2.View.Abstract.BaseFormPanel;
 
 import javax.swing.*;
@@ -23,30 +22,36 @@ public class EditBikeTypePanel extends BaseFormPanel {
     private JTextField nameEnField;
     private JTextField descriptionField;
 
-    public EditBikeTypePanel(BikeTypeService bikeTypeService, BikeType bikeType,
-                             BikeTypePanel parentPanel) {
+    public EditBikeTypePanel(BikeTypeService bikeTypeService, BikeType bikeType, BikeTypePanel parentPanel) {
+
         this.bikeTypeService = bikeTypeService;
-        this.bikeType        = bikeType;
-        this.parentPanel     = parentPanel;
+        this.bikeType = bikeType;
+        this.parentPanel = parentPanel;
+
         init();
     }
 
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
+    @Override
+    protected String getTitleKey() {
+        return "bikeType.editTitle";
+    }
 
     @Override
-    protected String getTitleKey() { return "bikeType.editTitle"; }
-
-    @Override
-    protected String getSubmitButtonKey() { return "button.save"; }
+    protected String getSubmitButtonKey() {
+        return "button.save";
+    }
 
     @Override
     protected void initFormComponents() {
         Dimension size = defaultFieldSize();
-        nameField        = new JTextField(bikeType.getBikeTypeName());        nameField.setPreferredSize(size);
-        nameEnField      = new JTextField(bikeType.getNameEn());              nameEnField.setPreferredSize(size);
-        descriptionField = new JTextField(bikeType.getBikeTypeDescription()); descriptionField.setPreferredSize(size);
+
+        nameField = new JTextField(bikeType.getBikeTypeName());
+        nameField.setPreferredSize(size);
+        nameEnField = new JTextField(bikeType.getBikeTypeNameEn());
+        nameEnField.setPreferredSize(size);
+
+        descriptionField = new JTextField(bikeType.getBikeTypeDescription());
+        descriptionField.setPreferredSize(size);
     }
 
     @Override
@@ -59,14 +64,16 @@ public class EditBikeTypePanel extends BaseFormPanel {
     @Override
     protected void onSubmit() {
         try {
-            bikeTypeService.updateBikeType(bikeType, new BikeTypeDTO(
+                bikeTypeService.updateBikeType(bikeType, new BikeTypeDTO(
                     nameField.getText().trim(),
                     nameEnField.getText().trim(),
                     descriptionField.getText().trim()
             ));
+
             showSuccess("bikeType.updated");
             parentPanel.loadData();
             closeDialog();
+
         } catch (Exception ex) {
             showError(ex.getMessage());
         }

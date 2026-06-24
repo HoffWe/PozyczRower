@@ -29,6 +29,7 @@ public class BikeTypeRepository {
      * Ostatnio użyty identyfikator roweru.
      */
     private int currentBikeTypeId;
+
     /**
      * Konstruktor bezargumentowy
      * Tworzy repozytorium typów rowerów
@@ -98,7 +99,7 @@ public class BikeTypeRepository {
      * Zwraca całą listę wszystkich zapisanych typów rowerów.
      * @return lista typów rowerów
      */
-    public List<BikeType> getAllBikesTypes(){
+    public List<BikeType> getAllBikeTypes(){
         return new ArrayList<>(bikeTypeList);
     }
 
@@ -118,11 +119,6 @@ public class BikeTypeRepository {
     }
 
     /**
-     * Czy jest potrzebny status do typu roweru?
-    */
-
-
-    /**
      * Zwraca ostatnio użyty identyfikator typu roweru.
      *
      * @return ostatnio użyty identyfikator
@@ -132,31 +128,36 @@ public class BikeTypeRepository {
     }
 
     /**
-     * Znacznik wersji 2 pliku (pierwszy int w pliku).
+     * Znacznik wersji 2 pliku (pierwszy int w pliku)
      * Stare pliki zaczynały się od currentBikeTypeId (wartość > 0),
-     * więc Integer.MIN_VALUE jest bezpiecznym znacznikiem wersji.
+     * Integer.MIN_VALUE jest bezpiecznym znacznikiem wersji.
      */
     private static final int VERSION_MARKER = Integer.MIN_VALUE;
-    private static final int FILE_VERSION   = 2; // wersja obsługująca nameEn
+    private static final int FILE_VERSION = 2; // wersja obsługująca nameEn
 
     /**
-     * Zapisuje dane typów roweru do pliku (format v2: z nameEn).
+     * Zapisuje dane typów roweru do pliku (format z nameEn)
      */
     public void saveBikeTypeRepository(){
+
         List<BikeType> snapshot = new ArrayList<>(bikeTypeList);
         int idSnapshot = currentBikeTypeId;
+
         AppConfig.SAVE_EXECUTOR.submit(() -> {
+
             new File(AppConfig.DATA_DIR).mkdirs();
+
             try (DataOutputStream out = new DataOutputStream(new FileOutputStream(FILE_NAME))) {
                 out.writeInt(VERSION_MARKER);   // znacznik wersji
                 out.writeInt(FILE_VERSION);      // numer wersji formatu
                 out.writeInt(idSnapshot);
                 out.writeInt(snapshot.size());
+
                 for (BikeType bt : snapshot) {
                     out.writeInt(bt.getBikeTypeId());
-                    out.writeUTF(bt.getBikeTypeName()        == null ? "" : bt.getBikeTypeName());
+                    out.writeUTF(bt.getBikeTypeName() == null ? "" : bt.getBikeTypeName());
                     out.writeUTF(bt.getBikeTypeDescription() == null ? "" : bt.getBikeTypeDescription());
-                    out.writeUTF(bt.getNameEn());
+                    out.writeUTF(bt.getBikeTypeNameEn());
                 }
             } catch (IOException e) {
                 System.out.println("Blad zapisu danych typow rowerow: " + e.getMessage());
@@ -166,7 +167,7 @@ public class BikeTypeRepository {
 
     /**
      * Wczytuje dane typów roweru z pliku.
-     * Obsługuje stary format (v1, bez nameEn) i nowy (v2, z nameEn).
+     * Obsługuje stary format (bez nameEn) i nowy (z nameEn).
      */
     public void loadBikeTypeRepository(){
         try (DataInputStream in = new DataInputStream(new FileInputStream(FILE_NAME))) {
@@ -174,21 +175,26 @@ public class BikeTypeRepository {
 
             int first = in.readInt();
             boolean hasNameEn;
+
             if (first == VERSION_MARKER) {
+
                 int version = in.readInt();
                 currentBikeTypeId = in.readInt();
                 hasNameEn = (version >= 2);
+
             } else {
                 currentBikeTypeId = first;
                 hasNameEn = false;
             }
 
             int count = in.readInt();
+
             for (int i = 0; i < count; i++) {
-                int    id   = in.readInt();
+                int id = in.readInt();
                 String name = in.readUTF();
                 String desc = in.readUTF();
-                String en   = hasNameEn ? in.readUTF() : "";
+                String en = hasNameEn ? in.readUTF() : "";
+
                 bikeTypeList.add(new BikeType(id, name, en, desc));
             }
         } catch (IOException ignored) {}

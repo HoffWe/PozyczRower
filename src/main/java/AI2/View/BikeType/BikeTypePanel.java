@@ -12,8 +12,10 @@ import java.util.stream.Collectors;
 
 /**
  * Panel zarządzania typami rowerów.
- * Dane pobierane z serwisu (brak hardkodowanych wartości).
- * ID typów NIE jest wyświetlane w tabeli.
+ * Dane pobierane z serwisu
+ * Tabela bez kolumny ID
+ *
+ * @author Adrian Karpiński
  */
 public class BikeTypePanel extends BaseListPanel {
 
@@ -24,9 +26,7 @@ public class BikeTypePanel extends BaseListPanel {
         loadData();
     }
 
-    // ----------------------------------------------------------------
     // BaseListPanel
-    // ----------------------------------------------------------------
 
     @Override
     protected String getTitleKey() {
@@ -43,9 +43,10 @@ public class BikeTypePanel extends BaseListPanel {
 
     @Override
     public void loadData() {
-        String query = searchField != null ? searchField.getText().trim() : "";
 
+        String query = searchField != null ? searchField.getText().trim() : "";
         List<BikeType> types = bikeTypeService.getAllBikeTypes();
+
         if (!query.isEmpty()) {
             String lower = query.toLowerCase();
             types = types.stream()
@@ -77,10 +78,12 @@ public class BikeTypePanel extends BaseListPanel {
 
     @Override
     protected void onEdit(int row) {
+
         int id = getSelectedId();
         if (id == -1) return;
 
         BikeType bikeType = bikeTypeService.getBikeTypeById(id);
+
         if (bikeType == null) {
             JOptionPane.showMessageDialog(this,
                     LanguageManager.getString("error.title"));
@@ -96,6 +99,7 @@ public class BikeTypePanel extends BaseListPanel {
 
     @Override
     protected void onDelete(int row) {
+
         int id = getSelectedId();
         if (id == -1) return;
 
