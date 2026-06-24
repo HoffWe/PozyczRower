@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 /**
  * Panel zarządzania klientami.
  * ID klientów NIE jest wyświetlane w tabeli – przechowywane w {@code rowIds}.
+ *
+ *  @author Światosław Matsopa
  */
 public class ClientPanel extends BaseListPanel {
 

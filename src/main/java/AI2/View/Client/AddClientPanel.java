@@ -9,6 +9,8 @@ import java.awt.*;
 
 /**
  * Panel formularza dodawania nowego klienta.
+ *
+ *  @author Światosław Matsopa
  */
 public class AddClientPanel extends BaseFormPanel {
 

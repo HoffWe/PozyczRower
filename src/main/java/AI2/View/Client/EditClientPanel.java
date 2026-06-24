@@ -11,6 +11,8 @@ import java.awt.*;
 /**
  * Panel formularza edycji istniejącego klienta.
  * Pola są wstępnie wypełnione danymi przekazanego obiektu {@link Client}.
+ *
+ *  @author Światosław Matsopa
  */
 public class EditClientPanel extends BaseFormPanel {
 
