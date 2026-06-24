@@ -46,10 +46,6 @@ class UserServiceTest {
         service = new UserService(stubRepo);
     }
 
-    // ----------------------------------------------------------------
-    // hashPassword
-    // ----------------------------------------------------------------
-
     @Test
     void hashPassword_deterministicForSameInput() {
         String h1 = UserService.hashPassword("secret");
@@ -69,10 +65,6 @@ class UserServiceTest {
         // SHA-256 → 64 znaki hex
         assertEquals(64, UserService.hashPassword("test").length());
     }
-
-    // ----------------------------------------------------------------
-    // addUser
-    // ----------------------------------------------------------------
 
     @Test
     void addUser_validData_userAdded() {
@@ -121,10 +113,6 @@ class UserServiceTest {
                 () -> service.addUser("ADMIN", "haslo2", UserRole.RENTAL_WORKER));
     }
 
-    // ----------------------------------------------------------------
-    // login
-    // ----------------------------------------------------------------
-
     @Test
     void login_correctCredentials_returnsUser() {
         service.addUser("jan", "tajne", UserRole.RENTAL_WORKER);
@@ -154,9 +142,6 @@ class UserServiceTest {
                 () -> service.login("jan", ""));
     }
 
-    // ----------------------------------------------------------------
-    // updateUser
-    // ----------------------------------------------------------------
 
     @Test
     void updateUser_changeRole_roleUpdated() {
@@ -211,9 +196,7 @@ class UserServiceTest {
         assertDoesNotThrow(() -> service.updateUser(u, ""));
     }
 
-    // ----------------------------------------------------------------
-    // removeUser / getUserById / getAllUsers / isEmpty
-    // ----------------------------------------------------------------
+
 
     @Test
     void removeUser_existingUser_userRemoved() {

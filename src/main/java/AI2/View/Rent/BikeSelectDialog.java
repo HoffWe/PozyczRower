@@ -93,14 +93,14 @@ public class BikeSelectDialog extends JDialog {
      * Tworzy okno dialogowe wyboru rowerów z filtrowaniem okresu i wykluczaniem
      * już wybranych rowerów.
      *
-     * @param owner            okno nadrzędne
-     * @param bikeService      serwis rowerów
+     * @param owner okno nadrzędne
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param rentService      serwis wypożyczeń
-     * @param periodStart      początek okresu wypożyczenia
-     * @param periodEnd        koniec okresu wypożyczenia
-     * @param excludedIds      identyfikatory rowerów już dodanych (pomijane w puli)
+     * @param bikeTypeService serwis typów rowerów
+     * @param rentService serwis wypożyczeń
+     * @param periodStart początek okresu wypożyczenia
+     * @param periodEnd koniec okresu wypożyczenia
+     * @param excludedIds identyfikatory rowerów już dodanych (pomijane w puli)
      * @author Tomasz Piłat
      */
     public BikeSelectDialog(Window owner,
@@ -152,9 +152,9 @@ public class BikeSelectDialog extends JDialog {
         }
 
         for (List<Bike> bikes : grouped.values()) {
-            Bike      first = bikes.get(0);
-            BikeModel bm    = bikeModelService.getBikeModelById(first.getBikeModelId());
-            BikeType  bt    = bikeTypeService.getBikeTypeById(first.getBikeTypeId());
+            Bike first = bikes.get(0);
+            BikeModel bm = bikeModelService.getBikeModelById(first.getBikeModelId());
+            BikeType bt = bikeTypeService.getBikeTypeById(first.getBikeTypeId());
             allGroups.add(new GroupEntry(bikes, bt, bm));
         }
 
@@ -188,8 +188,8 @@ public class BikeSelectDialog extends JDialog {
         SearchPanel searchPanel = new SearchPanel();
         JTextField  searchField = searchPanel.getSearchField();
         searchField.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e)  { filter(searchField.getText()); }
-            public void removeUpdate(DocumentEvent e)  { filter(searchField.getText()); }
+            public void insertUpdate(DocumentEvent e){ filter(searchField.getText()); }
+            public void removeUpdate(DocumentEvent e) { filter(searchField.getText()); }
             public void changedUpdate(DocumentEvent e) { filter(searchField.getText()); }
         });
 
@@ -200,9 +200,9 @@ public class BikeSelectDialog extends JDialog {
 
         setLayout(new BorderLayout(10, 10));
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(searchPanel,            BorderLayout.NORTH);
+        add(searchPanel, BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
-        add(south,                  BorderLayout.SOUTH);
+        add(south,BorderLayout.SOUTH);
 
         filter("");
 

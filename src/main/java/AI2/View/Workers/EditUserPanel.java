@@ -26,9 +26,9 @@ public class EditUserPanel extends BaseFormPanel {
     private JComboBox<UserRole> roleCombo;
 
     public EditUserPanel(UserService userService, User user, WorkersPanel parentPanel) {
-        this.userService  = userService;
-        this.user         = user;
-        this.parentPanel  = parentPanel;
+        this.userService = userService;
+        this.user = user;
+        this.parentPanel = parentPanel;
         init();
     }
 

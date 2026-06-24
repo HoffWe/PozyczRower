@@ -151,4 +151,55 @@ class BikeServiceTest {
     void updateBike_nullBike_throwsException() {
         assertThrows(IllegalArgumentException.class, () -> service.updateBike(null));
     }
+
+    /**
+     * Sprawdza że updateBike poprawnie aktualizuje dane roweru.
+     */
+    @Test
+    void updateBike_validData_updatesStatus() {
+        Bike bike = service.addBike(1, 1, 28, BikeStatus.AVAILABLE, "");
+        bike.setStatus(BikeStatus.RENTED);
+        boolean result = service.updateBike(bike);
+        assertTrue(result);
+        assertEquals(BikeStatus.RENTED, service.getBikeById(bike.getBikeId()).getStatus());
+    }
+
+    /**
+     * Sprawdza że getAllBikes zwraca wszystkie dodane rowery.
+     */
+    @Test
+    void getAllBikes_afterAdd_returnsAll() {
+        service.addBike(1, 1, 28, BikeStatus.AVAILABLE, "");
+        service.addBike(1, 1, 26, BikeStatus.AVAILABLE, "");
+        assertEquals(2, service.getAllBikes().size());
+    }
+
+    /**
+     * Sprawdza że getAllBikes pomija rowery oznaczone jako usunięte.
+     */
+    @Test
+    void getAllBikes_deletedBike_notReturned() {
+        Bike bike = service.addBike(1, 1, 28, BikeStatus.AVAILABLE, "");
+        bike.setDeleted(true);
+        assertTrue(service.getAllBikes().isEmpty());
+    }
+
+    /**
+     * Sprawdza że getBikeById zwraca rower dla istniejącego ID.
+     */
+    @Test
+    void getBikeById_existingId_returnsBike() {
+        Bike bike = service.addBike(1, 1, 28, BikeStatus.AVAILABLE, "");
+        Bike found = service.getBikeById(bike.getBikeId());
+        assertNotNull(found);
+        assertEquals(28, found.getWheelSize());
+    }
+
+    /**
+     * Sprawdza że getBikeById zwraca null dla nieistniejącego ID.
+     */
+    @Test
+    void getBikeById_nonExistingId_returnsNull() {
+        assertNull(service.getBikeById(999));
+    }
 }

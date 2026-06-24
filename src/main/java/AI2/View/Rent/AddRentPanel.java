@@ -558,7 +558,7 @@ public class AddRentPanel extends BaseFormPanel {
     private JPanel buildSelectorPanel(JTextField field, JButton plusBtn) {
         JPanel panel = new JPanel(new BorderLayout(4, 0));
         panel.setPreferredSize(new Dimension(280, 35));
-        panel.add(field,   BorderLayout.CENTER);
+        panel.add(field, BorderLayout.CENTER);
         panel.add(plusBtn, BorderLayout.EAST);
         return panel;
     }

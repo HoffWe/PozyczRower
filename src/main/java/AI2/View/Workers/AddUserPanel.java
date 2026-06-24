@@ -18,20 +18,24 @@ public class AddUserPanel extends BaseFormPanel {
     private final UserService userService;
     private final WorkersPanel parentPanel;
 
-    private JTextField     usernameField;
+    private JTextField usernameField;
     private JPasswordField passwordField;
     private JComboBox<UserRole> roleCombo;
 
     public AddUserPanel(UserService userService, WorkersPanel parentPanel) {
-        this.userService   = userService;
-        this.parentPanel   = parentPanel;
+        this.userService = userService;
+        this.parentPanel = parentPanel;
         init();
     }
     @Override
-    protected String getTitleKey() { return "workers.nameAdd"; }
+    protected String getTitleKey() {
+        return "workers.nameAdd";
+    }
 
     @Override
-    protected String getSubmitButtonKey() { return "button.add"; }
+    protected String getSubmitButtonKey() {
+        return "button.add";
+    }
 
     @Override
     protected void initFormComponents() {
