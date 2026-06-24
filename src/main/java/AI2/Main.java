@@ -27,6 +27,9 @@ public class Main {
         UIManager.put("Component.arc", 15);
         UIManager.put("TextComponent.arc", 15);
 
+        UIManager.put("ScrollPane.arc", 15); // Zaokrągla listy rowerów i duże pole uwag!
+        UIManager.put("ComboBox.arc", 15);   // Zaokrągla rozwijane listy i wybór daty
+
         UIManager.put("Panel.background", bgNeutral);
         UIManager.put("RootPane.background", bgNeutral);
         UIManager.put("Label.foreground", textNavy);
