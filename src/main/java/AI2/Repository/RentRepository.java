@@ -47,6 +47,10 @@ public class RentRepository {
 
     public void updateRent(Rent newRent) {
         Rent rent = getRentByID(newRent.getId());
+        if (rent == null) {
+            System.err.println("updateRent: nie znaleziono wypożyczenia o id=" + newRent.getId());
+            return;
+        }
         rent.setBikeId(newRent.getBikeId());
         rent.setRentDate(newRent.getRentDate());
         rent.setReturnTime(newRent.getReturnTime());

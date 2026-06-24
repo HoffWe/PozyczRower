@@ -76,7 +76,7 @@ public class ClientSelectDialog extends JDialog {
         });
 
         SearchPanel searchPanel = new SearchPanel();
-        JTextField searchField  = searchPanel.getSearchField();
+        JTextField searchField = searchPanel.getSearchField();
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e)  { filter(searchField.getText()); }
             public void removeUpdate(DocumentEvent e)  { filter(searchField.getText()); }

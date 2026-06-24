@@ -14,6 +14,7 @@ import AI2.Service.BikeTypeService;
 import AI2.Service.ClientService;
 import AI2.Service.RentService;
 import AI2.Service.UserService;
+import AI2.Util.AppConfig;
 import AI2.Util.DataSeeder;
 import AI2.Util.LanguageChangeListener;
 import AI2.Util.LanguageManager;
@@ -254,13 +255,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         ButtonGroup buttonGroup = new ButtonGroup();
 
-        rentsButton.addActionListener(e-> layout.show(contentPanel, CARD_RENTS));
-        bikesButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKES));
-        bikeTypesButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKE_TYPES));
-        clientsButton.addActionListener(e-> layout.show(contentPanel, CARD_CLIENTS));
-        bikeModelsButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKE_MODELS));
-        workersButton.addActionListener(e-> layout.show(contentPanel, CARD_WORKERS));
-
         if (role.canAccess(CARD_RENTS)) {
             rentsButton.addActionListener(e -> layout.show(contentPanel, CARD_RENTS));
             toolBar.add(rentsButton);
@@ -316,7 +310,6 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
      * Stylizuje przycisk paska narzędzi.
      *
      * @param btn przycisk do ostylowania
-     * @author Tomasz Piłat
      */
     private void styleToolbarButton(AbstractButton btn) {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -389,6 +382,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
             rentService.saveRents();
             bikeTypeService.saveBikeTypes();
             bikeModelService.saveBikeModels();
+            AppConfig.awaitSaveCompletion();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Błąd zapisu danych: " + ex.getMessage(),

@@ -121,7 +121,9 @@ public class BikeSelectDialog extends JDialog {
                 LanguageManager.getString("bike.wheelSize"),
                 LanguageManager.getString("bike.available")
         }, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -212,13 +214,13 @@ public class BikeSelectDialog extends JDialog {
     /**
      * Wygodny konstruktor bez wykluczeń (np. z EditRentPanel).
      *
-     * @param owner            okno nadrzędne
-     * @param bikeService      serwis rowerów
+     * @param owner okno nadrzędne
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param rentService      serwis wypożyczeń
-     * @param periodStart      początek okresu wypożyczenia
-     * @param periodEnd        koniec okresu wypożyczenia
+     * @param bikeTypeService serwis typów rowerów
+     * @param rentService serwis wypożyczeń
+     * @param periodStart początek okresu wypożyczenia
+     * @param periodEnd koniec okresu wypożyczenia
      * @author Tomasz Piłat
      */
     public BikeSelectDialog(Window owner,

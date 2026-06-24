@@ -1,7 +1,9 @@
 package AI2.Util;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Klasa przechowująca konfigurowalne parametry aplikacji.
@@ -36,9 +38,34 @@ public final class AppConfig {
     public static final ExecutorService SAVE_EXECUTOR =
             Executors.newFixedThreadPool(THREAD_POOL_SIZE, r -> {
                 Thread t = new Thread(r, "file-saver");
-                t.setDaemon(true);
+                t.setDaemon(false);
                 return t;
             });
+
+    /**
+     * Blokuje do 5 sekund, czekając na zakończenie bieżących zadań zapisu.
+     * Wywołaj przed zamknięciem aplikacji lub wylogowaniem.
+     */
+    /**
+     * Blokuje (maks. 5 s) aż wszystkie aktualnie zakolejkowane zapisy się zakończą.
+     * <p>
+     * Wysyła po jednym "sentinel" task na każdy wątek puli. Ponieważ executor jest FIFO,
+     * sentinel trafi na koniec kolejki — gdy się wykona, wszystkie wcześniejsze zapisy
+     * są już gotowe.
+     * </p>
+     */
+    @SuppressWarnings("unchecked")
+    public static void awaitSaveCompletion() {
+        CompletableFuture<Void>[] sentinels = new CompletableFuture[THREAD_POOL_SIZE];
+        for (int i = 0; i < THREAD_POOL_SIZE; i++) {
+            sentinels[i] = CompletableFuture.runAsync(() -> {}, SAVE_EXECUTOR);
+        }
+        try {
+            CompletableFuture.allOf(sentinels).get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     /** Klasa narzędziowa – brak instancji. */
     private AppConfig() {}

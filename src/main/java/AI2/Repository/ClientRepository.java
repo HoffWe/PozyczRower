@@ -35,9 +35,9 @@ public class ClientRepository {
         saveToFile();
     }
 
-    /** Zwraca liste wszystkich klientow */
+    /** Zwraca kopię listy wszystkich klientów (nie modyfikuj stanu repozytorium przez tę listę). */
     public List<Client> getAllClients() {
-        return clients;
+        return new ArrayList<>(clients);
     }
 
     /** Zwraca klienta po ID, lub null jesli nie istnieje */

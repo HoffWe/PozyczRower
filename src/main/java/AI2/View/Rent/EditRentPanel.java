@@ -156,15 +156,15 @@ public class EditRentPanel extends BaseFormPanel {
     /** {@inheritDoc} */
     @Override
     protected void buildForm(JPanel formPanel, GridBagConstraints gbc) {
-        addFormRow(formPanel, gbc, "client.name",    clientLabel);
-        addFormRow(formPanel, gbc, "bike.name",      bikeSelectorPanel);
+        addFormRow(formPanel, gbc, "client.name", clientLabel);
+        addFormRow(formPanel, gbc, "bike.name",bikeSelectorPanel);
         addFormRow(formPanel, gbc, "date.startDate", startDatePicker);
-        addFormRow(formPanel, gbc, "rent.duration",  presetPanel);
-        addFormRow(formPanel, gbc, "date.endDate",   returnDatePicker);
+        addFormRow(formPanel, gbc, "rent.duration", presetPanel);
+        addFormRow(formPanel, gbc, "date.endDate",returnDatePicker);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        addFormRow(formPanel, gbc, "rent.notes",     new JScrollPane(notesArea));
+        addFormRow(formPanel, gbc, "rent.notes",new JScrollPane(notesArea));
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weighty = 0.0;
     }

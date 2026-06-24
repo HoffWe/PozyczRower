@@ -45,10 +45,21 @@ public abstract class BaseListPanel extends JPanel implements LanguageChangeList
      * po ustawieniu własnych pól (serwisów itp.).
      */
     protected BaseListPanel() {
-        LanguageManager.addListener(this);
         initComponents();
         buildLayout();
         registerListeners();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        LanguageManager.addListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        LanguageManager.removeListener(this);
     }
 
     private void initComponents() {

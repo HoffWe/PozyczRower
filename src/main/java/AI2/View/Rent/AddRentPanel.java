@@ -49,40 +49,35 @@ public class AddRentPanel extends BaseFormPanel {
     /** Akcja wykonywana po pomyślnym dodaniu wypożyczenia/wypożyczeń. */
     private final Runnable onSuccess;
 
-    // --- Stan ---
-    private Client     selectedClient;
-    private final List<Bike>   selectedBikes  = new ArrayList<>();
+    private Client selectedClient;
+    private final List<Bike> selectedBikes  = new ArrayList<>();
 
-    // --- Komponenty ---
-    private JTextField         clientDisplayField;
-    private JButton            selectClientBtn;
-    private JPanel             clientSelectorPanel;
 
-    private DateTimePicker     startDatePicker;
-    private DateTimePicker     returnDatePicker;
-    private JPanel             presetPanel;
+    private JTextField clientDisplayField;
+    private JButton selectClientBtn;
+    private JPanel clientSelectorPanel;
+
+    private DateTimePicker startDatePicker;
+    private DateTimePicker returnDatePicker;
+    private JPanel presetPanel;
 
     private DefaultListModel<String> bikesListModel;
-    private JList<String>      bikesList;
-    private JButton            addBikeBtn;
-    private JButton            removeBikeBtn;
-    private JPanel             bikesPanel;
+    private JList<String> bikesList;
+    private JButton addBikeBtn;
+    private JButton removeBikeBtn;
+    private JPanel bikesPanel;
 
-    private JTextArea          notesArea;
-
-    // ----------------------------------------------------------------
-    // Konstruktory
-    // ----------------------------------------------------------------
+    private JTextArea notesArea;
 
     /**
      * Konstruktor z panelu wypożyczeń – pełny zestaw serwisów, brak pre-selekcji.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param onSuccess        akcja po pomyślnym zapisie
+     * @param bikeTypeService serwis typów rowerów
+     * @param onSuccess akcja po pomyślnym zapisie
      * @author Tomasz Piłat
      */
     public AddRentPanel(RentService rentService, ClientService clientService,
@@ -95,12 +90,12 @@ public class AddRentPanel extends BaseFormPanel {
     /**
      * Konstruktor z panelu klientów – klient jest pre-wybrany.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param preClient        pre-wybrany klient
+     * @param bikeTypeService serwis typów rowerów
+     * @param preClient pre-wybrany klient
      * @author Tomasz Piłat
      */
     public AddRentPanel(RentService rentService, ClientService clientService,
@@ -113,13 +108,13 @@ public class AddRentPanel extends BaseFormPanel {
     /**
      * Konstruktor z panelu klientów – klient pre-wybrany, własna akcja po zapisie.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param onSuccess        akcja po pomyślnym zapisie
-     * @param preClient        pre-wybrany klient
+     * @param bikeTypeService serwis typów rowerów
+     * @param onSuccess akcja po pomyślnym zapisie
+     * @param preClient pre-wybrany klient
      * @author Tomasz Piłat
      */
     public AddRentPanel(RentService rentService, ClientService clientService,
@@ -132,12 +127,12 @@ public class AddRentPanel extends BaseFormPanel {
     /**
      * Konstruktor z panelu rowerów – rower jest pre-wybrany.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param preBike          pre-wybrany rower
+     * @param bikeTypeService serwis typów rowerów
+     * @param preBike pre-wybrany rower
      * @author Tomasz Piłat
      */
     public AddRentPanel(RentService rentService, ClientService clientService,
@@ -151,10 +146,10 @@ public class AddRentPanel extends BaseFormPanel {
      * Konstruktor z panelu wypożyczeń – brak pre-selekcji, odświeża RentPanel po zapisie.
      * (Zachowany dla wstecznej kompatybilności.)
      *
-     * @param rentService   serwis wypożyczeń
+     * @param rentService serwis wypożyczeń
      * @param clientService serwis klientów
-     * @param parentPanel   nadrzędny panel listy wypożyczeń
-     * @param bikeService   serwis rowerów
+     * @param parentPanel nadrzędny panel listy wypożyczeń
+     * @param bikeService serwis rowerów
      * @author Tomasz Piłat
      */
     public AddRentPanel(RentService rentService, ClientService clientService,
@@ -166,36 +161,32 @@ public class AddRentPanel extends BaseFormPanel {
     /**
      * Konstruktor główny – wspólna logika wszystkich wariantów.
      *
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeService      serwis rowerów
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów (może być {@code null})
-     * @param bikeTypeService  serwis typów rowerów (może być {@code null})
-     * @param onSuccess        akcja po pomyślnym zapisie
-     * @param preClient        pre-wybrany klient (może być {@code null})
-     * @param preBike          pre-wybrany rower (może być {@code null})
+     * @param bikeTypeService serwis typów rowerów (może być {@code null})
+     * @param onSuccess akcja po pomyślnym zapisie
+     * @param preClient pre-wybrany klient (może być {@code null})
+     * @param preBike pre-wybrany rower (może być {@code null})
      * @author Tomasz Piłat
      */
     private AddRentPanel(RentService rentService, ClientService clientService,
                          BikeService bikeService, BikeModelService bikeModelService,
                          BikeTypeService bikeTypeService, Runnable onSuccess,
                          Client preClient, Bike preBike) {
-        this.rentService      = rentService;
-        this.clientService    = clientService;
-        this.bikeService      = bikeService;
+        this.rentService = rentService;
+        this.clientService = clientService;
+        this.bikeService = bikeService;
         this.bikeModelService = bikeModelService;
-        this.bikeTypeService  = bikeTypeService;
-        this.onSuccess        = onSuccess;
-        this.selectedClient   = preClient;
+        this.bikeTypeService = bikeTypeService;
+        this.onSuccess = onSuccess;
+        this.selectedClient = preClient;
         if (preBike != null) {
             this.selectedBikes.add(preBike);
         }
         init();
     }
-
-    // ----------------------------------------------------------------
-    // BaseFormPanel
-    // ----------------------------------------------------------------
 
     /** {@inheritDoc} */
     @Override
@@ -210,11 +201,10 @@ public class AddRentPanel extends BaseFormPanel {
     protected void initFormComponents() {
         Dimension pickerSize = defaultFieldSize();
 
-        // --- Klient ---
         clientDisplayField = new JTextField();
         clientDisplayField.setEditable(false);
         clientDisplayField.setPreferredSize(new Dimension(220, 35));
-//        clientDisplayField.setBackground(Color.WHITE);
+
 
         selectClientBtn = makePlusButton();
         selectClientBtn.addActionListener(e -> openClientDialog());
@@ -227,10 +217,10 @@ public class AddRentPanel extends BaseFormPanel {
             clientDisplayField.setText(LanguageManager.getString("dialog.none.selected"));
         }
 
-        // --- Daty ---
+
         startDatePicker = new DateTimePicker();
         startDatePicker.setPreferredSize(pickerSize);
-        startDatePicker.setDateTimeStrict(LocalDateTime.now());   // domyślnie teraz
+        startDatePicker.setDateTimeStrict(LocalDateTime.now());
         returnDatePicker = new DateTimePicker();
         returnDatePicker.setPreferredSize(pickerSize);
 
@@ -239,7 +229,7 @@ public class AddRentPanel extends BaseFormPanel {
         returnDatePicker.getDatePicker().addDateChangeListener(e -> onDatesChanged());
         returnDatePicker.getTimePicker().addTimeChangeListener(e -> onDatesChanged());
 
-        // --- HACK FLATLAF DLA LGoodDatePicker (WZMOCNIONY) ---
+
         JButton startCalBtn = startDatePicker.getDatePicker().getComponentToggleCalendarButton();
         JButton returnCalBtn = returnDatePicker.getDatePicker().getComponentToggleCalendarButton();
         JButton startTimeBtn = startDatePicker.getTimePicker().getComponentToggleTimeMenuButton();
@@ -266,7 +256,7 @@ public class AddRentPanel extends BaseFormPanel {
         presetPanel = buildPresetPanel();
 
         bikesListModel = new DefaultListModel<>();
-        bikesList      = new JList<>(bikesListModel);
+        bikesList = new JList<>(bikesListModel);
         bikesList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         bikesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         bikesList.setFixedCellHeight(28);
@@ -277,7 +267,7 @@ public class AddRentPanel extends BaseFormPanel {
             bikesListModel.addElement(bikeLabel(b));
         }
 
-        addBikeBtn    = makePlusButton();
+        addBikeBtn = makePlusButton();
         addBikeBtn.setEnabled(false);
         addBikeBtn.setToolTipText(LanguageManager.getString("error.rent.selectDatesFirst"));
         addBikeBtn.addActionListener(e -> openBikeDialog());
@@ -297,20 +287,16 @@ public class AddRentPanel extends BaseFormPanel {
         });
 
         JPanel bikeBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-//        bikeBtnPanel.setBackground(Color.WHITE);
         bikeBtnPanel.add(addBikeBtn);
         bikeBtnPanel.add(removeBikeBtn);
 
-        // Scroll pane bez fiksu rozmiaru — JList.visibleRowCount kontroluje wysokość
         JScrollPane bikesScroll = new JScrollPane(bikesList);
         bikesScroll.setMinimumSize(new Dimension(280, 28 * 3));
 
         bikesPanel = new JPanel(new BorderLayout(0, 4));
-//        bikesPanel.setBackground(Color.WHITE);
         bikesPanel.add(bikesScroll,   BorderLayout.CENTER);
         bikesPanel.add(bikeBtnPanel,  BorderLayout.SOUTH);
 
-        // --- Uwagi ---
         notesArea = new JTextArea(3, 20);
         notesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         notesArea.setLineWrap(true);
@@ -325,16 +311,16 @@ public class AddRentPanel extends BaseFormPanel {
         addFormRow(formPanel, gbc, "rent.duration",   presetPanel);
         addFormRow(formPanel, gbc, "date.endDate",    returnDatePicker);
 
-        gbc.fill    = GridBagConstraints.BOTH;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        gbc.gridx   = 0; gbc.weightx = 0.0;
-        gbc.anchor  = GridBagConstraints.NORTHWEST;
+        gbc.gridx = 0; gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         formPanel.add(new JLabel(LanguageManager.getString("rent.selectedBikes")), gbc);
-        gbc.gridx   = 1; gbc.weightx = 1.0;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         formPanel.add(bikesPanel, gbc);
         gbc.gridy++;
 
-        gbc.fill    = GridBagConstraints.BOTH;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 0.3;
         addFormRow(formPanel, gbc, "rent.notes", new JScrollPane(notesArea));
     }
@@ -389,10 +375,6 @@ public class AddRentPanel extends BaseFormPanel {
         }
     }
 
-    // ----------------------------------------------------------------
-    // Listenery / helpers
-    // ----------------------------------------------------------------
-
     /**
      * Reaguje na zmianę dat – włącza/wyłącza przycisk dodawania roweru.
      *
@@ -400,8 +382,8 @@ public class AddRentPanel extends BaseFormPanel {
      */
     private void onDatesChanged() {
         LocalDateTime start = startDatePicker.getDateTimeStrict();
-        LocalDateTime end   = returnDatePicker.getDateTimeStrict();
-        boolean datesValid  = start != null && end != null && end.isAfter(start);
+        LocalDateTime end = returnDatePicker.getDateTimeStrict();
+        boolean datesValid = start != null && end != null && end.isAfter(start);
         addBikeBtn.setEnabled(datesValid && bikeModelService != null && bikeTypeService != null);
         addBikeBtn.setToolTipText(datesValid
                 ? null
@@ -438,7 +420,7 @@ public class AddRentPanel extends BaseFormPanel {
             return;
         }
         LocalDateTime start = startDatePicker.getDateTimeStrict();
-        LocalDateTime end   = returnDatePicker.getDateTimeStrict();
+        LocalDateTime end = returnDatePicker.getDateTimeStrict();
         if (start == null || end == null || !end.isAfter(start)) {
             showError(LanguageManager.getString("error.rent.selectDatesFirst"));
             return;
@@ -475,8 +457,6 @@ public class AddRentPanel extends BaseFormPanel {
                 "rent.preset.7days", "rent.preset.14days"
         };
 
-        // Wracamy do zwykłego panelu.
-        // 8 pikseli przerwy w poziomie (ładny odstęp) i 5 w pionie (żeby nie ucinało dołu!)
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
         panel.setOpaque(false);
         ButtonGroup group = new ButtonGroup();
@@ -485,11 +465,7 @@ public class AddRentPanel extends BaseFormPanel {
             JToggleButton btn = new JToggleButton(LanguageManager.getString(keys[i]));
             btn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
             btn.setFocusPainted(false);
-
-            // Wygodne marginesy wewnątrz przycisku
             btn.setMargin(new Insets(4, 12, 4, 12));
-
-            // Koniec z segmentowaniem! Zwykłe, osobne, miękko zaokrąglone przyciski
             btn.putClientProperty("JButton.buttonType", "roundRect");
 
             final long m = minutes[i];
@@ -581,7 +557,6 @@ public class AddRentPanel extends BaseFormPanel {
      */
     private JPanel buildSelectorPanel(JTextField field, JButton plusBtn) {
         JPanel panel = new JPanel(new BorderLayout(4, 0));
-//        panel.setBackground(Color.WHITE);
         panel.setPreferredSize(new Dimension(280, 35));
         panel.add(field,   BorderLayout.CENTER);
         panel.add(plusBtn, BorderLayout.EAST);

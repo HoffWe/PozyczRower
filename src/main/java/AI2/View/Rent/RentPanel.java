@@ -244,6 +244,14 @@ public class RentPanel extends BaseListPanel {
     @Override
     public void loadData() {
         rentService.updateStatuses();
+        renderRents();
+    }
+
+    /**
+     * Filtruje i renderuje tabelę BEZ wywoływania updateStatuses().
+     * Używane przy wyszukiwaniu (każde naciśnięcie klawisza) i zmianie filtra statusu.
+     */
+    private void renderRents() {
         String query = searchField != null ? searchField.getText().trim() : "";
 
         Object sel = statusFilterCombo != null ? statusFilterCombo.getSelectedItem() : STATUS_ALL;
@@ -315,7 +323,7 @@ public class RentPanel extends BaseListPanel {
     /** {@inheritDoc} */
     @Override
     protected void filterTable(String query) {
-        loadData();
+        renderRents();
     }
 
 
@@ -481,6 +489,6 @@ public class RentPanel extends BaseListPanel {
             int id = getSelectedId();
             if (id != -1) onCancel(id);
         });
-        statusFilterCombo.addActionListener(e -> loadData());
+        statusFilterCombo.addActionListener(e -> renderRents());
     }
 }

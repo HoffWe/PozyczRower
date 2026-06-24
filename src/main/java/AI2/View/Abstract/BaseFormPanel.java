@@ -30,11 +30,22 @@ public abstract class BaseFormPanel extends JPanel implements LanguageChangeList
      * Musi być wywołana jako ostatnia instrukcja konstruktora podklasy.
      */
     protected final void init() {
-        LanguageManager.addListener(this);
 //        setBackground(Color.WHITE);
         initComponents();
         buildLayout();
         registerListeners();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        LanguageManager.addListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        LanguageManager.removeListener(this);
     }
 
     private void initComponents() {

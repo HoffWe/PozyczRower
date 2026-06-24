@@ -21,14 +21,14 @@ public class LoginDialog extends JDialog {
     /** Zalogowany użytkownik – {@code null} jeśli dialog zamknięto bez logowania. */
     private User loggedUser = null;
 
-    private JTextField     usernameField;
+    private JTextField usernameField;
     private JPasswordField passwordField;
-    private JLabel         errorLabel;
+    private JLabel errorLabel;
 
     /**
      * Tworzy okno logowania.
      *
-     * @param owner       okno nadrzędne (może być {@code null})
+     * @param owner okno nadrzędne (może być {@code null})
      * @param userService serwis użytkowników
      */
     public LoginDialog(Frame owner, UserService userService) {
@@ -41,7 +41,6 @@ public class LoginDialog extends JDialog {
         setLayout(new BorderLayout(10, 10));
         ((JComponent) getContentPane()).setBorder(
                 BorderFactory.createEmptyBorder(24, 36, 20, 36));
-//        getContentPane().setBackground(Color.WHITE);
 
         JLabel title = new JLabel(LanguageManager.getString("login.title"), SwingConstants.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -49,7 +48,6 @@ public class LoginDialog extends JDialog {
         add(title, BorderLayout.NORTH);
 
         JPanel form = new JPanel(new GridBagLayout());
-//        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill    = GridBagConstraints.HORIZONTAL;
         gbc.insets  = new Insets(6, 4, 6, 4);
@@ -82,13 +80,11 @@ public class LoginDialog extends JDialog {
         add(form, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//        btnPanel.setBackground(Color.WHITE);
         AppButton loginBtn = new AppButton(LanguageManager.getString("login.button"));
         loginBtn.addActionListener(e -> tryLogin());
         btnPanel.add(loginBtn);
         add(btnPanel, BorderLayout.SOUTH);
 
-        // Enter uruchamia logowanie
         getRootPane().setDefaultButton(loginBtn);
 
         setSize(380, 270);

@@ -21,11 +21,10 @@ import java.awt.event.FocusEvent;
 public class SearchPanel extends JPanel implements LanguageChangeListener {
 
     private final JTextField searchField;
-    private final JButton    clearButton;
-    private       String     placeholder;
+    private final JButton clearButton;
+    private String placeholder;
 
     public SearchPanel() {
-        LanguageManager.addListener(this);
         placeholder = LanguageManager.getString("search");
 
         setLayout(new BorderLayout(4, 0));
@@ -101,6 +100,18 @@ public class SearchPanel extends JPanel implements LanguageChangeListener {
     /** Czyści pole wyszukiwania programowo. */
     public void clear() {
         searchField.setText("");
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        LanguageManager.addListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        LanguageManager.removeListener(this);
     }
 
     @Override
