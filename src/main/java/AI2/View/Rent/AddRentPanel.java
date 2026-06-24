@@ -49,29 +49,35 @@ public class AddRentPanel extends BaseFormPanel {
     /** Akcja wykonywana po pomyślnym dodaniu wypożyczenia/wypożyczeń. */
     private final Runnable onSuccess;
 
+    // --- Stan ---
     private Client     selectedClient;
     private final List<Bike>   selectedBikes  = new ArrayList<>();
 
-    private JTextField clientDisplayField;
-    private JButton selectClientBtn;
-    private JPanel clientSelectorPanel;
+    // --- Komponenty ---
+    private JTextField         clientDisplayField;
+    private JButton            selectClientBtn;
+    private JPanel             clientSelectorPanel;
 
-    private DateTimePicker startDatePicker;
-    private DateTimePicker returnDatePicker;
-    private JPanel presetPanel;
+    private DateTimePicker     startDatePicker;
+    private DateTimePicker     returnDatePicker;
+    private JPanel             presetPanel;
 
     private DefaultListModel<String> bikesListModel;
-    private JList<String> bikesList;
-    private JButton addBikeBtn;
-    private JButton removeBikeBtn;
-    private JPanel bikesPanel;
+    private JList<String>      bikesList;
+    private JButton            addBikeBtn;
+    private JButton            removeBikeBtn;
+    private JPanel             bikesPanel;
 
-    private JTextArea notesArea;
+    private JTextArea          notesArea;
+
+    // ----------------------------------------------------------------
+    // Konstruktory
+    // ----------------------------------------------------------------
 
     /**
      * Konstruktor z panelu wypożyczeń – pełny zestaw serwisów, brak pre-selekcji.
      *
-     * @param rentService serwis wypożyczeń
+     * @param rentService      serwis wypożyczeń
      * @param clientService    serwis klientów
      * @param bikeService      serwis rowerów
      * @param bikeModelService serwis modeli rowerów
@@ -142,6 +148,22 @@ public class AddRentPanel extends BaseFormPanel {
     }
 
     /**
+     * Konstruktor z panelu wypożyczeń – brak pre-selekcji, odświeża RentPanel po zapisie.
+     * (Zachowany dla wstecznej kompatybilności.)
+     *
+     * @param rentService   serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param parentPanel   nadrzędny panel listy wypożyczeń
+     * @param bikeService   serwis rowerów
+     * @author Tomasz Piłat
+     */
+    public AddRentPanel(RentService rentService, ClientService clientService,
+                        RentPanel parentPanel, BikeService bikeService) {
+        this(rentService, clientService, bikeService, null, null,
+                parentPanel::loadData, null, null);
+    }
+
+    /**
      * Konstruktor główny – wspólna logika wszystkich wariantów.
      *
      * @param rentService      serwis wypożyczeń
@@ -171,25 +193,28 @@ public class AddRentPanel extends BaseFormPanel {
         init();
     }
 
+    // ----------------------------------------------------------------
+    // BaseFormPanel
+    // ----------------------------------------------------------------
+
     /** {@inheritDoc} */
     @Override
     protected String getTitleKey() { return "rent.nameAdd"; }
 
     /** {@inheritDoc} */
     @Override
-    protected String getSubmitButtonKey() {
-        return "button.add";
-    }
+    protected String getSubmitButtonKey() { return "button.add"; }
 
     /** {@inheritDoc} */
     @Override
     protected void initFormComponents() {
         Dimension pickerSize = defaultFieldSize();
 
+        // --- Klient ---
         clientDisplayField = new JTextField();
         clientDisplayField.setEditable(false);
         clientDisplayField.setPreferredSize(new Dimension(220, 35));
-        clientDisplayField.setBackground(Color.WHITE);
+//        clientDisplayField.setBackground(Color.WHITE);
 
         selectClientBtn = makePlusButton();
         selectClientBtn.addActionListener(e -> openClientDialog());
@@ -202,9 +227,10 @@ public class AddRentPanel extends BaseFormPanel {
             clientDisplayField.setText(LanguageManager.getString("dialog.none.selected"));
         }
 
+        // --- Daty ---
         startDatePicker = new DateTimePicker();
         startDatePicker.setPreferredSize(pickerSize);
-        startDatePicker.setDateTimeStrict(LocalDateTime.now());
+        startDatePicker.setDateTimeStrict(LocalDateTime.now());   // domyślnie teraz
         returnDatePicker = new DateTimePicker();
         returnDatePicker.setPreferredSize(pickerSize);
 
@@ -213,6 +239,30 @@ public class AddRentPanel extends BaseFormPanel {
         returnDatePicker.getDatePicker().addDateChangeListener(e -> onDatesChanged());
         returnDatePicker.getTimePicker().addTimeChangeListener(e -> onDatesChanged());
 
+        // --- HACK FLATLAF DLA LGoodDatePicker (WZMOCNIONY) ---
+        JButton startCalBtn = startDatePicker.getDatePicker().getComponentToggleCalendarButton();
+        JButton returnCalBtn = returnDatePicker.getDatePicker().getComponentToggleCalendarButton();
+        JButton startTimeBtn = startDatePicker.getTimePicker().getComponentToggleTimeMenuButton();
+        JButton returnTimeBtn = returnDatePicker.getTimePicker().getComponentToggleTimeMenuButton();
+
+        javax.swing.border.Border flatBorder = UIManager.getBorder("Button.border");
+
+        if (startCalBtn != null) {
+            startCalBtn.setBorder(flatBorder);
+            startCalBtn.putClientProperty("JButton.buttonType", "roundRect");
+        }
+        if (returnCalBtn != null) {
+            returnCalBtn.setBorder(flatBorder);
+            returnCalBtn.putClientProperty("JButton.buttonType", "roundRect");
+        }
+        if (startTimeBtn != null) {
+            startTimeBtn.setBorder(flatBorder);
+            startTimeBtn.putClientProperty("JButton.buttonType", "roundRect");
+        }
+        if (returnTimeBtn != null) {
+            returnTimeBtn.setBorder(flatBorder);
+            returnTimeBtn.putClientProperty("JButton.buttonType", "roundRect");
+        }
         presetPanel = buildPresetPanel();
 
         bikesListModel = new DefaultListModel<>();
@@ -220,8 +270,9 @@ public class AddRentPanel extends BaseFormPanel {
         bikesList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         bikesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         bikesList.setFixedCellHeight(28);
-        bikesList.setVisibleRowCount(5);
+        bikesList.setVisibleRowCount(5);   // JList sam liczy preferowaną wysokość
 
+        // Pre-wybrany rower (jeśli jest)
         for (Bike b : selectedBikes) {
             bikesListModel.addElement(bikeLabel(b));
         }
@@ -246,18 +297,20 @@ public class AddRentPanel extends BaseFormPanel {
         });
 
         JPanel bikeBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        bikeBtnPanel.setBackground(Color.WHITE);
+//        bikeBtnPanel.setBackground(Color.WHITE);
         bikeBtnPanel.add(addBikeBtn);
         bikeBtnPanel.add(removeBikeBtn);
 
+        // Scroll pane bez fiksu rozmiaru — JList.visibleRowCount kontroluje wysokość
         JScrollPane bikesScroll = new JScrollPane(bikesList);
         bikesScroll.setMinimumSize(new Dimension(280, 28 * 3));
 
         bikesPanel = new JPanel(new BorderLayout(0, 4));
-        bikesPanel.setBackground(Color.WHITE);
+//        bikesPanel.setBackground(Color.WHITE);
         bikesPanel.add(bikesScroll,   BorderLayout.CENTER);
         bikesPanel.add(bikeBtnPanel,  BorderLayout.SOUTH);
 
+        // --- Uwagi ---
         notesArea = new JTextArea(3, 20);
         notesArea.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         notesArea.setLineWrap(true);
@@ -335,6 +388,11 @@ public class AddRentPanel extends BaseFormPanel {
             showError(ex.getMessage());
         }
     }
+
+    // ----------------------------------------------------------------
+    // Listenery / helpers
+    // ----------------------------------------------------------------
+
     /**
      * Reaguje na zmianę dat – włącza/wyłącza przycisk dodawania roweru.
      *
@@ -412,28 +470,36 @@ public class AddRentPanel extends BaseFormPanel {
     private JPanel buildPresetPanel() {
         long[]   minutes = {120, 240, 1440, 4320, 10080, 20160};
         String[] keys    = {
-            "rent.preset.2h", "rent.preset.4h",
-            "rent.preset.1day", "rent.preset.3days",
-            "rent.preset.7days", "rent.preset.14days"
+                "rent.preset.2h", "rent.preset.4h",
+                "rent.preset.1day", "rent.preset.3days",
+                "rent.preset.7days", "rent.preset.14days"
         };
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        panel.setBackground(Color.WHITE);
+        // Wracamy do zwykłego panelu.
+        // 8 pikseli przerwy w poziomie (ładny odstęp) i 5 w pionie (żeby nie ucinało dołu!)
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
+        panel.setOpaque(false);
         ButtonGroup group = new ButtonGroup();
 
         for (int i = 0; i < minutes.length; i++) {
             JToggleButton btn = new JToggleButton(LanguageManager.getString(keys[i]));
             btn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            btn.setPreferredSize(new Dimension(72, 30));
             btn.setFocusPainted(false);
+
+            // Wygodne marginesy wewnątrz przycisku
+            btn.setMargin(new Insets(4, 12, 4, 12));
+
+            // Koniec z segmentowaniem! Zwykłe, osobne, miękko zaokrąglone przyciski
+            btn.putClientProperty("JButton.buttonType", "roundRect");
+
             final long m = minutes[i];
             btn.addActionListener(e -> applyPreset(m));
             group.add(btn);
             panel.add(btn);
         }
+
         return panel;
     }
-
     /**
      * Ustawia datę zwrotu na podstawie daty startu + wybrany czas trwania.
      * Jeśli data startu nie jest ustawiona, używa bieżącego czasu.
@@ -515,7 +581,7 @@ public class AddRentPanel extends BaseFormPanel {
      */
     private JPanel buildSelectorPanel(JTextField field, JButton plusBtn) {
         JPanel panel = new JPanel(new BorderLayout(4, 0));
-        panel.setBackground(Color.WHITE);
+//        panel.setBackground(Color.WHITE);
         panel.setPreferredSize(new Dimension(280, 35));
         panel.add(field,   BorderLayout.CENTER);
         panel.add(plusBtn, BorderLayout.EAST);

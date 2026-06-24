@@ -326,7 +326,7 @@ public class RentPanel extends BaseListPanel {
                 LanguageManager.getString("rent.nameAdd"),
                 new AddRentPanel(rentService, clientService, bikeService,
                         bikeModelService, bikeTypeService, this::loadData),
-                580, 600
+                650, 600
         );
     }
 
