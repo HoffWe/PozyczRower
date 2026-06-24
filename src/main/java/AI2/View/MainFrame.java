@@ -98,28 +98,28 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
     /**
      * Tworzy główne okno aplikacji dla zalogowanego użytkownika.
      *
-     * @param currentUser      zalogowany użytkownik
-     * @param userService      serwis użytkowników
-     * @param rentService      serwis wypożyczeń
-     * @param clientService    serwis klientów
-     * @param bikeTypeService  serwis typów rowerów
-     * @param bikeService      serwis rowerów
+     * @param currentUser zalogowany użytkownik
+     * @param userService serwis użytkowników
+     * @param rentService serwis wypożyczeń
+     * @param clientService serwis klientów
+     * @param bikeTypeService serwis typów rowerów
+     * @param bikeService serwis rowerów
      * @param bikeModelService serwis modeli rowerów
-     * @param onLogout         callback wywoływany przy wylogowaniu (dispose + ponowne logowanie)
+     * @param onLogout callback wywoływany przy wylogowaniu (dispose + ponowne logowanie)
      * @author Tomasz Piłat
      */
     public MainFrame(User currentUser, UserService userService,
                      RentService rentService, ClientService clientService,
                      BikeTypeService bikeTypeService, BikeService bikeService,
                      BikeModelService bikeModelService, Runnable onLogout) {
-        this.currentUser      = currentUser;
-        this.userService      = userService;
-        this.rentService      = rentService;
-        this.clientService    = clientService;
-        this.bikeTypeService  = bikeTypeService;
-        this.bikeService      = bikeService;
+        this.currentUser = currentUser;
+        this.userService = userService;
+        this.rentService = rentService;
+        this.clientService = clientService;
+        this.bikeTypeService = bikeTypeService;
+        this.bikeService = bikeService;
         this.bikeModelService = bikeModelService;
-        this.onLogout         = onLogout;
+        this.onLogout = onLogout;
 
         LanguageManager.addListener(this);
 
@@ -142,7 +142,7 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         setJMenuBar(buildMenuBar());
         add(buildToolBar(), BorderLayout.NORTH);
 
-        layout       = new CardLayout();
+        layout = new CardLayout();
         contentPanel = new JPanel(layout);
 
         UserRole role = currentUser.getRole();
@@ -187,9 +187,9 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
         fileMenu = new JMenu(LanguageManager.getString("menu.file"));
         fileMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
-        loginItem  = new JMenuItem(LanguageManager.getString("menu.login"));
+        loginItem = new JMenuItem(LanguageManager.getString("menu.login"));
         logoutItem = new JMenuItem(LanguageManager.getString("menu.logout"));
-        exitItem   = new JMenuItem(LanguageManager.getString("menu.exit"));
+        exitItem = new JMenuItem(LanguageManager.getString("menu.exit"));
 
         loginItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         logoutItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -238,12 +238,12 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         UserRole role = currentUser.getRole();
 
-        rentsButton      = new JToggleButton(LanguageManager.getString("rent.name"));
-        bikesButton      = new JToggleButton(LanguageManager.getString("bike.name"));
-        bikeTypesButton  = new JToggleButton(LanguageManager.getString("bikeType.name"));
-        clientsButton    = new JToggleButton(LanguageManager.getString("client.name"));
+        rentsButton = new JToggleButton(LanguageManager.getString("rent.name"));
+        bikesButton = new JToggleButton(LanguageManager.getString("bike.name"));
+        bikeTypesButton = new JToggleButton(LanguageManager.getString("bikeType.name"));
+        clientsButton = new JToggleButton(LanguageManager.getString("client.name"));
         bikeModelsButton = new JToggleButton(LanguageManager.getString("bikeModel.name"));
-        workersButton    = new JToggleButton(LanguageManager.getString("workers.name"));
+        workersButton = new JToggleButton(LanguageManager.getString("workers.name"));
 
         styleToolbarButton(rentsButton);
         styleToolbarButton(bikesButton);
@@ -254,12 +254,12 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
 
         ButtonGroup buttonGroup = new ButtonGroup();
 
-        rentsButton.addActionListener(e      -> layout.show(contentPanel, CARD_RENTS));
-        bikesButton.addActionListener(e      -> layout.show(contentPanel, CARD_BIKES));
-        bikeTypesButton.addActionListener(e  -> layout.show(contentPanel, CARD_BIKE_TYPES));
-        clientsButton.addActionListener(e    -> layout.show(contentPanel, CARD_CLIENTS));
-        bikeModelsButton.addActionListener(e -> layout.show(contentPanel, CARD_BIKE_MODELS));
-        workersButton.addActionListener(e    -> layout.show(contentPanel, CARD_WORKERS));
+        rentsButton.addActionListener(e-> layout.show(contentPanel, CARD_RENTS));
+        bikesButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKES));
+        bikeTypesButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKE_TYPES));
+        clientsButton.addActionListener(e-> layout.show(contentPanel, CARD_CLIENTS));
+        bikeModelsButton.addActionListener(e-> layout.show(contentPanel, CARD_BIKE_MODELS));
+        workersButton.addActionListener(e-> layout.show(contentPanel, CARD_WORKERS));
 
         if (role.canAccess(CARD_RENTS)) {
             rentsButton.addActionListener(e -> layout.show(contentPanel, CARD_RENTS));
