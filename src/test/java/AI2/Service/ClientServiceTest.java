@@ -56,7 +56,7 @@ class ClientServiceTest {
      */
     @Test
     void addClient_validData_clientIsAdded() {
-        service.addClient("Jan", "Kowalski", "ABC123", "");
+        service.addClient("Jan", "Kowalski", "ABC123234", "");
         List<Client> clients = service.getAllClients();
         assertEquals(1, clients.size());
         assertEquals("Jan", clients.get(0).getName());

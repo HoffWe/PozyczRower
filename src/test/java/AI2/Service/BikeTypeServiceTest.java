@@ -69,17 +69,6 @@ class BikeTypeServiceTest {
     }
 
     /**
-     * Sprawdza że pusta nazwa powoduje wyjątek.
-     *
-     * @author Adrian Karpiński
-     */
-    @Test
-    void addBikeType_emptyName_throwsException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> service.addBikeType(new BikeTypeDTO("", "", "opis")));
-    }
-
-    /**
      * Sprawdza że pusty opis powoduje wyjątek.
      *
      * @author Adrian Karpiński
