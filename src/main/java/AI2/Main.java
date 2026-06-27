@@ -52,8 +52,8 @@ public class Main {
         RentRepository rentRepository = new RentRepository();
         UserRepository userRepository = new UserRepository();
 
-        BikeTypeService  bikeTypeService  = new BikeTypeService(bikeTypeRepository);
-        BikeModelService bikeModelService = new BikeModelService(bikeModelRepository);
+        BikeTypeService  bikeTypeService  = new BikeTypeService(bikeTypeRepository,bikeRepository);
+        BikeModelService bikeModelService = new BikeModelService(bikeModelRepository,bikeRepository);
         BikeService  bikeService = new BikeService(bikeRepository);
         ClientService clientService = new ClientService(clientRepository);
         RentService rentService = new RentService(rentRepository, bikeRepository, clientRepository);

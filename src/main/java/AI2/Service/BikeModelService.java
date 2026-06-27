@@ -1,8 +1,12 @@
 package AI2.Service;
 
 import AI2.DTO.BikeModelDTO;
+import AI2.Enums.RentStatus;
+import AI2.Model.Bike;
 import AI2.Model.BikeModel;
+import AI2.Model.Rent;
 import AI2.Repository.BikeModelRepository;
+import AI2.Repository.BikeRepository;
 import AI2.Util.LanguageManager;
 
 import java.util.List;
@@ -16,6 +20,7 @@ public class BikeModelService {
 
     /** Repozytorium modeli rowerów. */
     private final BikeModelRepository bikeModelRepository;
+    private final BikeRepository bikeRepository;
 
     /**
      * Tworzy serwis modeli rowerów.
@@ -23,8 +28,9 @@ public class BikeModelService {
      * @param bikeModelRepository repozytorium modeli rowerów
      * @author Rafał Wojciechowski
      */
-    public BikeModelService(BikeModelRepository bikeModelRepository) {
+    public BikeModelService(BikeModelRepository bikeModelRepository, BikeRepository bikeRepository) {
         this.bikeModelRepository = bikeModelRepository;
+        this.bikeRepository = bikeRepository;
     }
 
     /**
@@ -62,6 +68,12 @@ public class BikeModelService {
      * @author Rafał Wojciechowski
      */
     public boolean removeBikeModel(int bikeModelId) {
+        List<Bike> bikes = bikeRepository.getAllBikes();
+        if(bikes.stream().anyMatch(bike -> bike.getBikeModelId() == bikeModelId)) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bikeModel.isTaken")
+            );
+        };
         return bikeModelRepository.removeBikeModel(bikeModelId);
     }
 

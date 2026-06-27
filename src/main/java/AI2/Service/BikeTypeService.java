@@ -1,7 +1,9 @@
 package AI2.Service;
 
 import AI2.DTO.BikeTypeDTO;
+import AI2.Model.Bike;
 import AI2.Model.BikeType;
+import AI2.Repository.BikeRepository;
 import AI2.Repository.BikeTypeRepository;
 import AI2.Util.LanguageManager;
 
@@ -16,14 +18,15 @@ public class BikeTypeService {
 
     /** Repozytorium typów rowerów. */
     private final BikeTypeRepository bikeTypeRepository;
-
+    private final BikeRepository bikeRepository;
     /**
      * Tworzy serwis typów rowerów.
      *
      * @param bikeTypeRepository repozytorium typów rowerów
      */
-    public BikeTypeService(BikeTypeRepository bikeTypeRepository) {
+    public BikeTypeService(BikeTypeRepository bikeTypeRepository, BikeRepository bikeRepository) {
         this.bikeTypeRepository = bikeTypeRepository;
+        this.bikeRepository = bikeRepository;
     }
 
     /**
@@ -63,6 +66,12 @@ public class BikeTypeService {
      * @return {@code true} jeśli typ roweru został usunięty
      */
     public boolean removeBikeType(int bikeTypeId) {
+        List<Bike>  bikes = bikeRepository.getAllBikes();
+        if (bikes.stream().anyMatch(bike -> bike.getBikeTypeId() == bikeTypeId)) {
+            throw new IllegalArgumentException(
+                    LanguageManager.getString("error.bikeType.isTaken")
+            );
+        }
         return bikeTypeRepository.removeBikeType(bikeTypeId);
     }
 
