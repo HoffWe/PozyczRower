@@ -85,7 +85,7 @@ public class ClientRepository {
     }
 
     /** Zapisuje wszystkich klientów do pliku w oddzielnym wątku (DataOutputStream). */
-    private void saveToFile() {
+    public void saveToFile() {
         List<Client> snapshot = new ArrayList<>(clients);
         AppConfig.SAVE_EXECUTOR.submit(() -> {
             new File(AppConfig.DATA_DIR).mkdirs();

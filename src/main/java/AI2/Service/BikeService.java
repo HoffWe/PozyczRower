@@ -119,7 +119,9 @@ public class BikeService {
     public List<Bike> getBikesByStatus(BikeStatus status) {
         return bikeRepository.getBikesByStatus(status);
     }
-
+    public void saveBikes(){
+        bikeRepository.saveBikeRepository();
+    }
     /**
      * Sprawdza poprawność danych roweru.
      *

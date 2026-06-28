@@ -382,6 +382,8 @@ public class MainFrame extends JFrame implements LanguageChangeListener {
             rentService.saveRents();
             bikeTypeService.saveBikeTypes();
             bikeModelService.saveBikeModels();
+            bikeService.saveBikes();
+            clientService.saveClients();
             AppConfig.awaitSaveCompletion();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,

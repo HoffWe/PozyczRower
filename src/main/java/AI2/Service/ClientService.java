@@ -136,4 +136,7 @@ public class ClientService {
                         .contains(keyword.toLowerCase()))
                 .collect(Collectors.toList());
     }
+    public void saveClients() {
+        clientRepository.saveToFile();
+    }
 }

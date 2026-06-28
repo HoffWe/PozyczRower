@@ -2,6 +2,7 @@ package AI2.Service;
 
 import AI2.DTO.BikeTypeDTO;
 import AI2.Model.BikeType;
+import AI2.Repository.BikeRepository;
 import AI2.Repository.BikeTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class BikeTypeServiceTest {
             @Override public void saveBikeTypeRepository() {}
             @Override public void loadBikeTypeRepository() {}
         };
-        service = new BikeTypeService(stubRepo);
+        service = new BikeTypeService(stubRepo,new BikeRepository());
     }
 
     /**
